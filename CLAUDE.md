@@ -1,0 +1,129 @@
+# CLAUDE.md — GuilTrip
+
+Native iOS bill splitter that uses AI to figure out who owes what, then helps you
+deliver the bad news. Personal project, deliberately a playful meme app — lighthearted
+in tone, but the code stays clean and the split math must be exact (real money).
+
+This is a **primarily agent-coded app** — the goal is the least amount of hand-written
+human code possible. Claude does the implementation; keep the codebase coherent,
+well-structured, and easy for the next agent session to pick up.
+
+## Project Overview
+
+- SwiftUI app, universal (iPhone + iPad).
+- Minimum deployment target: **iOS 26.0** (`IPHONEOS_DEPLOYMENT_TARGET = 26.0`).
+- **Orientation:** iPhone is portrait only; iPad supports all orientations.
+- Language: **Swift 6** (`SWIFT_VERSION = 6.0`) — full strict concurrency.
+- Architecture: **Model-View (MV)**. See "Architecture" below — no ViewModels.
+- Package manager: **Swift Package Manager** only (no CocoaPods, no Carthage).
+- Xcode 26.6. Bundle ID `com.palkesz.guiltrip`.
+- Xcode project uses **file-system-synchronized groups** — add/move/delete files and
+  folders on disk and the target picks them up automatically. Don't hand-edit
+  `project.pbxproj` unless a change genuinely can't be done any other way (e.g. a
+  build-membership exception), and call it out when you do.
+
+## Tech Stack
+
+- **UI:** SwiftUI (no UIKit unless wrapping legacy components)
+- **Networking:** async/await with Alamofire
+- **Persistence:** SwiftData
+- **DI:** Factory pattern via FactoryKit
+- **Testing:** Swift Testing framework for unit tests
+
+(Dependencies are aspirational until actually added via SPM — add them when the first
+real use lands, not before, and note why in the PR.)
+
+## Architecture — Model-View, no ViewModels
+
+- **No ViewModels. No `ObservableObject`.** Presentation logic lives in the SwiftUI
+  view, with private helper methods / computed properties on the view for anything
+  non-trivial.
+- When a view's logic gets genuinely complex, **extract it into plain
+  helpers** — free functions, `struct`s, or small classes — that are independently
+  testable. Keep them next to the feature that uses them.
+- **Models** are value types where possible and own domain logic (the split algorithm,
+  rounding, totals). `@Observable` for reference-type model/state objects that views
+  observe; `@State` / `@Bindable` to hold and bind them.
+- Side-effecting collaborators (network, persistence, AI service) are protocol-typed
+  and injected via FactoryKit, so views/models take an abstraction, not a concrete type.
+
+## Coding Standards
+
+- Prefer value types (structs) over reference types.
+- Use the `@Observable` macro, not `ObservableObject`.
+- No comments unless to explain something that is not obvious. Explain *why*, not *what*.
+- Mark everything with appropriate access control (default to `private` / `internal`;
+  widen only when needed).
+- No force unwrapping (`!`) or force `try!` in production code — use `guard let` /
+  `if let` / typed throws.
+- One primary type per file; filename matches the type.
+- **Money:** never `Double`/`Float` for currency. Use `Decimal` (or integer minor
+  units) with explicit rounding. Every split must sum back to the exact total — assign
+  leftover cents deterministically.
+
+## File Structure
+
+```
+guiltrip/
+  Resources/            Assets.xcassets, Localizable.strings, fonts, Lottie, etc.
+  Sources/
+    guiltripApp.swift   @main entry point
+    Core/               Shared, cross-feature code:
+      UI/               Components/, Extensions/, Util/  (reusable views, view helpers)
+      Networking/       Alamofire client, request/response models
+      Persistence/      SwiftData container, model schema
+      DI/               FactoryKit container & registrations
+      Logging/
+    Feature/            One folder per feature module. Each feature holds, as needed:
+      <Feature>/
+        UI/             Screens and feature-local views
+        Model/          Feature domain models
+        Data/           Repositories / data sources for the feature
+        Util/           Feature-local helpers
+```
+
+Empty folders aren't committed (git doesn't track them) — create each folder when the
+first real file for it lands, following the layout above. The app target folder is
+`guiltrip/`; tests live in `guiltripTests/` and `guiltripUITests/` at the repo root.
+
+Current state: `Sources/guiltripApp.swift` and `Sources/Feature/Root/ContentView.swift`
+(the placeholder root view). Everything else is still to be built.
+
+## Common Commands
+
+Build (Debug, simulator):
+
+```bash
+xcodebuild build -project guiltrip.xcodeproj -scheme guiltrip \
+  -destination 'platform=iOS Simulator,name=iPhone 17'
+```
+
+Test (unit + UI):
+
+```bash
+xcodebuild test -project guiltrip.xcodeproj -scheme guiltrip \
+  -destination 'platform=iOS Simulator,name=iPhone 17'
+```
+
+To see the app running, prefer the iOS Simulator tooling (attach the live panel, build,
+launch) over describing manual steps.
+
+## Tone
+
+- **User-facing copy** (button labels, reminder messages, empty states): lean into the
+  joke — guilt-trippy, a little petty, self-aware. Kind, never mean.
+- **Code, commits, docs:** professional and clear.
+
+## Working Agreements for Claude
+
+- **Committing is pre-authorized** — commit changes as you go, at natural checkpoints,
+  without stopping to ask. Use concise messages ending with the
+  `Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>` trailer. Keep commits
+  focused; don't bundle unrelated changes.
+- Push to `origin/main` once the working tree builds and is in a good state.
+- Don't add third-party dependencies without checking first.
+- Keep secrets out of the repo. AI-service / API keys go in a gitignored xcconfig or
+  environment, never committed. `Secrets.plist`, `.env`, `*.xcconfig.local` are already
+  gitignored.
+- After code changes, build (and run tests if logic changed) before reporting done.
+- This is a public repo — assume anything committed is world-readable.
