@@ -1,0 +1,17 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Hello, world!" : {
+      "comment" : "Placeholder greeting on the root screen.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Helló, világ!"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

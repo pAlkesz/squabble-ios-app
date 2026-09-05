@@ -61,11 +61,32 @@ real use lands, not before, and note why in the PR.)
   units) with explicit rounding. Every split must sum back to the exact total — assign
   leftover cents deterministically.
 
+## Localization
+
+- Supported languages: **English (`en`, primary / source)** and **Hungarian (`hu`)**.
+- Every user-facing string must be localized — no bare literals in `Text`, alerts,
+  accessibility labels, etc. Add each new string to the String Catalog with a `hu`
+  translation in the same change; don't leave `hu` stale.
+- Mechanism: a **String Catalog** at `guiltrip/Resources/Localizable.xcstrings`
+  (`LOCALIZATION_PREFERS_STRING_CATALOGS = YES`, `SWIFT_EMIT_LOC_STRINGS = YES`).
+  SwiftUI `Text("...")` with a literal is auto-extracted; for interpolated or
+  non-View strings use `String(localized:)`.
+- `hu` is registered in the project's `knownRegions`. Keep the placeholder-text
+  tone in Hungarian too — playful and guilt-trippy, not a dry literal translation.
+- Format numbers/currency/dates with locale-aware APIs
+  (`Decimal.formatted(.currency(code:))`, `Date.FormatStyle`), never hand-built strings.
+
+## App Store
+
+- Primary category: **Finance** (`LSApplicationCategoryType = public.app-category.finance`).
+  Secondary: Utilities. The joke framing is marketing copy, not a category — bill
+  splitters are found under Finance.
+
 ## File Structure
 
 ```
 guiltrip/
-  Resources/            Assets.xcassets, Localizable.strings, fonts, Lottie, etc.
+  Resources/            Assets.xcassets, Localizable.xcstrings, fonts, Lottie, etc.
   Sources/
     guiltripApp.swift   @main entry point
     Core/               Shared, cross-feature code:
