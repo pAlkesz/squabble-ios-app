@@ -49,7 +49,7 @@
   <rect x="338" y="612" width="128" height="20" rx="10" fill="#9AA0AC"/>
   <rect x="566" y="612" width="120" height="20" rx="10" fill="#E23D4C"/>
 
-  <!-- guilt: a single nervous sweat drop -->
+  <!-- a single nervous sweat drop -->
   <g>
     <path fill="#8FBEFF" d="
       M 700 190

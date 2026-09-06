@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  guiltrip
+//  squabble
 //
 //  Created by Personal on 2026. 09. 06..
 //

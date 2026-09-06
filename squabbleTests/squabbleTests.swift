@@ -1,14 +1,14 @@
 //
-//  guiltripTests.swift
-//  guiltripTests
+//  squabbleTests.swift
+//  squabbleTests
 //
 //  Created by Personal on 2026. 09. 06..
 //
 
 import Testing
-@testable import guiltrip
+@testable import squabble
 
-struct guiltripTests {
+struct squabbleTests {
 
     @Test func example() async throws {
         // Write your test here and use APIs like `#expect(...)` to check expected conditions.

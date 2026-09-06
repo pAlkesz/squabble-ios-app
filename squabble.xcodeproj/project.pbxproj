@@ -12,37 +12,37 @@
 			containerPortal = 60693182304CD73D00C6DE98 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 60693189304CD73D00C6DE98;
-			remoteInfo = guiltrip;
+			remoteInfo = squabble;
 		};
 		606931A2304CD73E00C6DE98 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 60693182304CD73D00C6DE98 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 60693189304CD73D00C6DE98;
-			remoteInfo = guiltrip;
+			remoteInfo = squabble;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		6069318A304CD73D00C6DE98 /* guiltrip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = guiltrip.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		60693197304CD73E00C6DE98 /* guiltripTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = guiltripTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		606931A1304CD73E00C6DE98 /* guiltripUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = guiltripUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6069318A304CD73D00C6DE98 /* squabble.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = squabble.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		60693197304CD73E00C6DE98 /* squabbleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = squabbleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		606931A1304CD73E00C6DE98 /* squabbleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = squabbleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		6069318C304CD73D00C6DE98 /* guiltrip */ = {
+		6069318C304CD73D00C6DE98 /* squabble */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = guiltrip;
+			path = squabble;
 			sourceTree = "<group>";
 		};
-		6069319A304CD73E00C6DE98 /* guiltripTests */ = {
+		6069319A304CD73E00C6DE98 /* squabbleTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = guiltripTests;
+			path = squabbleTests;
 			sourceTree = "<group>";
 		};
-		606931A4304CD73E00C6DE98 /* guiltripUITests */ = {
+		606931A4304CD73E00C6DE98 /* squabbleUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = guiltripUITests;
+			path = squabbleUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -75,9 +75,9 @@
 		60693181304CD73D00C6DE98 = {
 			isa = PBXGroup;
 			children = (
-				6069318C304CD73D00C6DE98 /* guiltrip */,
-				6069319A304CD73E00C6DE98 /* guiltripTests */,
-				606931A4304CD73E00C6DE98 /* guiltripUITests */,
+				6069318C304CD73D00C6DE98 /* squabble */,
+				6069319A304CD73E00C6DE98 /* squabbleTests */,
+				606931A4304CD73E00C6DE98 /* squabbleUITests */,
 				6069318B304CD73D00C6DE98 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -85,9 +85,9 @@
 		6069318B304CD73D00C6DE98 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6069318A304CD73D00C6DE98 /* guiltrip.app */,
-				60693197304CD73E00C6DE98 /* guiltripTests.xctest */,
-				606931A1304CD73E00C6DE98 /* guiltripUITests.xctest */,
+				6069318A304CD73D00C6DE98 /* squabble.app */,
+				60693197304CD73E00C6DE98 /* squabbleTests.xctest */,
+				606931A1304CD73E00C6DE98 /* squabbleUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,9 +95,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		60693189304CD73D00C6DE98 /* guiltrip */ = {
+		60693189304CD73D00C6DE98 /* squabble */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 606931AB304CD73E00C6DE98 /* Build configuration list for PBXNativeTarget "guiltrip" */;
+			buildConfigurationList = 606931AB304CD73E00C6DE98 /* Build configuration list for PBXNativeTarget "squabble" */;
 			buildPhases = (
 				60693186304CD73D00C6DE98 /* Sources */,
 				60693187304CD73D00C6DE98 /* Frameworks */,
@@ -108,18 +108,18 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				6069318C304CD73D00C6DE98 /* guiltrip */,
+				6069318C304CD73D00C6DE98 /* squabble */,
 			);
-			name = guiltrip;
+			name = squabble;
 			packageProductDependencies = (
 			);
-			productName = guiltrip;
-			productReference = 6069318A304CD73D00C6DE98 /* guiltrip.app */;
+			productName = squabble;
+			productReference = 6069318A304CD73D00C6DE98 /* squabble.app */;
 			productType = "com.apple.product-type.application";
 		};
-		60693196304CD73E00C6DE98 /* guiltripTests */ = {
+		60693196304CD73E00C6DE98 /* squabbleTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 606931AE304CD73E00C6DE98 /* Build configuration list for PBXNativeTarget "guiltripTests" */;
+			buildConfigurationList = 606931AE304CD73E00C6DE98 /* Build configuration list for PBXNativeTarget "squabbleTests" */;
 			buildPhases = (
 				60693193304CD73E00C6DE98 /* Sources */,
 				60693194304CD73E00C6DE98 /* Frameworks */,
@@ -131,18 +131,18 @@
 				60693199304CD73E00C6DE98 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				6069319A304CD73E00C6DE98 /* guiltripTests */,
+				6069319A304CD73E00C6DE98 /* squabbleTests */,
 			);
-			name = guiltripTests;
+			name = squabbleTests;
 			packageProductDependencies = (
 			);
-			productName = guiltripTests;
-			productReference = 60693197304CD73E00C6DE98 /* guiltripTests.xctest */;
+			productName = squabbleTests;
+			productReference = 60693197304CD73E00C6DE98 /* squabbleTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		606931A0304CD73E00C6DE98 /* guiltripUITests */ = {
+		606931A0304CD73E00C6DE98 /* squabbleUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 606931B1304CD73E00C6DE98 /* Build configuration list for PBXNativeTarget "guiltripUITests" */;
+			buildConfigurationList = 606931B1304CD73E00C6DE98 /* Build configuration list for PBXNativeTarget "squabbleUITests" */;
 			buildPhases = (
 				6069319D304CD73E00C6DE98 /* Sources */,
 				6069319E304CD73E00C6DE98 /* Frameworks */,
@@ -154,13 +154,13 @@
 				606931A3304CD73E00C6DE98 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				606931A4304CD73E00C6DE98 /* guiltripUITests */,
+				606931A4304CD73E00C6DE98 /* squabbleUITests */,
 			);
-			name = guiltripUITests;
+			name = squabbleUITests;
 			packageProductDependencies = (
 			);
-			productName = guiltripUITests;
-			productReference = 606931A1304CD73E00C6DE98 /* guiltripUITests.xctest */;
+			productName = squabbleUITests;
+			productReference = 606931A1304CD73E00C6DE98 /* squabbleUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -186,7 +186,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 60693185304CD73D00C6DE98 /* Build configuration list for PBXProject "guiltrip" */;
+			buildConfigurationList = 60693185304CD73D00C6DE98 /* Build configuration list for PBXProject "squabble" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -201,9 +201,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				60693189304CD73D00C6DE98 /* guiltrip */,
-				60693196304CD73E00C6DE98 /* guiltripTests */,
-				606931A0304CD73E00C6DE98 /* guiltripUITests */,
+				60693189304CD73D00C6DE98 /* squabble */,
+				60693196304CD73E00C6DE98 /* squabbleTests */,
+				606931A0304CD73E00C6DE98 /* squabbleUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -259,12 +259,12 @@
 /* Begin PBXTargetDependency section */
 		60693199304CD73E00C6DE98 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 60693189304CD73D00C6DE98 /* guiltrip */;
+			target = 60693189304CD73D00C6DE98 /* squabble */;
 			targetProxy = 60693198304CD73E00C6DE98 /* PBXContainerItemProxy */;
 		};
 		606931A3304CD73E00C6DE98 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 60693189304CD73D00C6DE98 /* guiltrip */;
+			target = 60693189304CD73D00C6DE98 /* squabble */;
 			targetProxy = 606931A2304CD73E00C6DE98 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -401,7 +401,7 @@
 				DEVELOPMENT_TEAM = 429ZM3SX3W;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Guilt Trip";
+				INFOPLIST_KEY_CFBundleDisplayName = "Squabble";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -414,7 +414,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.palkesz.guiltrip;
+				PRODUCT_BUNDLE_IDENTIFIER = com.palkesz.squabble;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -440,7 +440,7 @@
 				DEVELOPMENT_TEAM = 429ZM3SX3W;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Guilt Trip";
+				INFOPLIST_KEY_CFBundleDisplayName = "Squabble";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -453,7 +453,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.palkesz.guiltrip;
+				PRODUCT_BUNDLE_IDENTIFIER = com.palkesz.squabble;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -479,7 +479,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.palkesz.guiltripTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.palkesz.squabbleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -487,7 +487,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/guiltrip.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/guiltrip";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/squabble.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/squabble";
 			};
 			name = Debug;
 		};
@@ -501,7 +501,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.palkesz.guiltripTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.palkesz.squabbleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -509,7 +509,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/guiltrip.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/guiltrip";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/squabble.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/squabble";
 			};
 			name = Release;
 		};
@@ -521,7 +521,7 @@
 				DEVELOPMENT_TEAM = 429ZM3SX3W;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.palkesz.guiltripUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.palkesz.squabbleUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -529,7 +529,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = guiltrip;
+				TEST_TARGET_NAME = squabble;
 			};
 			name = Debug;
 		};
@@ -541,7 +541,7 @@
 				DEVELOPMENT_TEAM = 429ZM3SX3W;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.palkesz.guiltripUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.palkesz.squabbleUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -549,14 +549,14 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = guiltrip;
+				TEST_TARGET_NAME = squabble;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		60693185304CD73D00C6DE98 /* Build configuration list for PBXProject "guiltrip" */ = {
+		60693185304CD73D00C6DE98 /* Build configuration list for PBXProject "squabble" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				606931A9304CD73E00C6DE98 /* Debug */,
@@ -565,7 +565,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		606931AB304CD73E00C6DE98 /* Build configuration list for PBXNativeTarget "guiltrip" */ = {
+		606931AB304CD73E00C6DE98 /* Build configuration list for PBXNativeTarget "squabble" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				606931AC304CD73E00C6DE98 /* Debug */,
@@ -574,7 +574,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		606931AE304CD73E00C6DE98 /* Build configuration list for PBXNativeTarget "guiltripTests" */ = {
+		606931AE304CD73E00C6DE98 /* Build configuration list for PBXNativeTarget "squabbleTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				606931AF304CD73E00C6DE98 /* Debug */,
@@ -583,7 +583,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		606931B1304CD73E00C6DE98 /* Build configuration list for PBXNativeTarget "guiltripUITests" */ = {
+		606931B1304CD73E00C6DE98 /* Build configuration list for PBXNativeTarget "squabbleUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				606931B2304CD73E00C6DE98 /* Debug */,

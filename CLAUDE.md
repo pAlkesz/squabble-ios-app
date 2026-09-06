@@ -1,8 +1,11 @@
-# CLAUDE.md — GuilTrip
+# CLAUDE.md — Squabble
 
 Native iOS bill splitter that uses AI to figure out who owes what, then helps you
 deliver the bad news. Personal project, deliberately a playful meme app — lighthearted
 in tone, but the code stays clean and the split math must be exact (real money).
+
+The name plays on **squab** (a young bird — hence the bird logo) and the **squabble**
+that splitting a bill always seems to start.
 
 This is a **primarily agent-coded app** — the goal is the least amount of hand-written
 human code possible. Claude does the implementation; keep the codebase coherent,
@@ -11,14 +14,16 @@ well-structured, and easy for the next agent session to pick up.
 ## Project Overview
 
 - SwiftUI app, universal (iPhone + iPad).
-- Display name: **Guilt Trip** (`INFOPLIST_KEY_CFBundleDisplayName`). Target/product
-  name stays `guiltrip`; the type prefix is `guiltrip`.
+- Display name: **Squabble** (`INFOPLIST_KEY_CFBundleDisplayName`). Target / product /
+  module name and the Xcode-generated type prefix are all `squabble` (lowercase, as
+  Xcode generated it — e.g. `struct squabbleApp`; don't rename it).
 - Minimum deployment target: **iOS 26.0** (`IPHONEOS_DEPLOYMENT_TARGET = 26.0`).
 - **Orientation:** iPhone is portrait only; iPad supports all orientations.
 - Language: **Swift 6** (`SWIFT_VERSION = 6.0`) — full strict concurrency.
 - Architecture: **Model-View (MV)**. See "Architecture" below — no ViewModels.
 - Package manager: **Swift Package Manager** only (no CocoaPods, no Carthage).
-- Xcode 26.6. Bundle ID `com.palkesz.guiltrip`.
+- Xcode 26.6. Bundle ID `com.palkesz.squabble` (tests: `.squabbleTests`,
+  `.squabbleUITests`).
 - Xcode project uses **file-system-synchronized groups** — add/move/delete files and
   folders on disk and the target picks them up automatically. Don't hand-edit
   `project.pbxproj` unless a change genuinely can't be done any other way (e.g. a
@@ -69,27 +74,29 @@ real use lands, not before, and note why in the PR.)
 - Every user-facing string must be localized — no bare literals in `Text`, alerts,
   accessibility labels, etc. Add each new string to the String Catalog with a `hu`
   translation in the same change; don't leave `hu` stale.
-- Mechanism: a **String Catalog** at `guiltrip/Resources/Localizable.xcstrings`
+- Mechanism: a **String Catalog** at `squabble/Resources/Localizable.xcstrings`
   (`LOCALIZATION_PREFERS_STRING_CATALOGS = YES`, `SWIFT_EMIT_LOC_STRINGS = YES`).
   SwiftUI `Text("...")` with a literal is auto-extracted; for interpolated or
   non-View strings use `String(localized:)`.
-- `hu` is registered in the project's `knownRegions`. Keep the placeholder-text
-  tone in Hungarian too — playful and guilt-trippy, not a dry literal translation.
+- `hu` is registered in the project's `knownRegions`. Keep the tone in Hungarian
+  too — playful and a little passive-aggressive, not a dry literal translation.
 - Format numbers/currency/dates with locale-aware APIs
   (`Decimal.formatted(.currency(code:))`, `Date.FormatStyle`), never hand-built strings.
 
 ## Branding
 
-- **Accent color** (`AccentColor` asset, drives `.tint`): a warm "guilt red".
+- **Accent color** (`AccentColor` asset, drives `.tint`): a warm red.
   - Light: `#E23D4C`  ·  Dark: `#FF5B67`
   - It's the single brand color — use `Color.accentColor` / `.tint`, don't scatter
     ad-hoc reds. Additional named colors go in the asset catalog with light + dark
     variants, never hardcoded `Color(red:…)` in views.
-- **Logo direction:** a split receipt — white receipt on the accent-red icon
-  background, a dashed perforation line splitting it down the middle, torn zig-zag
-  bottom edge, and one nervous blue sweat drop (the "guilt"). Working concept:
-  `design/logo-concept.svg`. Final `AppIcon` PNGs (1024 + dark + tinted) still to be
-  produced from the finalized art.
+  - Note: the current chosen logo sits on a **green** field, so the accent red may
+    get revisited once the icon is final — don't over-invest in red-specific UI yet.
+- **Logo direction:** a flat, angular **paper-cut seabird** (gull / tern — a nod to
+  "squab") holding a small curled **receipt** in its beak, white on a green
+  background. Superseded concept (split receipt) is still in `design/logo-concept.svg`
+  for reference. Final `AppIcon` PNGs (1024 + dark + tinted) and the finalized vector
+  are still to be produced.
 
 ## App Store
 
@@ -100,10 +107,10 @@ real use lands, not before, and note why in the PR.)
 ## File Structure
 
 ```
-guiltrip/
+squabble/
   Resources/            Assets.xcassets, Localizable.xcstrings, fonts, Lottie, etc.
   Sources/
-    guiltripApp.swift   @main entry point
+    squabbleApp.swift   @main entry point
     Core/               Shared, cross-feature code:
       UI/               Components/, Extensions/, Util/  (reusable views, view helpers)
       Networking/       Alamofire client, request/response models
@@ -120,9 +127,9 @@ guiltrip/
 
 Empty folders aren't committed (git doesn't track them) — create each folder when the
 first real file for it lands, following the layout above. The app target folder is
-`guiltrip/`; tests live in `guiltripTests/` and `guiltripUITests/` at the repo root.
+`squabble/`; tests live in `squabbleTests/` and `squabbleUITests/` at the repo root.
 
-Current state: `Sources/guiltripApp.swift` and `Sources/Feature/Root/ContentView.swift`
+Current state: `Sources/squabbleApp.swift` and `Sources/Feature/Root/ContentView.swift`
 (the placeholder root view). Everything else is still to be built.
 
 ## Common Commands
@@ -130,14 +137,14 @@ Current state: `Sources/guiltripApp.swift` and `Sources/Feature/Root/ContentView
 Build (Debug, simulator):
 
 ```bash
-xcodebuild build -project guiltrip.xcodeproj -scheme guiltrip \
+xcodebuild build -project squabble.xcodeproj -scheme squabble \
   -destination 'platform=iOS Simulator,name=iPhone 17'
 ```
 
 Test (unit + UI):
 
 ```bash
-xcodebuild test -project guiltrip.xcodeproj -scheme guiltrip \
+xcodebuild test -project squabble.xcodeproj -scheme squabble \
   -destination 'platform=iOS Simulator,name=iPhone 17'
 ```
 
@@ -147,7 +154,7 @@ launch) over describing manual steps.
 ## Tone
 
 - **User-facing copy** (button labels, reminder messages, empty states): lean into the
-  joke — guilt-trippy, a little petty, self-aware. Kind, never mean.
+  joke — petty, a little passive-aggressive, self-aware. Kind, never mean.
 - **Code, commits, docs:** professional and clear.
 
 ## Working Agreements for Claude

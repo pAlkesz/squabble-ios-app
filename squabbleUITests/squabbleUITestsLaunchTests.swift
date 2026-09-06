@@ -1,13 +1,13 @@
 //
-//  guiltripUITestsLaunchTests.swift
-//  guiltripUITests
+//  squabbleUITestsLaunchTests.swift
+//  squabbleUITests
 //
 //  Created by Personal on 2026. 09. 06..
 //
 
 import XCTest
 
-final class guiltripUITestsLaunchTests: XCTestCase {
+final class squabbleUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

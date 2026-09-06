@@ -1,8 +1,8 @@
-# GuilTrip 🧾😰
+# Squabble 🐦🧾
 
-> Splitting bills, one guilt trip at a time.
+> Split the bill before it turns into a squabble.
 
-**GuilTrip** is a native iOS bill splitter that uses AI to figure out who owes what — and then delivers the bad news with just the right amount of passive-aggressive flair.
+**Squabble** is a native iOS bill splitter that uses AI to figure out who owes what — and then helps you deliver the bad news with just the right amount of passive-aggressive flair.
 
 This is a personal project and a bit of a joke app. It's meant to be playful. Do not use it to settle a mortgage.
 
@@ -10,17 +10,17 @@ This is a personal project and a bit of a joke app. It's meant to be playful. Do
 
 You go out. Someone orders the lobster. Someone "just had a salad" but also three cocktails. Somebody paid, somebody Venmo'd half, and now there's a group chat with 47 unread messages.
 
-GuilTrip is here to help:
+Squabble is here to help:
 
 - 📸 Snap a photo of the receipt, or type items in by hand
 - 🤖 AI parses the receipt and suggests a fair split
 - 🧠 Assign items to people, split shared stuff, handle tax & tip
-- 😇 Generate a friendly (or not-so-friendly) reminder message for whoever owes you
+- ✉️ Generate a friendly (or not-so-friendly) reminder message for whoever owes you
 - 📊 See who's the most expensive friend to hang out with
 
 ## Status
 
-Very early. Right now this is a fresh SwiftUI project that says "Hello, world!" — the guilt has not yet been implemented.
+Very early. Right now this is a fresh SwiftUI project that says "Hello, world!" — the squabbling has not yet been implemented.
 
 ### Roadmap (aspirational, subject to vibes)
 
@@ -34,13 +34,13 @@ Very early. Right now this is a fresh SwiftUI project that says "Hello, world!" 
 
 ## Tech
 
-- Swift / SwiftUI
-- iOS (native)
+- Swift 6 / SwiftUI
+- iOS 26+ (native), iPhone & iPad
 - Some AI model for receipt parsing and message generation (TBD)
 
 ## Building
 
-Open `guiltrip.xcodeproj` in Xcode and run. That's it for now.
+Open `squabble.xcodeproj` in Xcode and run. That's it for now.
 
 ## License
 
