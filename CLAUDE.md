@@ -11,6 +11,8 @@ well-structured, and easy for the next agent session to pick up.
 ## Project Overview
 
 - SwiftUI app, universal (iPhone + iPad).
+- Display name: **Guilt Trip** (`INFOPLIST_KEY_CFBundleDisplayName`). Target/product
+  name stays `guiltrip`; the type prefix is `guiltrip`.
 - Minimum deployment target: **iOS 26.0** (`IPHONEOS_DEPLOYMENT_TARGET = 26.0`).
 - **Orientation:** iPhone is portrait only; iPad supports all orientations.
 - Language: **Swift 6** (`SWIFT_VERSION = 6.0`) — full strict concurrency.
@@ -75,6 +77,19 @@ real use lands, not before, and note why in the PR.)
   tone in Hungarian too — playful and guilt-trippy, not a dry literal translation.
 - Format numbers/currency/dates with locale-aware APIs
   (`Decimal.formatted(.currency(code:))`, `Date.FormatStyle`), never hand-built strings.
+
+## Branding
+
+- **Accent color** (`AccentColor` asset, drives `.tint`): a warm "guilt red".
+  - Light: `#E23D4C`  ·  Dark: `#FF5B67`
+  - It's the single brand color — use `Color.accentColor` / `.tint`, don't scatter
+    ad-hoc reds. Additional named colors go in the asset catalog with light + dark
+    variants, never hardcoded `Color(red:…)` in views.
+- **Logo direction:** a split receipt — white receipt on the accent-red icon
+  background, a dashed perforation line splitting it down the middle, torn zig-zag
+  bottom edge, and one nervous blue sweat drop (the "guilt"). Working concept:
+  `design/logo-concept.svg`. Final `AppIcon` PNGs (1024 + dark + tinted) still to be
+  produced from the finalized art.
 
 ## App Store
 
