@@ -21,7 +21,7 @@ struct LaunchSplashView: View {
         }
         .ignoresSafeArea()
         .opacity(phase == .done ? 0 : 1)
-        .animation(.easeOut(duration: 0.35), value: phase)
+        .animation(.easeOut(duration: 0.3), value: phase)
         .contentShape(Rectangle())
         .onTapGesture(perform: skip)
         .accessibilityElement(children: .ignore)
@@ -41,7 +41,7 @@ struct LaunchSplashView: View {
                 x: isFlyingAway && !reduceMotion ? 1000 : 0,
                 y: isFlyingAway && !reduceMotion ? -700 : 0
             )
-            .animation(.easeIn(duration: 0.6), value: phase)
+            .animation(.easeIn(duration: 0.5), value: phase)
     }
 
     private var isFlyingAway: Bool { phase >= .flyAway }
@@ -94,7 +94,7 @@ struct LaunchSplashView: View {
         case (.wing, _) where isFlyingAway:
             return .easeInOut(duration: 0.1).repeatForever(autoreverses: true)
         case (_, .assembled):
-            return .spring(duration: 0.55, bounce: 0.38).delay(Self.arrivalDelay(for: piece))
+            return .spring(duration: 0.5, bounce: 0.38).delay(Self.arrivalDelay(for: piece))
         case (.body, .squawk), (.body, .unfurled):
             return .spring(duration: 0.3, bounce: 0.6)
         case (.receipt, .unfurled):
@@ -108,10 +108,10 @@ struct LaunchSplashView: View {
 
     private static func arrivalDelay(for piece: SquabLogoPiece) -> TimeInterval {
         switch piece {
-        case .tailLower: 0.05
-        case .tailUpper: 0.15
-        case .wing: 0.25
-        case .body: 0.4
+        case .tailLower: 0
+        case .tailUpper: 0.06
+        case .wing: 0.12
+        case .body: 0.2
         case .receipt, .receiptCurl: 0
         }
     }

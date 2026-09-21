@@ -16,10 +16,10 @@ nonisolated enum LaunchPhase: Int, Comparable, Sendable {
 
     static let script: [(phase: LaunchPhase, at: Duration)] = [
         (.assembled, .zero),
-        (.squawk, .milliseconds(950)),
-        (.unfurled, .milliseconds(1100)),
-        (.flyAway, .milliseconds(2100)),
-        (.done, .milliseconds(2700)),
+        (.squawk, .milliseconds(650)),
+        (.unfurled, .milliseconds(780)),
+        (.flyAway, .milliseconds(1350)),
+        (.done, .milliseconds(1750)),
     ]
 
     /// The effect that starts with this phase, if any.
@@ -32,7 +32,7 @@ nonisolated enum LaunchPhase: Int, Comparable, Sendable {
     }
 
     /// Time the outro fade needs after `.done` before the view is torn down.
-    static let fadeOut: Duration = .milliseconds(400)
+    static let fadeOut: Duration = .milliseconds(300)
 
     static func < (lhs: Self, rhs: Self) -> Bool { lhs.rawValue < rhs.rawValue }
 }
