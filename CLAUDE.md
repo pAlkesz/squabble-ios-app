@@ -44,8 +44,8 @@ well-structured, and easy for the next agent session to pick up.
 - **Testing:** Swift Testing framework for unit tests
 
 (Dependencies are aspirational until actually added via SPM — add them when the first
-real use lands, not before, and note why in the PR. Firebase is added as soon as the
-`GoogleService-Info.plist` lands.)
+real use lands, not before, and note why in the PR. Added so far: `firebase-ios-sdk`,
+`Factory` (product `FactoryKit`).)
 
 ## Backend — Firebase
 
@@ -77,9 +77,16 @@ ObjC-based SDK, NoSQL modeling, `Sendable` friction under Swift 6.
 - **Money in Firestore:** there is no decimal type. Store amounts as **integer minor
   units** (`Int64` cents) plus an ISO currency code; convert to `Decimal` at the model
   boundary. Never store `Double` amounts.
-- **Auth:** anonymous sign-in on first launch so the app works with zero friction;
-  upgrade/link to Sign in with Apple when an account is actually needed (sharing a
-  bill across devices).
+- **Auth:** Sign in with Apple only, required at first launch (decided Sept 2026 over
+  anonymous-first: one identity, no account-linking edge cases). Entitlement lives in
+  `squabble/squabble.entitlements`. The Apple provider must be enabled in the Firebase
+  console, and account deletion needs the Sign in with Apple `.p8` key configured there
+  so `revokeToken(withAuthorizationCode:)` works — App Review requires deletion.
+  - Apple hands over the user's name **once**, on the first authorization; it's stored
+    on the Firebase Auth profile (`displayName`) in the same sign-in call. There is no
+    Firestore `users` doc yet — add one when other users need to see names.
+  - `AuthSession` (`Feature/Auth/Model`) is the app-wide `@Observable` state, created
+    in the root view and shared via `.environment`. Views never touch `FirebaseAuth`.
 - **Crashlytics:** Release builds use `DEBUG_INFORMATION_FORMAT = dwarf-with-dsym` and
   a dSYM upload run-script build phase (`upload-symbols` from the SPM checkout) — this
   is a legitimate `project.pbxproj` hand-edit; call it out. Log handled errors with
@@ -194,8 +201,8 @@ Empty folders aren't committed (git doesn't track them) — create each folder w
 first real file for it lands, following the layout above. The app target folder is
 `squabble/`; tests live in `squabbleTests/` and `squabbleUITests/` at the repo root.
 
-Current state: `Sources/squabbleApp.swift` and `Sources/Feature/Root/ContentView.swift`
-(the placeholder root view). Everything else is still to be built.
+`ContentView` is the root router: it owns `AuthSession` and switches between the
+sign-in screen and `HomeView` on auth state. `squabbleApp` applies the launch splash.
 
 ## Common Commands
 

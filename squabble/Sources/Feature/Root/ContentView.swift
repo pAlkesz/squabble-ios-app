@@ -7,18 +7,23 @@
 
 import SwiftUI
 
+/// Root router: picks the screen from the auth state and owns the shared `AuthSession`.
 struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
-    }
-}
+    @State private var session = AuthSession()
 
-#Preview {
-    ContentView()
+    var body: some View {
+        Group {
+            switch session.state {
+            case .loading:
+                ProgressView()
+            case .signedOut:
+                SignInView()
+            case .signedIn:
+                HomeView()
+            }
+        }
+        .animation(.default, value: session.state)
+        .environment(session)
+        .task { await session.observe() }
+    }
 }

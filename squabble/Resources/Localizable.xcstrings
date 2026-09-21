@@ -1,39 +1,259 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "Hello, world!" : {
-      "comment" : "Placeholder greeting on the root screen.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Helló, világ!"
+  "sourceLanguage": "en",
+  "strings": {
+    "Account": {
+      "comment": "Account screen title and toolbar button.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fiók"
           }
         }
       }
     },
-    "Skip intro" : {
-      "comment" : "VoiceOver action to skip the launch animation.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Intró kihagyása"
+    "Add a bill and we'll find something.": {
+      "comment": "Home empty-state description.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adj hozzá egy számlát, találunk okot."
           }
         }
       }
     },
-    "Squabble" : {
-      "comment" : "App name, read by VoiceOver on the launch splash.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Squabble"
+    "Anonymous squab": {
+      "comment": "Shown instead of the name when Apple didn't share one.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Névtelen fióka"
+          }
+        }
+      }
+    },
+    "Apple didn't return an authorization code.": {
+      "comment": "AuthError.missingAuthorizationCode",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Az Apple nem küldött engedélyezési kódot."
+          }
+        }
+      }
+    },
+    "Apple didn't return an identity token.": {
+      "comment": "AuthError.missingIdentityToken",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Az Apple nem küldött azonosító tokent."
+          }
+        }
+      }
+    },
+    "Cancel": {
+      "comment": "Generic cancel button.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mégse"
+          }
+        }
+      }
+    },
+    "Confirm with Apple to delete your account.": {
+      "comment": "Re-authentication sheet heading before deletion.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erősítsd meg Apple-lel a fiók törlését."
+          }
+        }
+      }
+    },
+    "Continue": {
+      "comment": "Confirmation dialog proceed button.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Folytatás"
+          }
+        }
+      }
+    },
+    "Delete account": {
+      "comment": "Account screen destructive button.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fiók törlése"
+          }
+        }
+      }
+    },
+    "Delete your account?": {
+      "comment": "Confirmation dialog title.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Törlöd a fiókod?"
+          }
+        }
+      }
+    },
+    "Done": {
+      "comment": "Dismiss button on sheets.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kész"
+          }
+        }
+      }
+    },
+    "Nothing to squabble about yet.": {
+      "comment": "Home empty-state title.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Még nincs min veszekedni."
+          }
+        }
+      }
+    },
+    "OK": {
+      "comment": "Alert dismiss button.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        }
+      }
+    },
+    "Sign in so we know whose name to put on the receipt.": {
+      "comment": "Sign-in explanation under the tagline.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jelentkezz be, hogy tudjuk, kinek a nevére írjuk a számlát."
+          }
+        }
+      }
+    },
+    "Sign out": {
+      "comment": "Account screen button.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kijelentkezés"
+          }
+        }
+      }
+    },
+    "Sign-in failed": {
+      "comment": "Alert title when Sign in with Apple fails.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nem sikerült bejelentkezni"
+          }
+        }
+      }
+    },
+    "Sign-in isn't available in this build.": {
+      "comment": "AuthError.unavailable — Firebase config missing.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A bejelentkezés ebben a buildben nem elérhető."
+          }
+        }
+      }
+    },
+    "Skip intro": {
+      "comment": "VoiceOver action to skip the launch animation.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Intró kihagyása"
+          }
+        }
+      }
+    },
+    "Something went wrong": {
+      "comment": "Generic alert title on the account screen.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Valami elromlott"
+          }
+        }
+      }
+    },
+    "Split the bill. Assign the blame.": {
+      "comment": "Sign-in tagline.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oszd el a számlát. Oszd ki a felelősséget."
+          }
+        }
+      }
+    },
+    "Squabble": {
+      "comment": "App name, read by VoiceOver on the launch splash.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Squabble"
+          }
+        }
+      }
+    },
+    "This wipes your account and everything in it. Your friends will still owe you money — that part's between you and them.": {
+      "comment": "Confirmation dialog message before account deletion.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ez törli a fiókod és mindent, ami benne van. A barátaid ettől még tartoznak neked — az már a ti dolgotok."
+          }
+        }
+      }
+    },
+    "You're not signed in.": {
+      "comment": "AuthError.notSignedIn",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nem vagy bejelentkezve."
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }
