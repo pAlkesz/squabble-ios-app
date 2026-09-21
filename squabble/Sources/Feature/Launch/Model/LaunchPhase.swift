@@ -9,7 +9,7 @@ nonisolated enum LaunchPhase: Int, Comparable, Sendable {
     case squawk
     /// The receipt unrolls from the beak.
     case unfurled
-    /// Title and tagline land.
+    /// The title lands.
     case titled
     /// Bird takes the receipt and leaves; the field fades to reveal the app.
     case flyAway

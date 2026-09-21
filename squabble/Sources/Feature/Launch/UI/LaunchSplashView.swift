@@ -17,7 +17,7 @@ struct LaunchSplashView: View {
             Color.accentColor
             VStack(spacing: 36) {
                 logo
-                titleBlock
+                title
             }
             .padding(.horizontal, 32)
         }
@@ -125,35 +125,25 @@ struct LaunchSplashView: View {
 
     private var isTitled: Bool { phase >= .titled }
 
-    private var titleBlock: some View {
-        VStack(spacing: 10) {
-            HStack(spacing: 0) {
-                let letters = Array(String(localized: "Squabble", comment: "App name on the launch splash."))
-                ForEach(Array(letters.enumerated()), id: \.offset) { index, letter in
-                    Text(String(letter))
-                        .opacity(isTitled ? 1 : 0)
-                        .scaleEffect(isTitled || reduceMotion ? 1 : 1.6)
-                        .rotationEffect(.degrees(isTitled || reduceMotion ? 0 : Self.letterTilts[index % Self.letterTilts.count]))
-                        .offset(y: isTitled || reduceMotion ? 0 : -70)
-                        .animation(
-                            reduceMotion
-                                ? .easeInOut(duration: 0.3)
-                                : .spring(duration: 0.5, bounce: 0.5).delay(0.05 * Double(index)),
-                            value: isTitled
-                        )
-                }
+    private var title: some View {
+        HStack(spacing: 0) {
+            let letters = Array(String(localized: "Squabble", comment: "App name on the launch splash."))
+            ForEach(Array(letters.enumerated()), id: \.offset) { index, letter in
+                Text(String(letter))
+                    .opacity(isTitled ? 1 : 0)
+                    .scaleEffect(isTitled || reduceMotion ? 1 : 1.6)
+                    .rotationEffect(.degrees(isTitled || reduceMotion ? 0 : Self.letterTilts[index % Self.letterTilts.count]))
+                    .offset(y: isTitled || reduceMotion ? 0 : -70)
+                    .animation(
+                        reduceMotion
+                            ? .easeInOut(duration: 0.3)
+                            : .spring(duration: 0.5, bounce: 0.5).delay(0.05 * Double(index)),
+                        value: isTitled
+                    )
             }
-            .font(.system(size: 52, weight: .black, design: .rounded))
-            .foregroundStyle(.white)
-
-            Text("Someone owes you money. Let's fix that.", comment: "Launch splash tagline.")
-                .font(.system(.title3, design: .rounded, weight: .semibold))
-                .foregroundStyle(.white.opacity(0.85))
-                .multilineTextAlignment(.center)
-                .opacity(isTitled ? 1 : 0)
-                .offset(y: isTitled || reduceMotion ? 0 : 14)
-                .animation(.easeOut(duration: 0.4).delay(reduceMotion ? 0 : 0.55), value: isTitled)
         }
+        .font(.system(size: 52, weight: .black))
+        .foregroundStyle(.white)
     }
 
     private static let letterTilts: [Double] = [-14, 9, -6, 12, -10, 7, -8, 11]

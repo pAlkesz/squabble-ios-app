@@ -1,50 +1,39 @@
 {
-  "sourceLanguage": "en",
-  "strings": {
-    "Hello, world!": {
-      "comment": "Placeholder greeting on the root screen.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Helló, világ!"
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Hello, world!" : {
+      "comment" : "Placeholder greeting on the root screen.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Helló, világ!"
           }
         }
       }
     },
-    "Skip intro": {
-      "comment": "VoiceOver action to skip the launch animation.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Intró kihagyása"
+    "Skip intro" : {
+      "comment" : "VoiceOver action to skip the launch animation.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intró kihagyása"
           }
         }
       }
     },
-    "Someone owes you money. Let's fix that.": {
-      "comment": "Launch splash tagline.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Valaki tartozik neked. Intézzük el."
-          }
-        }
-      }
-    },
-    "Squabble": {
-      "comment": "App name on the launch splash.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Squabble"
+    "Squabble" : {
+      "comment" : "App name on the launch splash.\nApp name, read by VoiceOver on the launch splash.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Squabble"
           }
         }
       }
     }
   },
-  "version": "1.0"
+  "version" : "1.0"
 }
