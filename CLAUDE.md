@@ -85,18 +85,21 @@ real use lands, not before, and note why in the PR.)
 
 ## Branding
 
-- **Accent color** (`AccentColor` asset, drives `.tint`): a warm red.
-  - Light: `#E23D4C`  ·  Dark: `#FF5B67`
+- **Accent color** (`AccentColor` asset, drives `.tint`): emerald green, matched to
+  the app icon's background.
+  - Light: `#129955`  ·  Dark: `#3AD17E`
   - It's the single brand color — use `Color.accentColor` / `.tint`, don't scatter
-    ad-hoc reds. Additional named colors go in the asset catalog with light + dark
+    ad-hoc greens. Additional named colors go in the asset catalog with light + dark
     variants, never hardcoded `Color(red:…)` in views.
-  - Note: the current chosen logo sits on a **green** field, so the accent red may
-    get revisited once the icon is final — don't over-invest in red-specific UI yet.
-- **Logo direction:** a flat, angular **paper-cut seabird** (gull / tern — a nod to
-  "squab") holding a small curled **receipt** in its beak, white on a green
-  background. Superseded concept (split receipt) is still in `design/logo-concept.svg`
-  for reference. Final `AppIcon` PNGs (1024 + dark + tinted) and the finalized vector
-  are still to be produced.
+  - Contrast note: `#129955` is fine for filled buttons, icons, and large/bold text
+    on white, but borderline for small body text as a link color — prefer it as a
+    fill (button background, selected state) over small colored text on white.
+- **Logo:** final — a flat, angular **paper-cut seabird** (a nod to "squab") holding
+  a small curled **receipt** in its beak, white on the emerald field above. Shipped
+  as `squabble/Resources/Assets.xcassets/AppIcon.appiconset/icon.png` (single
+  1024×1024, used for all appearances — no separate dark/tinted variants yet).
+  Superseded concepts (split receipt, hand-drawn/geometric bird explorations) are in
+  `design/logo-concept.svg` for reference only.
 
 ## App Store
 
