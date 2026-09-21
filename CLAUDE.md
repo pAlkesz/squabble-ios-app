@@ -85,19 +85,22 @@ real use lands, not before, and note why in the PR.)
 
 ## Branding
 
-- **Accent color** (`AccentColor` asset, drives `.tint`): emerald green, matched to
-  the app icon's background.
-  - Light: `#129955`  ·  Dark: `#3AD17E`
+- **Single theme.** The app is locked to light appearance for everyone
+  (`INFOPLIST_KEY_UIUserInterfaceStyle = Light`). No dark mode for now — don't add
+  dark-appearance variants to colors, assets, or the icon, and don't write
+  `colorScheme`-dependent UI.
+- **Accent color** (`AccentColor` asset, drives `.tint`): one universal value,
+  `#129955` — the classic green sampled from the app icon's background.
   - It's the single brand color — use `Color.accentColor` / `.tint`, don't scatter
-    ad-hoc greens. Additional named colors go in the asset catalog with light + dark
-    variants, never hardcoded `Color(red:…)` in views.
+    ad-hoc greens. Additional named colors go in the asset catalog as single
+    universal values, never hardcoded `Color(red:…)` in views.
   - Contrast note: `#129955` is fine for filled buttons, icons, and large/bold text
     on white, but borderline for small body text as a link color — prefer it as a
     fill (button background, selected state) over small colored text on white.
 - **Logo:** final — a flat, angular **paper-cut seabird** (a nod to "squab") holding
-  a small curled **receipt** in its beak, white on the emerald field above. Shipped
-  as `squabble/Resources/Assets.xcassets/AppIcon.appiconset/icon.png` (single
-  1024×1024, used for all appearances — no separate dark/tinted variants yet).
+  a small curled **receipt** in its beak, white on the green field above. Shipped
+  as `squabble/Resources/Assets.xcassets/AppIcon.appiconset/icon.png` — a single
+  1024×1024 image used for every appearance; deliberately no dark/tinted variants.
   Superseded concepts (split receipt, hand-drawn/geometric bird explorations) are in
   `design/logo-concept.svg` for reference only.
 
