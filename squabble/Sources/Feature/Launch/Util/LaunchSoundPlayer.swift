@@ -3,7 +3,7 @@ import AVFoundation
 enum LaunchSound: String, CaseIterable, Sendable {
     /// The bird's opening remark, timed with its hop.
     case squawk
-    /// Wing flaps and a parting call as it leaves with the receipt.
+    /// Wing beats as it leaves with the receipt.
     case flyaway
 }
 

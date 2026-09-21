@@ -24,7 +24,7 @@
       }
     },
     "Squabble" : {
-      "comment" : "App name on the launch splash.\nApp name, read by VoiceOver on the launch splash.",
+      "comment" : "App name, read by VoiceOver on the launch splash.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
