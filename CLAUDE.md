@@ -32,13 +32,71 @@ well-structured, and easy for the next agent session to pick up.
 ## Tech Stack
 
 - **UI:** SwiftUI (no UIKit unless wrapping legacy components)
-- **Networking:** async/await with Alamofire
-- **Persistence:** SwiftData
+- **Backend:** Firebase (`firebase-ios-sdk` via SPM). See "Backend — Firebase" below.
+  - Database: Cloud Firestore (offline persistence on)
+  - Auth: Firebase Auth
+  - Telemetry: Crashlytics (crashes + non-fatals), Analytics
+- **Networking:** async/await with Alamofire — for non-Firebase HTTP only (the AI
+  service). Firebase traffic goes through the Firebase SDK, never hand-rolled REST.
+- **Persistence:** Firestore's local cache for anything that syncs; SwiftData only for
+  device-local state that never leaves the phone (see "Local data" below).
 - **DI:** Factory pattern via FactoryKit
 - **Testing:** Swift Testing framework for unit tests
 
 (Dependencies are aspirational until actually added via SPM — add them when the first
-real use lands, not before, and note why in the PR.)
+real use lands, not before, and note why in the PR. Firebase is added as soon as the
+`GoogleService-Info.plist` lands.)
+
+## Backend — Firebase
+
+Chosen over Supabase (Sept 2026) for offline-out-of-the-box Firestore, free
+Crashlytics, and a free tier that never auto-pauses. Trade-offs accepted: heavy
+ObjC-based SDK, NoSQL modeling, `Sendable` friction under Swift 6.
+
+- **Products in use:** Firestore, Auth, Crashlytics, Analytics. Don't pull in other
+  Firebase products (Functions, Storage, Remote Config, Messaging…) without checking
+  first — each one is an SPM product and a config decision.
+- **Config file:** `squabble/Resources/GoogleService-Info.plist`. It is **gitignored**
+  (public repo; the key is bundle-ID-restricted but there's no reason to publish it).
+  With file-system-synchronized groups, dropping it in `Resources/` is enough for the
+  target to pick it up. Per-environment plists (dev/prod) are out of scope for now.
+- **Bootstrap:** `FirebaseApp.configure()` runs once at launch from `squabbleApp`
+  (an `AppDelegate` adaptor is acceptable here — it's the one sanctioned UIKit spot).
+- **Isolation:** Firebase types never leak into views or feature models. Each feature's
+  `Data/` layer exposes a protocol-typed repository (registered in FactoryKit) whose
+  Firestore implementation lives in the same folder; domain models are plain `Codable`
+  structs mapped to/from Firestore documents. This keeps views testable with fakes and
+  contains the Swift 6 `Sendable` warnings to the adapter layer.
+- **Offline:** Firestore persistence stays enabled (the iOS default). Writes are
+  fire-and-forget against the local cache and sync later; UI must not block on network
+  and should reflect `metadata.hasPendingWrites` where "not yet sent" matters
+  (e.g. a reminder that hasn't actually reached anyone).
+- **Reads cost money:** Firestore bills per document read. Prefer one listener per
+  screen on a scoped query, use `.getDocuments(source: .cache)` where staleness is
+  fine, and never re-query a whole collection to refresh a list.
+- **Money in Firestore:** there is no decimal type. Store amounts as **integer minor
+  units** (`Int64` cents) plus an ISO currency code; convert to `Decimal` at the model
+  boundary. Never store `Double` amounts.
+- **Auth:** anonymous sign-in on first launch so the app works with zero friction;
+  upgrade/link to Sign in with Apple when an account is actually needed (sharing a
+  bill across devices).
+- **Crashlytics:** Release builds use `DEBUG_INFORMATION_FORMAT = dwarf-with-dsym` and
+  a dSYM upload run-script build phase (`upload-symbols` from the SPM checkout) — this
+  is a legitimate `project.pbxproj` hand-edit; call it out. Log handled errors with
+  `Crashlytics.record(error:)` via the `Core/Logging` facade, never directly from
+  features. Verify with a real TestFlight test crash after any Xcode major bump —
+  Xcode 26 + Firebase 12.7 had a known release-build reporting gap.
+- **Analytics:** log events through the `Core/Logging` facade too, so features don't
+  import Firebase. Keep event names in one enum.
+
+### Local data
+
+- Anything that syncs (bills, participants, splits, reminders) lives in Firestore and
+  is read through its offline cache — **don't mirror it into SwiftData**; two sources
+  of truth is where these apps rot.
+- SwiftData is reserved for purely on-device state (drafts before first save,
+  user preferences that shouldn't roam, cached AI results). Add it only when such a
+  need actually appears.
 
 ## Architecture — Model-View, no ViewModels
 
@@ -119,15 +177,16 @@ squabble/
     squabbleApp.swift   @main entry point
     Core/               Shared, cross-feature code:
       UI/               Components/, Extensions/, Util/  (reusable views, view helpers)
-      Networking/       Alamofire client, request/response models
-      Persistence/      SwiftData container, model schema
+      Firebase/         FirebaseApp bootstrap, Firestore codec helpers, Auth session
+      Networking/       Alamofire client for the AI service, request/response models
+      Persistence/      SwiftData container, model schema (device-local state only)
       DI/               FactoryKit container & registrations
-      Logging/
+      Logging/          Facade over Crashlytics + Analytics; features log here only
     Feature/            One folder per feature module. Each feature holds, as needed:
       <Feature>/
         UI/             Screens and feature-local views
         Model/          Feature domain models
-        Data/           Repositories / data sources for the feature
+        Data/           Protocol-typed repositories + their Firestore implementations
         Util/           Feature-local helpers
 ```
 
@@ -172,7 +231,7 @@ launch) over describing manual steps.
 - Push to `origin/main` once the working tree builds and is in a good state.
 - Don't add third-party dependencies without checking first.
 - Keep secrets out of the repo. AI-service / API keys go in a gitignored xcconfig or
-  environment, never committed. `Secrets.plist`, `.env`, `*.xcconfig.local` are already
-  gitignored.
+  environment, never committed. `Secrets.plist`, `GoogleService-Info.plist`, `.env`,
+  `*.xcconfig.local` are already gitignored.
 - After code changes, build (and run tests if logic changed) before reporting done.
 - This is a public repo — assume anything committed is world-readable.

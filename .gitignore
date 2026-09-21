@@ -36,3 +36,4 @@ fastlane/test_output
 *.xcconfig.local
 Secrets.plist
 .env
+GoogleService-Info.plist
