@@ -7,6 +7,7 @@ import SwiftUI
 /// a plain cross-fade.
 struct LaunchSplashView: View {
     let onFinished: @MainActor () -> Void
+    var sounds: any LaunchSoundPlaying = LaunchSoundPlayer()
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var phase = LaunchPhase.curtain
@@ -142,7 +143,7 @@ struct LaunchSplashView: View {
                     )
             }
         }
-        .font(.system(size: 52, weight: .black))
+        .font(.system(size: 52, weight: .black, design: .rounded))
         .foregroundStyle(.white)
     }
 
@@ -157,6 +158,9 @@ struct LaunchSplashView: View {
             try? await Task.sleep(until: start + step.at, clock: .continuous)
             guard !Task.isCancelled, !skipped else { return }
             phase = step.phase
+            if let sound = step.phase.sound {
+                sounds.play(sound)
+            }
         }
         try? await Task.sleep(for: LaunchPhase.fadeOut)
         guard !Task.isCancelled, !skipped else { return }
@@ -167,6 +171,7 @@ struct LaunchSplashView: View {
         guard !skipped, phase < .done else { return }
         skipped = true
         phase = .done
+        sounds.stop()
         Task {
             try? await Task.sleep(for: LaunchPhase.fadeOut)
             onFinished()

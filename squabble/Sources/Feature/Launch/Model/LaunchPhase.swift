@@ -25,6 +25,15 @@ nonisolated enum LaunchPhase: Int, Comparable, Sendable {
         (.done, .milliseconds(3100)),
     ]
 
+    /// The effect that starts with this phase, if any.
+    var sound: LaunchSound? {
+        switch self {
+        case .squawk: .squawk
+        case .flyAway: .flyaway
+        default: nil
+        }
+    }
+
     /// Time the outro fade needs after `.done` before the view is torn down.
     static let fadeOut: Duration = .milliseconds(400)
 
