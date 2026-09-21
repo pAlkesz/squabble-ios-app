@@ -9,6 +9,10 @@ import SwiftUI
 
 @main
 struct squabbleApp: App {
+    init() {
+        FirebaseBootstrap.configure()
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()
