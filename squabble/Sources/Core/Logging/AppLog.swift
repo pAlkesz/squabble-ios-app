@@ -3,7 +3,7 @@ import OSLog
 
 /// Single entry point for diagnostics. Features log here and never import Firebase directly,
 /// so the crash/analytics backend can change without touching feature code.
-enum AppLog {
+nonisolated enum AppLog {
     private static let logger = Logger(subsystem: "com.palkesz.squabble", category: "app")
 
     /// Records a handled error as a Crashlytics non-fatal and mirrors it to the console.

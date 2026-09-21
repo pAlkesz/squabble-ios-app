@@ -25,7 +25,8 @@ nonisolated enum LaunchPhase: Int, Comparable, Sendable {
     /// The effect that starts with this phase, if any.
     var sound: LaunchSound? {
         switch self {
-        case .squawk: .squawk
+        case .assembled: .arrival
+        case .squawk: .hop
         case .flyAway: .flyaway
         default: nil
         }

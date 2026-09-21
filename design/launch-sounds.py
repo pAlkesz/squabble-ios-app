@@ -2,7 +2,7 @@
 Pure stdlib so it runs anywhere; output is 44.1 kHz mono 16-bit WAV.
 
     python3 design/launch-sounds.py <out dir>
-    afconvert -f caff -d LEI16 <out dir>/squawk.wav squabble/Resources/Sounds/squawk.caf
+    afconvert -f caff -d LEI16 <out dir>/arrival.wav squabble/Resources/Sounds/arrival.caf
 """
 import math, random, struct, wave, os, sys
 
@@ -77,13 +77,22 @@ def write(name, samples):
     print(name, f'{len(samples)/SR:.2f}s')
 
 out = sys.argv[1]
-# three quick notes: a rising glide, an inverted V, and a short falling one
-write(os.path.join(out, 'squawk.wav'), room(mix(
+# arrival — four quick notes while the pieces fly in: two rising glides, an
+# inverted V, and a short falling one
+write(os.path.join(out, 'arrival.wav'), room(mix(
+    chirp(0.08, [2300, 3400, 3700]),
+    silence(0.05),
     chirp(0.09, [2400, 3600, 3900]),
     silence(0.07),
     chirp(0.11, [2800, 4200, 3000], vibrato_hz=60, vibrato=0.02),
     silence(0.06),
     chirp(0.07, [3800, 2900, 2600]),
+)))
+# hop — a pleased two-note tweet as the bird lands and puffs up
+write(os.path.join(out, 'hop.wav'), room(mix(
+    chirp(0.07, [3000, 4100, 3800]),
+    silence(0.04),
+    chirp(0.10, [3300, 4400, 3200], vibrato_hz=70, vibrato=0.02),
 )))
 # a flurry of wing beats, nothing else
 write(os.path.join(out, 'flyaway.wav'), room(mix(

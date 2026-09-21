@@ -123,13 +123,15 @@ struct LaunchSplashView: View {
 
     @Sendable
     private func play() async {
+        // Nothing moves until the first beat, so the warm-up isn't visible.
+        await sounds.prepare()
         let start = ContinuousClock.now
         for step in LaunchPhase.script {
             try? await Task.sleep(until: start + step.at, clock: .continuous)
             guard !Task.isCancelled, !skipped else { return }
             phase = step.phase
             if let sound = step.phase.sound {
-                sounds.play(sound)
+                await sounds.play(sound)
             }
         }
         try? await Task.sleep(for: LaunchPhase.fadeOut)
@@ -141,8 +143,8 @@ struct LaunchSplashView: View {
         guard !skipped, phase < .done else { return }
         skipped = true
         phase = .done
-        sounds.stop()
         Task {
+            await sounds.stop()
             try? await Task.sleep(for: LaunchPhase.fadeOut)
             onFinished()
         }
