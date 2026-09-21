@@ -9,8 +9,6 @@ nonisolated enum LaunchPhase: Int, Comparable, Sendable {
     case squawk
     /// The receipt unrolls from the beak.
     case unfurled
-    /// The title lands.
-    case titled
     /// Bird takes the receipt and leaves; the field fades to reveal the app.
     case flyAway
     /// Fully faded; the splash can be removed.
@@ -20,9 +18,8 @@ nonisolated enum LaunchPhase: Int, Comparable, Sendable {
         (.assembled, .zero),
         (.squawk, .milliseconds(950)),
         (.unfurled, .milliseconds(1100)),
-        (.titled, .milliseconds(1400)),
-        (.flyAway, .milliseconds(2500)),
-        (.done, .milliseconds(3100)),
+        (.flyAway, .milliseconds(2100)),
+        (.done, .milliseconds(2700)),
     ]
 
     /// The effect that starts with this phase, if any.

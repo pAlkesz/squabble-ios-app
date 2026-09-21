@@ -1,8 +1,8 @@
 import SwiftUI
 
 /// The animated hand-off from the static launch screen: it starts as the same plain
-/// green field, assembles the bird out of paper pieces, drops the title in, then the
-/// bird flies off with the receipt and the field fades to reveal the app.
+/// green field, assembles the bird out of paper pieces, then the bird flies off with
+/// the receipt and the field fades to reveal the app.
 /// Tapping skips straight to the fade. Reduce Motion replaces the choreography with
 /// a plain cross-fade.
 struct LaunchSplashView: View {
@@ -16,11 +16,8 @@ struct LaunchSplashView: View {
     var body: some View {
         ZStack {
             Color.accentColor
-            VStack(spacing: 36) {
-                logo
-                title
-            }
-            .padding(.horizontal, 32)
+            logo
+                .padding(.horizontal, 32)
         }
         .ignoresSafeArea()
         .opacity(phase == .done ? 0 : 1)
@@ -121,33 +118,6 @@ struct LaunchSplashView: View {
 
     private static let wingJoint = SquabLogoPieceShape.anchor(for: SquabLogoPiece.wingJoint)
     private static let beakTip = SquabLogoPieceShape.anchor(for: SquabLogoPiece.beakTip)
-
-    // MARK: - Title
-
-    private var isTitled: Bool { phase >= .titled }
-
-    private var title: some View {
-        HStack(spacing: 0) {
-            let letters = Array(String(localized: "Squabble", comment: "App name on the launch splash."))
-            ForEach(Array(letters.enumerated()), id: \.offset) { index, letter in
-                Text(String(letter))
-                    .opacity(isTitled ? 1 : 0)
-                    .scaleEffect(isTitled || reduceMotion ? 1 : 1.6)
-                    .rotationEffect(.degrees(isTitled || reduceMotion ? 0 : Self.letterTilts[index % Self.letterTilts.count]))
-                    .offset(y: isTitled || reduceMotion ? 0 : -70)
-                    .animation(
-                        reduceMotion
-                            ? .easeInOut(duration: 0.3)
-                            : .spring(duration: 0.5, bounce: 0.5).delay(0.05 * Double(index)),
-                        value: isTitled
-                    )
-            }
-        }
-        .font(.system(size: 52, weight: .black, design: .rounded))
-        .foregroundStyle(.white)
-    }
-
-    private static let letterTilts: [Double] = [-14, 9, -6, 12, -10, 7, -8, 11]
 
     // MARK: - Playback
 
