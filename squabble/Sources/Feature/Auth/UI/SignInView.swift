@@ -7,26 +7,10 @@ struct SignInView: View {
     @State private var failure: SignInFailure?
 
     var body: some View {
-        VStack(spacing: 16) {
-            Spacer()
-            SquabLogoView(color: .accentColor)
-                .frame(width: 120, height: 120)
-            Text("Squabble")
-                .font(.largeTitle.bold())
-            Text("Split the bill. Assign the blame.")
-                .font(.title3)
-            Text("Sign in so we know whose name to put on the receipt.")
-                .font(.callout)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-            Spacer()
-            AppleSignInButton(label: .signIn, onCompletion: signIn)
-                .disabled(isSigningIn)
-                .overlay {
-                    if isSigningIn { ProgressView().tint(.white) }
-                }
+        ZStack {
+            SquabbleBackdrop()
+            content
         }
-        .padding(24)
         .alert(
             "Sign-in failed",
             isPresented: Binding(get: { failure != nil }, set: { if !$0 { failure = nil } }),
@@ -35,6 +19,46 @@ struct SignInView: View {
             Button("OK", role: .cancel) {}
         } message: { failure in
             Text(failure.message)
+        }
+    }
+
+    private var content: some View {
+        VStack(spacing: 0) {
+            Spacer(minLength: 12)
+            header
+            WelcomeReceiptView()
+                .padding(.horizontal, 30)
+                .padding(.top, 26)
+            Spacer(minLength: 20)
+            signIn
+        }
+        .padding(.horizontal, 24)
+        .padding(.top, 8)
+        .padding(.bottom, 16)
+    }
+
+    private var header: some View {
+        VStack(spacing: 10) {
+            SquabLogoView(color: .white)
+                .frame(width: 84, height: 84)
+            Text("Split the bill. Assign the blame.")
+                .font(.title3.weight(.semibold))
+                .foregroundStyle(.white)
+                .multilineTextAlignment(.center)
+        }
+    }
+
+    private var signIn: some View {
+        VStack(spacing: 12) {
+            AppleSignInButton(label: .signIn, onCompletion: signIn)
+                .disabled(isSigningIn)
+                .overlay {
+                    if isSigningIn { ProgressView().tint(.black) }
+                }
+            Text("By continuing you accept that Dave still owes you for brunch.")
+                .font(.caption2)
+                .foregroundStyle(.white.opacity(0.45))
+                .multilineTextAlignment(.center)
         }
     }
 

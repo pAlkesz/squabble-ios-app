@@ -1,6 +1,28 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "\"Next one's on me\"": {
+      "comment": "Prop receipt line item — the classic lie, priced at zero.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "„Majd én fizetek”"
+          }
+        }
+      }
+    },
+    "A joke receipt: nachos, Dave's third beer, emotional damage. Total: friendship.": {
+      "comment": "VoiceOver description of the decorative welcome-screen receipt.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vicces számla: nachos, Dave harmadik söre, lelki kár. Végösszeg: barátság."
+          }
+        }
+      }
+    },
     "Account": {
       "comment": "Account screen title and toolbar button.",
       "localizations": {
@@ -56,6 +78,17 @@
         }
       }
     },
+    "By continuing you accept that Dave still owes you for brunch.": {
+      "comment": "Fake fine print under the sign-in button.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A folytatással tudomásul veszed, hogy Dave még mindig tartozik a brunch-csel."
+          }
+        }
+      }
+    },
     "Cancel": {
       "comment": "Generic cancel button.",
       "localizations": {
@@ -85,6 +118,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Folytatás"
+          }
+        }
+      }
+    },
+    "Dave's 3rd beer": {
+      "comment": "Prop receipt line item.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dave 3. söre"
           }
         }
       }
@@ -122,6 +166,39 @@
         }
       }
     },
+    "Emotional damage": {
+      "comment": "Prop receipt line item.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lelki kár"
+          }
+        }
+      }
+    },
+    "NO REFUNDS · NO MERCY": {
+      "comment": "Prop receipt footer.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NINCS PÉNZVISSZA · NINCS PARDON"
+          }
+        }
+      }
+    },
+    "Nachos": {
+      "comment": "Prop receipt line item.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nachos"
+          }
+        }
+      }
+    },
     "Nothing to squabble about yet.": {
       "comment": "Home empty-state title.",
       "localizations": {
@@ -144,13 +221,13 @@
         }
       }
     },
-    "Sign in so we know whose name to put on the receipt.": {
-      "comment": "Sign-in explanation under the tagline.",
+    "SQUABBLE": {
+      "comment": "Receipt header on the welcome screen; uppercase on purpose.",
       "localizations": {
         "hu": {
           "stringUnit": {
             "state": "translated",
-            "value": "Jelentkezz be, hogy tudjuk, kinek a nevére írjuk a számlát."
+            "value": "SQUABBLE"
           }
         }
       }
@@ -232,6 +309,28 @@
         }
       }
     },
+    "TABLE 4 · 3 GUESTS": {
+      "comment": "Prop receipt subheader.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "4. ASZTAL · 3 FŐ"
+          }
+        }
+      }
+    },
+    "TOTAL": {
+      "comment": "Prop receipt total row label.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ÖSSZESEN"
+          }
+        }
+      }
+    },
     "This wipes your account and everything in it. Your friends will still owe you money — that part's between you and them.": {
       "comment": "Confirmation dialog message before account deletion.",
       "localizations": {
@@ -250,6 +349,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nem vagy bejelentkezve."
+          }
+        }
+      }
+    },
+    "friendship": {
+      "comment": "Prop receipt total amount — the joke payoff.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "barátság"
+          }
+        }
+      }
+    },
+    "you had one": {
+      "comment": "Prop receipt note under the nachos line.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "egyet ettél belőle"
           }
         }
       }

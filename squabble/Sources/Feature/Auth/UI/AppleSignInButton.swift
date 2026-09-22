@@ -17,7 +17,7 @@ struct AppleSignInButton: View {
             handle(result)
             rawNonce = AppleSignInNonce.random()
         }
-        .signInWithAppleButtonStyle(.black)
+        .signInWithAppleButtonStyle(.white)
         .frame(height: 50)
     }
 
