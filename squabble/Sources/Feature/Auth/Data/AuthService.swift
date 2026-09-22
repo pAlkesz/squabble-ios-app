@@ -8,7 +8,10 @@ nonisolated protocol AuthService: Sendable {
 
     func signOut() throws
 
-    /// Apple requires a fresh authorization to delete: Firebase re-authenticates with it
-    /// and revokes the Apple token before removing the user.
-    func deleteAccount(reauthenticatingWith apple: AppleSignInResult) async throws
+    /// Apple requires a fresh authorization to delete. Re-authenticating first proves it's
+    /// really the user and gives a fresh token for wiping their data before the account goes.
+    func reauthenticate(with apple: AppleSignInResult) async throws
+
+    /// Revokes the Apple token, then removes the user. Call after `reauthenticate(with:)`.
+    func deleteAccount(revoking apple: AppleSignInResult) async throws
 }

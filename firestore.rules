@@ -1,0 +1,82 @@
+rules_version = '2';
+
+// Layout (see CLAUDE.md, "Firestore data model"):
+//   users/{uid}                 public profile — any signed-in user can read it
+//   users/{uid}/private/payment owner-only payment methods
+//   handles/{handle}            { uid } — the lock that keeps handles unique
+//
+// Deploy: firebase deploy --only firestore:rules,storage
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isUser(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function handlePath(handle) {
+      return /databases/$(database)/documents/handles/$(handle);
+    }
+
+    function userPath(uid) {
+      return /databases/$(database)/documents/users/$(uid);
+    }
+
+    function isValidAvatar(avatar, uid) {
+      return avatar is map && (
+        (avatar.kind == 'preset'
+          && avatar.keys().hasOnly(['kind', 'preset'])
+          && avatar.preset in ['meadow', 'lagoon', 'coral', 'mustard', 'plum'])
+        || (avatar.kind == 'photo'
+          && avatar.keys().hasOnly(['kind', 'path', 'url'])
+          && avatar.path is string
+          && avatar.path.matches('avatars/' + uid + '/[^/]+[.]jpg')
+          && avatar.url is string
+          && avatar.url.matches('https://firebasestorage[.]googleapis[.]com/.*'))
+      );
+    }
+
+    // The app caps names at 40 characters; rules count differently for emoji, so
+    // leave headroom and only stop abuse here.
+    function isValidProfile(data, uid) {
+      return data.keys().hasOnly(['displayName', 'handle', 'avatar', 'createdAt', 'updatedAt'])
+        && data.displayName is string
+        && data.displayName.size() > 0
+        && data.displayName.size() <= 100
+        && data.handle is string
+        && isValidAvatar(data.avatar, uid);
+    }
+
+    match /users/{uid} {
+      allow read: if signedIn();
+      // The profile must point at a handle this user holds once the write lands,
+      // which forces the handle claim into the same transaction.
+      allow create, update: if isUser(uid)
+        && isValidProfile(request.resource.data, uid)
+        && getAfter(handlePath(request.resource.data.handle)).data.uid == uid;
+      allow delete: if isUser(uid);
+
+      match /private/{document} {
+        allow read, delete: if isUser(uid);
+        allow create, update: if isUser(uid)
+          && document == 'payment'
+          && request.resource.data.keys().hasOnly(['methods'])
+          && request.resource.data.methods is list
+          && request.resource.data.methods.size() <= 5;
+      }
+    }
+
+    match /handles/{handle} {
+      allow read: if signedIn();
+      // No updates: a handle is released (deleted) and claimed again, never transferred.
+      allow create: if signedIn()
+        && handle.matches('[a-z0-9_]{3,20}')
+        && request.resource.data.keys().hasOnly(['uid'])
+        && request.resource.data.uid == request.auth.uid
+        && getAfter(userPath(request.auth.uid)).data.handle == handle;
+      allow delete: if signedIn() && resource.data.uid == request.auth.uid;
+    }
+  }
+}

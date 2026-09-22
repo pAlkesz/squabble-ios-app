@@ -44,10 +44,15 @@ nonisolated final class FirebaseAuthService: AuthService {
         try auth?.signOut()
     }
 
-    func deleteAccount(reauthenticatingWith apple: AppleSignInResult) async throws {
+    func reauthenticate(with apple: AppleSignInResult) async throws {
         guard let auth else { throw AuthError.unavailable }
         guard let user = auth.currentUser else { throw AuthError.notSignedIn }
         try await user.reauthenticate(with: credential(from: apple))
+    }
+
+    func deleteAccount(revoking apple: AppleSignInResult) async throws {
+        guard let auth else { throw AuthError.unavailable }
+        guard let user = auth.currentUser else { throw AuthError.notSignedIn }
         try await auth.revokeToken(withAuthorizationCode: apple.authorizationCode)
         try await user.delete()
     }

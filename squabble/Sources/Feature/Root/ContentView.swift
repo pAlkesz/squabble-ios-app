@@ -18,6 +18,10 @@ struct ContentView: View {
                 ProgressView()
             case .signedOut:
                 SignInView()
+            case .needsOnboarding(let user):
+                OnboardingView(user: user)
+            case .profileUnavailable:
+                ProfileUnavailableView()
             case .signedIn:
                 HomeView()
             }

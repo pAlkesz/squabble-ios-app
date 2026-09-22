@@ -13,10 +13,18 @@ struct AccountView: View {
         NavigationStack {
             List {
                 Section {
-                    Label(
-                        session.user?.displayName ?? String(localized: "Anonymous squab"),
-                        systemImage: "person.crop.circle"
-                    )
+                    if let profile = session.profile {
+                        HStack(spacing: 14) {
+                            AvatarView(profile.avatar, size: 52)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(verbatim: profile.displayName)
+                                    .font(.headline)
+                                Text(verbatim: profile.handle.description)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .accessibilityElement(children: .combine)
+                    }
                 }
                 Section {
                     Button("Sign out", action: signOut)

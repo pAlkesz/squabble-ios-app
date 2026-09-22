@@ -6,6 +6,7 @@ import Foundation
 nonisolated final class FakeAuthService: AuthService, @unchecked Sendable {
     var currentUser: AppUser?
     var signInError: Error?
+    var reauthenticationError: Error?
     private(set) var revokedCodes: [String] = []
     private var continuation: AsyncStream<AppUser?>.Continuation?
 
@@ -25,7 +26,12 @@ nonisolated final class FakeAuthService: AuthService, @unchecked Sendable {
         set(user: nil)
     }
 
-    func deleteAccount(reauthenticatingWith apple: AppleSignInResult) async throws {
+    func reauthenticate(with apple: AppleSignInResult) async throws {
+        guard currentUser != nil else { throw AuthError.notSignedIn }
+        if let reauthenticationError { throw reauthenticationError }
+    }
+
+    func deleteAccount(revoking apple: AppleSignInResult) async throws {
         guard currentUser != nil else { throw AuthError.notSignedIn }
         revokedCodes.append(apple.authorizationCode)
         set(user: nil)

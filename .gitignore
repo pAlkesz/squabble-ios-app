@@ -37,3 +37,9 @@ fastlane/test_output
 Secrets.plist
 .env
 GoogleService-Info.plist
+
+# Firebase CLI
+.firebaserc
+firebase-debug.log
+firestore-debug.log
+.firebase/
