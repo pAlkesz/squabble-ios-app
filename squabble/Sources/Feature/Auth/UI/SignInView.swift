@@ -24,12 +24,13 @@ struct SignInView: View {
 
     private var content: some View {
         VStack(spacing: 0) {
-            Spacer(minLength: 12)
+            // The bird centres itself in whatever is left above the receipt rather
+            // than sitting flush against it.
             header
+                .frame(maxHeight: .infinity)
             WelcomeReceiptView()
                 .padding(.horizontal, 30)
-                .padding(.top, 26)
-            Spacer(minLength: 20)
+                .padding(.bottom, 36)
             signIn
         }
         .padding(.horizontal, 24)
