@@ -35,6 +35,7 @@ well-structured, and easy for the next agent session to pick up.
 - **Backend:** Firebase (`firebase-ios-sdk` via SPM). See "Backend — Firebase" below.
   - Database: Cloud Firestore (offline persistence on)
   - Auth: Firebase Auth
+  - Files: Cloud Storage for Firebase (avatars only; project is on the Blaze plan)
   - Telemetry: Crashlytics (crashes + non-fatals), Analytics
 - **Networking:** async/await with Alamofire — for non-Firebase HTTP only (the AI
   service). Firebase traffic goes through the Firebase SDK, never hand-rolled REST.
@@ -44,8 +45,8 @@ well-structured, and easy for the next agent session to pick up.
 - **Testing:** Swift Testing framework for unit tests
 
 (Dependencies are aspirational until actually added via SPM — add them when the first
-real use lands, not before, and note why in the PR. Added so far: `firebase-ios-sdk`,
-`Factory` (product `FactoryKit`).)
+real use lands, not before, and note why in the PR. Added so far: `firebase-ios-sdk`
+(products Analytics, Auth, Crashlytics, Firestore, Storage), `Factory` (product `FactoryKit`).)
 
 ## Backend — Firebase
 
@@ -53,9 +54,20 @@ Chosen over Supabase (Sept 2026) for offline-out-of-the-box Firestore, free
 Crashlytics, and a free tier that never auto-pauses. Trade-offs accepted: heavy
 ObjC-based SDK, NoSQL modeling, `Sendable` friction under Swift 6.
 
-- **Products in use:** Firestore, Auth, Crashlytics, Analytics. Don't pull in other
-  Firebase products (Functions, Storage, Remote Config, Messaging…) without checking
-  first — each one is an SPM product and a config decision.
+- **Products in use:** Firestore, Auth, Storage, Crashlytics, Analytics. Don't pull in
+  other Firebase products (Functions, Remote Config, Messaging, Phone Auth…) without
+  checking first — each one is an SPM product and a config decision. Linking a new
+  product means adding it to the target in `project.pbxproj` (a sanctioned hand-edit).
+- **No REST layer.** The app talks to Firestore directly through the SDK, with security
+  rules as the access control — a Cloud Functions API would lose the offline cache and
+  live listeners, and wouldn't make reads cheaper. Functions are for background
+  triggers later (invite-link joins, reminder pushes, server-side cleanup), not for
+  reads. Design documents around screens instead of joining: denormalize small,
+  rarely-changing fields and embed what's always read together.
+- **Security rules** live in the repo: `firestore.rules`, `storage.rules`, wired up by
+  `firebase.json`. Deploy with `firebase deploy --only firestore:rules,storage`
+  (`.firebaserc` is gitignored — run `firebase use --add` once). Any change to the data
+  layout changes the rules in the same commit.
 - **Config file:** `squabble/Resources/GoogleService-Info.plist`. It is **gitignored**
   (public repo; the key is bundle-ID-restricted but there's no reason to publish it).
   With file-system-synchronized groups, dropping it in `Resources/` is enough for the
@@ -83,10 +95,66 @@ ObjC-based SDK, NoSQL modeling, `Sendable` friction under Swift 6.
   console, and account deletion needs the Sign in with Apple `.p8` key configured there
   so `revokeToken(withAuthorizationCode:)` works — App Review requires deletion.
   - Apple hands over the user's name **once**, on the first authorization; it's stored
-    on the Firebase Auth profile (`displayName`) in the same sign-in call. There is no
-    Firestore `users` doc yet — add one when other users need to see names.
+    on the Firebase Auth profile (`displayName`) in the same sign-in call, and is only
+    used to prefill onboarding. The public name lives on the Firestore profile.
   - `AuthSession` (`Feature/Auth/Model`) is the app-wide `@Observable` state, created
     in the root view and shared via `.environment`. Views never touch `FirebaseAuth`.
+    Its `state` combines the auth user with the profile listener: `loading`,
+    `signedOut`, `needsOnboarding`, `profileUnavailable`, `signedIn(user, profile)`.
+  - **"Needs onboarding" = no `users/{uid}` doc on the server**, never Firebase's
+    `isNewUser` (lost if the app dies mid-onboarding). A cache-only miss on a fresh
+    install is ignored until the server answers.
+  - **Account deletion** order: re-authenticate with Apple → delete avatars → delete
+    Firestore profile data → revoke the Apple token and delete the Auth user. Anything
+    new stored per user must be added to this cleanup.
+
+### Firestore data model
+
+```
+users/{uid}                      public profile — any signed-in user can read
+  displayName, handle, avatar: {kind: preset, preset} | {kind: photo, path, url},
+  createdAt, updatedAt
+users/{uid}/private/payment      owner-only: { methods: [ {id, kind: bankAccount, iban, holderName}
+                                               | {id, kind: link, provider, username} ] }
+handles/{handle}                 { uid } — uniqueness lock, claimed in the same
+                                 transaction as the profile (rules enforce both ways)
+avatars/{uid}/{random}.jpg       Storage: 512px square JPEG, < 1 MB
+```
+
+Planned, not built yet — bills always belong to a group (a one-off dinner is a small
+group):
+
+```
+groups/{groupId}                 name, currency, createdBy, createdAt,
+  memberIds: [uid]               ← rules + "my groups" query (array-contains)
+  members: { memberId: { uid?, displayName, avatar, payment? } }
+                                 ← guests without the app have no uid; payment details
+                                   are copied here so group-mates can read them
+groups/{gid}/bills/{billId}      title, currency, totalMinor, paidBy, items (embedded),
+                                 shares: { memberId: amountMinor }
+groups/{gid}/settlements/{id}    from, to, amountMinor, currency, createdAt
+groups/{gid}/reminders/{id}
+```
+
+When groups land, profile edits must also update the user's entry in each group's
+`members` map (client-side fan-out; the rules allow a member to edit only their own).
+
+### Profiles, handles and payment details
+
+- **Display names are free-form and not unique; handles are unique** (`a–z 0–9 _`,
+  3–20, stored lowercase). Friends find each other by exact handle lookup and — later —
+  invite links / QR codes. No display-name search (Firestore can't full-text search).
+  Phone numbers / contact matching were considered and deferred (SMS cost, SIM-swap
+  risk if linked as an auth provider, App Review 5.1.1).
+- **Payment details:** IBAN (mod-97 validated, with holder name) and payment links for
+  an allow-list of providers (Revolut, PayPal, Wise). Links are stored as
+  provider + username and rebuilt, never as free-form URLs, so a profile can't point
+  people at an arbitrary site. Never store card numbers. IBANs are GDPR personal data:
+  owner-only in Firestore, shared into groups later, deleted with the account, and
+  declared as "Financial Info" on the App Store privacy label.
+- **Avatars** default to the bird on a coloured disc (`AvatarPreset`, picked stably
+  from the uid). Photos are cropped/resized on device by `AvatarImageProcessor`
+  (ImageIO, no UIKit) before upload.
 - **Crashlytics:** Release builds use `DEBUG_INFORMATION_FORMAT = dwarf-with-dsym` and
   a dSYM upload run-script build phase (`upload-symbols` from the SPM checkout) — this
   is a legitimate `project.pbxproj` hand-edit; call it out. Log handled errors with
@@ -170,6 +238,8 @@ ObjC-based SDK, NoSQL modeling, `Sendable` friction under Swift 6.
     `BackdropDeep` `#06180F` — the four rows of `SquabbleBackdrop`'s mesh, bright at
     the top of the screen down to deep green at the bottom.
   - `ReceiptPaper` `#F4F0E4`, `ReceiptInk` `#271814` — prop-receipt paper and its ink.
+  - `AvatarLagoon` `#1E8FB3`, `AvatarCoral` `#E4674E`, `AvatarMustard` `#D9A21B`,
+    `AvatarPlum` `#8A4FB0` — preset avatar discs (the fifth, meadow, is the accent).
 - **Logo:** final — a flat, angular **paper-cut seabird** (a nod to "squab") holding
   a small curled **receipt** in its beak, white on the green field above. Shipped
   as `squabble/Resources/Assets.xcassets/AppIcon.appiconset/icon.png` — a single
@@ -210,19 +280,25 @@ first real file for it lands, following the layout above. The app target folder 
 `squabble/`; tests live in `squabbleTests/` and `squabbleUITests/` at the repo root.
 
 `ContentView` is the root router: it owns `AuthSession` and switches between
-`SignInView` and `HomeView` on auth state. `squabbleApp` applies the launch splash.
+`SignInView`, `OnboardingView`, `ProfileUnavailableView` and `HomeView` on its state.
+`squabbleApp` applies the launch splash.
 
 ### Current state (Sept 2026)
 
 - **Done:** launch splash, Firebase bootstrap, Sign in with Apple (sign in / out /
   delete), and the welcome screen — `SquabbleBackdrop` gradient, the tappable bird as
-  hero, and the prop receipt that prints itself.
+  hero, and the prop receipt that prints itself. First-run **onboarding**
+  (`Feature/Onboarding`): display name + unique handle → avatar (preset or photo) →
+  optional payment methods, saved in one transaction; `Feature/Profile` holds the
+  models, Firestore/Storage adapters and shared views (`AvatarView`,
+  `PaymentMethodEditor`). Account deletion wipes profile data and avatars.
 - **Placeholder:** `HomeView` is an empty state with an account button and nothing
   else; it renders on plain system black and does **not** use `SquabbleBackdrop` yet.
-  `AccountView` is a stock `List`, likewise unstyled. Both need the branding pass
-  whenever real content lands — see "Never a plain black screen" above.
-- **Not started:** everything to do with bills — capture, AI parsing, the split
-  algorithm, reminders. No Firestore reads or writes exist yet.
+  `AccountView` is a stock `List` showing the profile, likewise unstyled — and there's
+  no way to edit the profile or payment methods after onboarding yet. Both need the
+  branding pass whenever real content lands — see "Never a plain black screen" above.
+- **Not started:** groups and everything to do with bills — capture, AI parsing, the
+  split algorithm, reminders, invite links.
 
 ### Screen conventions worth knowing
 
