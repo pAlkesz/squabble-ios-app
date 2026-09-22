@@ -150,18 +150,26 @@ ObjC-based SDK, NoSQL modeling, `Sendable` friction under Swift 6.
 
 ## Branding
 
-- **Single theme.** The app is locked to light appearance for everyone
-  (`INFOPLIST_KEY_UIUserInterfaceStyle = Light`). No dark mode for now — don't add
-  dark-appearance variants to colors, assets, or the icon, and don't write
-  `colorScheme`-dependent UI.
+- **Single theme.** The app is locked to **dark** appearance for everyone
+  (`INFOPLIST_KEY_UIUserInterfaceStyle = Dark`; switched from light-only in Sept 2026).
+  No light mode — don't add light-appearance variants to colors, assets, or the icon,
+  and don't write `colorScheme`-dependent UI.
+- **Never a plain black screen.** Dark here means deep green, not black. A full-screen
+  surface uses `SquabbleBackdrop`; anything else should at least sit on a backdrop
+  color rather than the system default.
 - **Accent color** (`AccentColor` asset, drives `.tint`): one universal value,
   `#129955` — the classic green sampled from the app icon's background.
   - It's the single brand color — use `Color.accentColor` / `.tint`, don't scatter
     ad-hoc greens. Additional named colors go in the asset catalog as single
     universal values, never hardcoded `Color(red:…)` in views.
-  - Contrast note: `#129955` is fine for filled buttons, icons, and large/bold text
-    on white, but borderline for small body text as a link color — prefer it as a
-    fill (button background, selected state) over small colored text on white.
+  - Contrast note: on the dark backdrop `#129955` clears AA for body text (~5.7:1 on
+    near-black), so it works as a text/link color here — unlike on white, where it was
+    only ~3.7:1 and had to stay a fill.
+- **Named colors in the catalog** (all single universal values):
+  - `BackdropTop` `#4FDD97`, `BackdropHigh` `#13924F`, `BackdropMid` `#0A3A23`,
+    `BackdropDeep` `#06180F` — the four rows of `SquabbleBackdrop`'s mesh, bright at
+    the top of the screen down to deep green at the bottom.
+  - `ReceiptPaper` `#F4F0E4`, `ReceiptInk` `#271814` — prop-receipt paper and its ink.
 - **Logo:** final — a flat, angular **paper-cut seabird** (a nod to "squab") holding
   a small curled **receipt** in its beak, white on the green field above. Shipped
   as `squabble/Resources/Assets.xcassets/AppIcon.appiconset/icon.png` — a single
@@ -201,8 +209,34 @@ Empty folders aren't committed (git doesn't track them) — create each folder w
 first real file for it lands, following the layout above. The app target folder is
 `squabble/`; tests live in `squabbleTests/` and `squabbleUITests/` at the repo root.
 
-`ContentView` is the root router: it owns `AuthSession` and switches between the
-sign-in screen and `HomeView` on auth state. `squabbleApp` applies the launch splash.
+`ContentView` is the root router: it owns `AuthSession` and switches between
+`SignInView` and `HomeView` on auth state. `squabbleApp` applies the launch splash.
+
+### Current state (Sept 2026)
+
+- **Done:** launch splash, Firebase bootstrap, Sign in with Apple (sign in / out /
+  delete), and the welcome screen — `SquabbleBackdrop` gradient, the tappable bird as
+  hero, and the prop receipt that prints itself.
+- **Placeholder:** `HomeView` is an empty state with an account button and nothing
+  else; it renders on plain system black and does **not** use `SquabbleBackdrop` yet.
+  `AccountView` is a stock `List`, likewise unstyled. Both need the branding pass
+  whenever real content lands — see "Never a plain black screen" above.
+- **Not started:** everything to do with bills — capture, AI parsing, the split
+  algorithm, reminders. No Firestore reads or writes exist yet.
+
+### Screen conventions worth knowing
+
+- **Entrance animations on the root must wait for the splash.** `launchSplash()`
+  publishes `\.isLaunchSplashFinished` through the environment; anything that animates
+  on appear (like the receipt unfurl) has to gate on it or it plays unseen behind the
+  splash.
+- **Posing the logo:** when animating `SquabLogoPiece`s, move the whole view rather
+  than the `body` piece — shifting `body` on its own tears the silhouette away from the
+  wing and tail. See `WelcomeBirdView`.
+- **The welcome receipt is a prop.** Its amounts are fixed to EUR rather than the
+  reader's currency — a deliberate exception to the locale-currency rule, because a
+  fictional restaurant bill in the user's own money reads as real (and "4 HUF nachos"
+  reads as broken). Real money everywhere else follows the rule.
 
 ## Common Commands
 

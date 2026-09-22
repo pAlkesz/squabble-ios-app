@@ -7,26 +7,10 @@ struct SignInView: View {
     @State private var failure: SignInFailure?
 
     var body: some View {
-        VStack(spacing: 16) {
-            Spacer()
-            SquabLogoView(color: .accentColor)
-                .frame(width: 120, height: 120)
-            Text("Squabble")
-                .font(.largeTitle.bold())
-            Text("Split the bill. Assign the blame.")
-                .font(.title3)
-            Text("Sign in so we know whose name to put on the receipt.")
-                .font(.callout)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-            Spacer()
-            AppleSignInButton(label: .signIn, onCompletion: signIn)
-                .disabled(isSigningIn)
-                .overlay {
-                    if isSigningIn { ProgressView().tint(.white) }
-                }
+        ZStack {
+            SquabbleBackdrop()
+            content
         }
-        .padding(24)
         .alert(
             "Sign-in failed",
             isPresented: Binding(get: { failure != nil }, set: { if !$0 { failure = nil } }),
@@ -36,6 +20,35 @@ struct SignInView: View {
         } message: { failure in
             Text(failure.message)
         }
+    }
+
+    private var content: some View {
+        VStack(spacing: 0) {
+            // The receipt's own bottom padding fixes how high it sits; the bird then
+            // centres itself in whatever space is left above it.
+            header
+                .frame(maxHeight: .infinity)
+            WelcomeReceiptView()
+                .padding(.horizontal, 30)
+                .padding(.bottom, 96)
+            signIn
+        }
+        .padding(.horizontal, 24)
+        .padding(.top, 8)
+        .padding(.bottom, 16)
+    }
+
+    private var header: some View {
+        WelcomeBirdView()
+            .frame(width: 270)
+    }
+
+    private var signIn: some View {
+        AppleSignInButton(label: .signIn, onCompletion: signIn)
+            .disabled(isSigningIn)
+            .overlay {
+                if isSigningIn { ProgressView().tint(.black) }
+            }
     }
 
     private func signIn(_ result: Result<AppleSignInResult, Error>) {

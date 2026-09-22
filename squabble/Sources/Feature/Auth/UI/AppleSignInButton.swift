@@ -17,8 +17,9 @@ struct AppleSignInButton: View {
             handle(result)
             rawNonce = AppleSignInNonce.random()
         }
-        .signInWithAppleButtonStyle(.black)
+        .signInWithAppleButtonStyle(.white)
         .frame(height: 50)
+        .clipShape(.capsule)
     }
 
     private func handle(_ result: Result<ASAuthorization, Error>) {
