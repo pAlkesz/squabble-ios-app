@@ -38,14 +38,8 @@ struct SignInView: View {
     }
 
     private var header: some View {
-        VStack(spacing: 10) {
-            WelcomeBirdView()
-                .frame(width: 128)
-            Text("Split the bill. Assign the blame.")
-                .font(.title3.weight(.semibold))
-                .foregroundStyle(.white)
-                .multilineTextAlignment(.center)
-        }
+        WelcomeBirdView()
+            .frame(width: 270)
     }
 
     private var signIn: some View {

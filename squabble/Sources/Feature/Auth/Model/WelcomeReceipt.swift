@@ -11,24 +11,24 @@ nonisolated enum ReceiptRow {
     case footer(String)
 }
 
-/// The joke receipt: a bill nobody would ever agree on, printed before the user has
-/// even signed in. Denominated in euros on purpose — it's a prop from a fictional
-/// restaurant, and the reader's own currency makes the amounts read as real money.
+/// The welcome receipt: the app's features itemised as a bill, every one of them free,
+/// with the joke landing on the total. Denominated in euros on purpose — a prop, and the
+/// reader's own currency would make the amounts read as real money.
 nonisolated enum WelcomeReceipt {
     static var rows: [ReceiptRow] {
         [
             .header(String(localized: "SQUABBLE")),
-            .subheader(String(localized: "TABLE 4 · 3 GUESTS")),
+            .subheader(String(localized: "OPEN TAB · 3 GUESTS")),
             .rule,
-            .item(label: String(localized: "Nachos"), amount: money(4)),
-            .note(String(localized: "you had one")),
-            .item(label: String(localized: "Dave's 3rd beer"), amount: money(7.5)),
-            .item(label: String(localized: "\"Next one's on me\""), amount: money(0)),
-            .item(label: String(localized: "Emotional damage"), amount: "???"),
+            .item(label: String(localized: "Split any bill"), amount: money(0)),
+            .item(label: String(localized: "Scan the receipt"), amount: money(0)),
+            .item(label: String(localized: "Who owes what"), amount: money(0)),
+            .item(label: String(localized: "Petty reminders"), amount: money(0)),
+            .note(String(localized: "we'll phrase it nicely")),
             .rule,
             .total(label: String(localized: "TOTAL"), amount: String(localized: "friendship")),
             .rule,
-            .footer(String(localized: "NO REFUNDS · NO MERCY")),
+            .footer(String(localized: "FREE. THE FALLOUT ISN'T.")),
         ]
     }
 

@@ -19,7 +19,7 @@ struct WelcomeReceiptView: View {
             .opacity(reduceMotion ? Double(unfurl) : 1)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text(
-                "A joke receipt: nachos, Dave's third beer, emotional damage. Total: friendship.",
+                "A receipt listing what Squabble does — split any bill, scan the receipt, work out who owes what, send petty reminders — all free. Total: friendship.",
                 comment: "VoiceOver description of the decorative welcome-screen receipt."
             ))
             .task(id: isLaunchSplashFinished, print)
