@@ -24,13 +24,13 @@ struct SignInView: View {
 
     private var content: some View {
         VStack(spacing: 0) {
-            // The bird centres itself in whatever is left above the receipt rather
-            // than sitting flush against it.
+            // The receipt's own bottom padding fixes how high it sits; the bird then
+            // centres itself in whatever space is left above it.
             header
                 .frame(maxHeight: .infinity)
             WelcomeReceiptView()
                 .padding(.horizontal, 30)
-                .padding(.bottom, 36)
+                .padding(.bottom, 96)
             signIn
         }
         .padding(.horizontal, 24)

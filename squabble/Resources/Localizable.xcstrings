@@ -1,13 +1,13 @@
 {
   "sourceLanguage": "en",
   "strings": {
-    "A receipt listing what Squabble does — split any bill, scan the receipt, work out who owes what, send petty reminders — all free. Total: friendship.": {
+    "A receipt listing what Squabble does — split any bill, scan the receipt, work out who owes what, send petty reminders — every line free, total zero.": {
       "comment": "VoiceOver description of the welcome-screen receipt.",
       "localizations": {
         "hu": {
           "stringUnit": {
             "state": "translated",
-            "value": "Számla arról, mit tud a Squabble: számla elosztása, blokk beolvasása, ki mivel tartozik, kicsinyes emlékeztetők — mind ingyen. Végösszeg: barátság."
+            "value": "Számla arról, mit tud a Squabble: számla elosztása, blokk beolvasása, ki mivel tartozik, kicsinyes emlékeztetők — minden tétel ingyen, a végösszeg nulla."
           }
         }
       }
@@ -338,17 +338,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nem vagy bejelentkezve."
-          }
-        }
-      }
-    },
-    "friendship": {
-      "comment": "Prop receipt total amount — the joke payoff.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "barátság"
           }
         }
       }

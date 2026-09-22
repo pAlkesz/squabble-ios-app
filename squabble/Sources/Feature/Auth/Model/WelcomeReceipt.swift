@@ -11,9 +11,9 @@ nonisolated enum ReceiptRow {
     case footer(String)
 }
 
-/// The welcome receipt: the app's features itemised as a bill, every one of them free,
-/// with the joke landing on the total. Denominated in euros on purpose — a prop, and the
-/// reader's own currency would make the amounts read as real money.
+/// The welcome receipt: the app's features itemised as a bill that adds up to nothing.
+/// Denominated in euros on purpose — a prop, and the reader's own currency would make
+/// the amounts read as real money.
 nonisolated enum WelcomeReceipt {
     static var rows: [ReceiptRow] {
         [
@@ -26,7 +26,7 @@ nonisolated enum WelcomeReceipt {
             .item(label: String(localized: "Petty reminders"), amount: money(0)),
             .note(String(localized: "we'll phrase it nicely")),
             .rule,
-            .total(label: String(localized: "TOTAL"), amount: String(localized: "friendship")),
+            .total(label: String(localized: "TOTAL"), amount: money(0)),
             .rule,
             .footer(String(localized: "FREE. THE FALLOUT ISN'T.")),
         ]
