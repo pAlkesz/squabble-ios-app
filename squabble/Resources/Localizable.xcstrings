@@ -1,358 +1,358 @@
 {
-  "sourceLanguage": "en",
-  "strings": {
-    "A receipt listing what Squabble does — split any bill, scan the receipt, work out who owes what, send petty reminders — every line free, total zero.": {
-      "comment": "VoiceOver description of the welcome-screen receipt.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Számla arról, mit tud a Squabble: számla elosztása, blokk beolvasása, ki mivel tartozik, kicsinyes emlékeztetők — minden tétel ingyen, a végösszeg nulla."
+  "sourceLanguage" : "en",
+  "strings" : {
+    "A receipt listing what Squabble does — split any bill, scan the receipt, work out who owes what, send petty reminders — every line free, total zero." : {
+      "comment" : "VoiceOver description of the decorative welcome-screen receipt.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Számla arról, mit tud a Squabble: számla elosztása, blokk beolvasása, ki mivel tartozik, kicsinyes emlékeztetők — minden tétel ingyen, a végösszeg nulla."
           }
         }
       }
     },
-    "Account": {
-      "comment": "Account screen title and toolbar button.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fiók"
+    "Account" : {
+      "comment" : "Account screen title and toolbar button.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fiók"
           }
         }
       }
     },
-    "Add a bill and we'll find something.": {
-      "comment": "Home empty-state description.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Adj hozzá egy számlát, találunk okot."
+    "Add a bill and we'll find something." : {
+      "comment" : "Home empty-state description.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adj hozzá egy számlát, találunk okot."
           }
         }
       }
     },
-    "Annoys the bird.": {
-      "comment": "VoiceOver hint for the tappable welcome-screen bird.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Felbosszantja a madarat."
+    "Annoys the bird." : {
+      "comment" : "VoiceOver hint for the tappable welcome-screen bird.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Felbosszantja a madarat."
           }
         }
       }
     },
-    "Anonymous squab": {
-      "comment": "Shown instead of the name when Apple didn't share one.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Névtelen fióka"
+    "Anonymous squab" : {
+      "comment" : "Shown instead of the name when Apple didn't share one.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Névtelen fióka"
           }
         }
       }
     },
-    "Apple didn't return an authorization code.": {
-      "comment": "AuthError.missingAuthorizationCode",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Az Apple nem küldött engedélyezési kódot."
+    "Apple didn't return an authorization code." : {
+      "comment" : "AuthError.missingAuthorizationCode",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Az Apple nem küldött engedélyezési kódot."
           }
         }
       }
     },
-    "Apple didn't return an identity token.": {
-      "comment": "AuthError.missingIdentityToken",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Az Apple nem küldött azonosító tokent."
+    "Apple didn't return an identity token." : {
+      "comment" : "AuthError.missingIdentityToken",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Az Apple nem küldött azonosító tokent."
           }
         }
       }
     },
-    "Cancel": {
-      "comment": "Generic cancel button.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mégse"
+    "Cancel" : {
+      "comment" : "Generic cancel button.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mégse"
           }
         }
       }
     },
-    "Confirm with Apple to delete your account.": {
-      "comment": "Re-authentication sheet heading before deletion.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Erősítsd meg Apple-lel a fiók törlését."
+    "Confirm with Apple to delete your account." : {
+      "comment" : "Re-authentication sheet heading before deletion.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erősítsd meg Apple-lel a fiók törlését."
           }
         }
       }
     },
-    "Continue": {
-      "comment": "Confirmation dialog proceed button.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Folytatás"
+    "Continue" : {
+      "comment" : "Confirmation dialog proceed button.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Folytatás"
           }
         }
       }
     },
-    "Delete account": {
-      "comment": "Account screen destructive button.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fiók törlése"
+    "Delete account" : {
+      "comment" : "Account screen destructive button.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fiók törlése"
           }
         }
       }
     },
-    "Delete your account?": {
-      "comment": "Confirmation dialog title.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Törlöd a fiókod?"
+    "Delete your account?" : {
+      "comment" : "Confirmation dialog title.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Törlöd a fiókod?"
           }
         }
       }
     },
-    "Done": {
-      "comment": "Dismiss button on sheets.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kész"
+    "Done" : {
+      "comment" : "Dismiss button on sheets.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kész"
           }
         }
       }
     },
-    "FREE. THE FALLOUT ISN'T.": {
-      "comment": "Receipt footer — the app is free, the consequences are not.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "INGYENES. A KÖVETKEZMÉNY NEM."
+    "FREE. THE FALLOUT ISN'T." : {
+      "comment" : "Receipt footer — the app is free, the consequences are not.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "INGYENES. A KÖVETKEZMÉNY NEM."
           }
         }
       }
     },
-    "Nothing to squabble about yet.": {
-      "comment": "Home empty-state title.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Még nincs min veszekedni."
+    "Nothing to squabble about yet." : {
+      "comment" : "Home empty-state title.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Még nincs min veszekedni."
           }
         }
       }
     },
-    "OK": {
-      "comment": "Alert dismiss button.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "OK"
+    "OK" : {
+      "comment" : "Alert dismiss button.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
           }
         }
       }
     },
-    "OPEN TAB · 3 GUESTS": {
-      "comment": "Prop receipt subheader.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "NYITOTT SZÁMLA · 3 FŐ"
+    "OPEN TAB · 3 GUESTS" : {
+      "comment" : "Prop receipt subheader.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NYITOTT SZÁMLA · 3 FŐ"
           }
         }
       }
     },
-    "Petty reminders": {
-      "comment": "Receipt line item — an app feature, priced at zero.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kicsinyes emlékeztetők"
+    "Petty reminders" : {
+      "comment" : "Receipt line item — an app feature, priced at zero.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kicsinyes emlékeztetők"
           }
         }
       }
     },
-    "SQUABBLE": {
-      "comment": "Receipt header on the welcome screen; uppercase on purpose.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "SQUABBLE"
+    "Scan the receipt" : {
+      "comment" : "Receipt line item — an app feature, priced at zero.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blokk beolvasása"
           }
         }
       }
     },
-    "Scan the receipt": {
-      "comment": "Receipt line item — an app feature, priced at zero.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Blokk beolvasása"
+    "Sign out" : {
+      "comment" : "Account screen button.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kijelentkezés"
           }
         }
       }
     },
-    "Sign out": {
-      "comment": "Account screen button.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kijelentkezés"
+    "Sign-in failed" : {
+      "comment" : "Alert title when Sign in with Apple fails.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nem sikerült bejelentkezni"
           }
         }
       }
     },
-    "Sign-in failed": {
-      "comment": "Alert title when Sign in with Apple fails.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nem sikerült bejelentkezni"
+    "Sign-in isn't available in this build." : {
+      "comment" : "AuthError.unavailable — Firebase config missing.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A bejelentkezés ebben a buildben nem elérhető."
           }
         }
       }
     },
-    "Sign-in isn't available in this build.": {
-      "comment": "AuthError.unavailable — Firebase config missing.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "A bejelentkezés ebben a buildben nem elérhető."
+    "Skip intro" : {
+      "comment" : "VoiceOver action to skip the launch animation.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intró kihagyása"
           }
         }
       }
     },
-    "Skip intro": {
-      "comment": "VoiceOver action to skip the launch animation.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Intró kihagyása"
+    "Something went wrong" : {
+      "comment" : "Generic alert title on the account screen.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Valami elromlott"
           }
         }
       }
     },
-    "Something went wrong": {
-      "comment": "Generic alert title on the account screen.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Valami elromlott"
+    "Split any bill" : {
+      "comment" : "Receipt line item — an app feature, priced at zero.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bármilyen számla elosztása"
           }
         }
       }
     },
-    "Split any bill": {
-      "comment": "Receipt line item — an app feature, priced at zero.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bármilyen számla elosztása"
+    "Squabble" : {
+      "comment" : "App name, read by VoiceOver for the welcome-screen bird.\nApp name, read by VoiceOver on the launch splash.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Squabble"
           }
         }
       }
     },
-    "Squabble": {
-      "comment": "App name, read by VoiceOver for the welcome-screen bird.\nApp name, read by VoiceOver on the launch splash.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Squabble"
+    "SQUABBLE" : {
+      "comment" : "Receipt header on the welcome screen; uppercase on purpose.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SQUABBLE"
           }
         }
       }
     },
-    "TOTAL": {
-      "comment": "Prop receipt total row label.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ÖSSZESEN"
+    "This wipes your account and everything in it. Your friends will still owe you money — that part's between you and them." : {
+      "comment" : "Confirmation dialog message before account deletion.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ez törli a fiókod és mindent, ami benne van. A barátaid ettől még tartoznak neked — az már a ti dolgotok."
           }
         }
       }
     },
-    "This wipes your account and everything in it. Your friends will still owe you money — that part's between you and them.": {
-      "comment": "Confirmation dialog message before account deletion.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ez törli a fiókod és mindent, ami benne van. A barátaid ettől még tartoznak neked — az már a ti dolgotok."
+    "TOTAL" : {
+      "comment" : "Prop receipt total row label.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ÖSSZESEN"
           }
         }
       }
     },
-    "Who owes what": {
-      "comment": "Receipt line item — an app feature, priced at zero.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ki mivel tartozik"
+    "we'll phrase it nicely" : {
+      "comment" : "Receipt note under the reminders line.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "szépen fogalmazunk"
           }
         }
       }
     },
-    "You're not signed in.": {
-      "comment": "AuthError.notSignedIn",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nem vagy bejelentkezve."
+    "Who owes what" : {
+      "comment" : "Receipt line item — an app feature, priced at zero.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ki mivel tartozik"
           }
         }
       }
     },
-    "we'll phrase it nicely": {
-      "comment": "Receipt note under the reminders line.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "szépen fogalmazunk"
+    "You're not signed in." : {
+      "comment" : "AuthError.notSignedIn",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nem vagy bejelentkezve."
           }
         }
       }
     }
   },
-  "version": "1.0"
+  "version" : "1.0"
 }
