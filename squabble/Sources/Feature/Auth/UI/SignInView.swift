@@ -39,8 +39,8 @@ struct SignInView: View {
 
     private var header: some View {
         VStack(spacing: 10) {
-            SquabLogoView(color: .white)
-                .frame(width: 84, height: 84)
+            WelcomeBirdView()
+                .frame(width: 128)
             Text("Split the bill. Assign the blame.")
                 .font(.title3.weight(.semibold))
                 .foregroundStyle(.white)
@@ -49,17 +49,11 @@ struct SignInView: View {
     }
 
     private var signIn: some View {
-        VStack(spacing: 12) {
-            AppleSignInButton(label: .signIn, onCompletion: signIn)
-                .disabled(isSigningIn)
-                .overlay {
-                    if isSigningIn { ProgressView().tint(.black) }
-                }
-            Text("By continuing you accept that Dave still owes you for brunch.")
-                .font(.caption2)
-                .foregroundStyle(.white.opacity(0.45))
-                .multilineTextAlignment(.center)
-        }
+        AppleSignInButton(label: .signIn, onCompletion: signIn)
+            .disabled(isSigningIn)
+            .overlay {
+                if isSigningIn { ProgressView().tint(.black) }
+            }
     }
 
     private func signIn(_ result: Result<AppleSignInResult, Error>) {

@@ -45,6 +45,17 @@
         }
       }
     },
+    "Annoys the bird.": {
+      "comment": "VoiceOver hint for the tappable welcome-screen bird.",
+      "localizations": {
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Felbosszantja a madarat."
+          }
+        }
+      }
+    },
     "Anonymous squab": {
       "comment": "Shown instead of the name when Apple didn't share one.",
       "localizations": {
@@ -74,17 +85,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Az Apple nem küldött azonosító tokent."
-          }
-        }
-      }
-    },
-    "By continuing you accept that Dave still owes you for brunch.": {
-      "comment": "Fake fine print under the sign-in button.",
-      "localizations": {
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "A folytatással tudomásul veszed, hogy Dave még mindig tartozik a brunch-csel."
           }
         }
       }
@@ -299,7 +299,7 @@
       }
     },
     "Squabble": {
-      "comment": "App name, read by VoiceOver on the launch splash.",
+      "comment": "App name, read by VoiceOver on the launch splash and the welcome-screen bird.",
       "localizations": {
         "hu": {
           "stringUnit": {
