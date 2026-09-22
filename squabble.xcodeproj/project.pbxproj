@@ -12,6 +12,7 @@
 		F1B0000000000000000000C3 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = F1B0000000000000000000B3 /* FirebaseCrashlytics */; };
 		F1B0000000000000000000C4 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = F1B0000000000000000000B4 /* FirebaseFirestore */; };
 		F1B0000000000000000000C5 /* FactoryKit in Frameworks */ = {isa = PBXBuildFile; productRef = F1B0000000000000000000B5 /* FactoryKit */; };
+		F1B0000000000000000000C6 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = F1B0000000000000000000B6 /* FirebaseStorage */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +78,7 @@
 				F1B0000000000000000000C2 /* FirebaseAuth in Frameworks */,
 				F1B0000000000000000000C3 /* FirebaseCrashlytics in Frameworks */,
 				F1B0000000000000000000C4 /* FirebaseFirestore in Frameworks */,
+				F1B0000000000000000000C6 /* FirebaseStorage in Frameworks */,
 				F1B0000000000000000000C5 /* FactoryKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -143,6 +145,7 @@
 				F1B0000000000000000000B2 /* FirebaseAuth */,
 				F1B0000000000000000000B3 /* FirebaseCrashlytics */,
 				F1B0000000000000000000B4 /* FirebaseFirestore */,
+				F1B0000000000000000000B6 /* FirebaseStorage */,
 				F1B0000000000000000000B5 /* FactoryKit */,
 			);
 			productName = squabble;
@@ -713,6 +716,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F1B0000000000000000000A2 /* XCRemoteSwiftPackageReference "Factory" */;
 			productName = FactoryKit;
+		};
+		F1B0000000000000000000B6 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F1B0000000000000000000A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
