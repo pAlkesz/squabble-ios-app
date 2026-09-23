@@ -3,6 +3,7 @@ import SwiftUI
 struct OnboardingNameStep: View {
     @Binding var draft: OnboardingDraft
     let availability: HandleAvailability
+    let onRetry: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 28) {
@@ -38,7 +39,12 @@ struct OnboardingNameStep: View {
                     }
                 }
             }
+            if availability == .failed {
+                Button("Try again", systemImage: "arrow.clockwise", action: onRetry)
+                    .buttonStyle(.glass)
+            }
         }
+        .animation(.default, value: availability)
     }
 
     private var nameMessage: SquabbleFieldMessage {
@@ -56,8 +62,10 @@ struct OnboardingNameStep: View {
             .init(text: String(localized: "Nice, it's all yours."), tone: .success)
         case .taken:
             .init(text: String(localized: "Taken. Someone got there first."), tone: .problem)
-        case .unknown:
-            .init(text: String(localized: "Can't check right now. We'll make sure when you finish."), tone: .hint)
+        case .offline:
+            .init(text: String(localized: "You're offline. Connect to the internet so we can check this handle."), tone: .problem)
+        case .failed:
+            .init(text: String(localized: "Couldn't check this handle. Try again in a moment."), tone: .problem)
         case .invalid(let error):
             .init(text: error.localizedDescription, tone: .problem)
         }

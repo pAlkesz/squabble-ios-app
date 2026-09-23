@@ -12,4 +12,8 @@ extension Container {
     var avatarStore: Factory<AvatarStore> {
         self { FirebaseAvatarStore() }.singleton
     }
+
+    var connectivityMonitor: Factory<ConnectivityMonitor> {
+        self { NetworkPathConnectivityMonitor() }.singleton
+    }
 }

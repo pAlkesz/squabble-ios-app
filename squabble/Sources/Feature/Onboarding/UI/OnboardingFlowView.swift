@@ -10,10 +10,13 @@ struct OnboardingFlowView: View {
     @Environment(AuthSession.self) private var session
     @Injected(\.profileRepository) private var profiles
     @Injected(\.avatarStore) private var avatars
+    @Injected(\.connectivityMonitor) private var connectivity
 
     @State private var path: [OnboardingStep] = []
     @State private var draft: OnboardingDraft?
     @State private var handleAvailability: HandleAvailability = .idle
+    @State private var isOnline = true
+    @State private var handleCheckAttempt = 0
     @State private var isSubmitting = false
     @State private var failure: OnboardingFailure?
 
@@ -31,7 +34,15 @@ struct OnboardingFlowView: View {
                 try? session.signOut()
             }
         }
-        .task(id: draft?.handle) { await checkHandle() }
+        .task {
+            for await isOnline in connectivity.updates() {
+                self.isOnline = isOnline
+            }
+        }
+        // Re-checks on every edit, when the connection comes back, and on "Try again".
+        .task(id: HandleCheckKey(handle: draft?.handle, isOnline: isOnline, attempt: handleCheckAttempt)) {
+            await checkHandle()
+        }
         .alert(
             "Something went wrong",
             isPresented: Binding(get: { failure != nil }, set: { if !$0 { failure = nil } }),
@@ -56,7 +67,9 @@ struct OnboardingFlowView: View {
             } content: {
                 switch step {
                 case .name:
-                    OnboardingNameStep(draft: draft, availability: handleAvailability)
+                    OnboardingNameStep(draft: draft, availability: handleAvailability) {
+                        handleCheckAttempt += 1
+                    }
                 case .avatar:
                     OnboardingAvatarStep(draft: draft) { error in
                         failure = OnboardingFailure(message: error.localizedDescription)
@@ -98,7 +111,7 @@ struct OnboardingFlowView: View {
         switch step {
         case .name:
             guard let draft, draft.validDisplayName != nil, case .success = draft.validatedHandle else { return false }
-            return !handleAvailability.blocksContinuing
+            return handleAvailability.allowsContinuing
         case .avatar, .payment:
             return true
         }
@@ -113,27 +126,19 @@ struct OnboardingFlowView: View {
     }
 
     private func checkHandle() async {
-        guard let draft, !draft.handle.isEmpty else {
-            handleAvailability = .idle
+        guard let draft, let uid = session.user?.id else { return }
+        if let verdict = HandleAvailabilityChecker.preflight(draft.handle, isOnline: isOnline) {
+            handleAvailability = verdict
             return
         }
-        switch draft.validatedHandle {
-        case .failure(let error):
-            handleAvailability = .invalid(error)
-        case .success(let handle):
-            handleAvailability = .checking
-            // Debounce: `task(id:)` cancels this sleep on every keystroke.
-            try? await Task.sleep(for: .milliseconds(400))
-            guard !Task.isCancelled, let uid = session.user?.id else { return }
-            do {
-                let isAvailable = try await profiles.isHandleAvailable(handle, for: uid)
-                guard !Task.isCancelled else { return }
-                handleAvailability = isAvailable ? .available : .taken
-            } catch {
-                guard !Task.isCancelled else { return }
-                handleAvailability = .unknown
-            }
-        }
+        handleAvailability = .checking
+        // Debounce: `task(id:)` cancels this sleep on every keystroke.
+        try? await Task.sleep(for: .milliseconds(400))
+        guard !Task.isCancelled else { return }
+        let result = await HandleAvailabilityChecker(profiles: profiles)
+            .check(draft.handle, for: uid, isOnline: true)
+        guard !Task.isCancelled else { return }
+        handleAvailability = result
     }
 
     private func finish() async {
@@ -163,4 +168,10 @@ struct OnboardingFlowView: View {
 private struct OnboardingFailure: Identifiable {
     let id = UUID()
     let message: String
+}
+
+private struct HandleCheckKey: Equatable {
+    let handle: String?
+    let isOnline: Bool
+    let attempt: Int
 }

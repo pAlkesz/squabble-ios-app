@@ -1,17 +1,17 @@
-/// What the handle field says under itself while the user types.
+/// What the handle field says under itself while the user types. Only a handle the
+/// server has confirmed as free lets the user continue — the first step is where the
+/// handle gets settled, not the final save.
 nonisolated enum HandleAvailability: Equatable {
     case idle
     case checking
     case available
     case taken
-    /// Couldn't ask (offline); the save will settle it.
-    case unknown
+    case offline
+    /// The server couldn't be asked for some other reason; worth a retry.
+    case failed
     case invalid(HandleError)
 
-    var blocksContinuing: Bool {
-        switch self {
-        case .taken, .invalid: true
-        case .idle, .checking, .available, .unknown: false
-        }
+    var allowsContinuing: Bool {
+        self == .available
     }
 }

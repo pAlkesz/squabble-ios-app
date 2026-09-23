@@ -177,17 +177,6 @@
         }
       }
     },
-    "Can't check right now. We'll make sure when you finish." : {
-      "comment" : "Onboarding: handle availability couldn't be checked (offline).",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Most nem tudjuk ellenőrizni. A végén azért megnézzük."
-          }
-        }
-      }
-    },
     "Cancel" : {
       "comment" : "Generic cancel button.",
       "localizations" : {
@@ -239,6 +228,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Korallszínű madár"
+          }
+        }
+      }
+    },
+    "Couldn't check this handle. Try again in a moment." : {
+      "comment" : "Onboarding: handle check failed for a reason other than being offline.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nem sikerült ellenőrizni a felhasználónevet. Próbáld újra kicsit később."
           }
         }
       }
@@ -954,6 +954,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nem vagy bejelentkezve."
+          }
+        }
+      }
+    },
+    "You're offline. Connect to the internet so we can check this handle." : {
+      "comment" : "Onboarding: handle can't be checked because the device is offline; blocks continuing.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nincs net. Csatlakozz, hogy ellenőrizni tudjuk ezt a felhasználónevet."
           }
         }
       }

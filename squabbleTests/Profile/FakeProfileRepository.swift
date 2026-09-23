@@ -10,6 +10,8 @@ nonisolated final class FakeProfileRepository: ProfileRepository, @unchecked Sen
     private(set) var deletedUIDs: [String] = []
     var listenerError: Error?
     var saveError: Error?
+    var availabilityError: Error?
+    private(set) var availabilityLookups = 0
     private var continuations: [String: [AsyncThrowingStream<UserProfile?, Error>.Continuation]] = [:]
 
     func seed(_ profile: UserProfile) {
@@ -33,7 +35,9 @@ nonisolated final class FakeProfileRepository: ProfileRepository, @unchecked Sen
     }
 
     func isHandleAvailable(_ handle: Handle, for uid: String) async throws -> Bool {
-        claimedHandles[handle].map { $0 == uid } ?? true
+        availabilityLookups += 1
+        if let availabilityError { throw availabilityError }
+        return claimedHandles[handle].map { $0 == uid } ?? true
     }
 
     func createProfile(_ profile: UserProfile, paymentMethods: [PaymentMethod]) async throws {
