@@ -280,7 +280,11 @@ first real file for it lands, following the layout above. The app target folder 
 `squabble/`; tests live in `squabbleTests/` and `squabbleUITests/` at the repo root.
 
 `ContentView` is the root router: it owns `AuthSession` and switches between
-`SignInView`, `OnboardingView`, `ProfileUnavailableView` and `HomeView` on its state.
+`OnboardingFlowView`, `ProfileUnavailableView` and `HomeView` on its state.
+`OnboardingFlowView` is one native `NavigationStack`: `SignInView` is the root and each
+onboarding step is pushed on top (system back button and swipe-back). Popping back to
+sign-in signs out. It stays mounted while the profile loads after sign-in, so the first
+step arrives as a push rather than a screen swap.
 `squabbleApp` applies the launch splash.
 
 ### Current state (Sept 2026)
