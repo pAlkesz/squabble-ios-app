@@ -347,13 +347,19 @@ stutters on a device even when the simulator looks smooth.
 - **Home, in progress:** `HomeView` follows a Revolut-style layout on `SquabbleBackdrop`,
   one `NavigationStack` and **no tab bar** (decided Oct 2026: squabbles are pushed from
   home like conversations; add a `TabView` only once there are 3+ peer destinations).
-  Top bar: avatar (opens `AccountView`), a search pill and a `+` for a new squabble —
-  search and `+` have no destination yet. Below it `TotalBalanceView`, the net of
-  everything owed either way, labelled "Total · <code>"; it's a fixed 0 until groups
-  exist. Totals will be **converted into one home currency** (for now the locale's).
-- **Placeholder:** `AccountView` is a stock `List` showing the profile, unstyled — and
-  there's no way to edit the profile or payment methods after onboarding yet. Needs
-  the branding pass — see "Never a plain black screen" above.
+  Top bar: avatar, a search pill and a `+` for a new squabble — search and `+` have no
+  destination yet. Below it `TotalBalanceView`, the net of everything owed either way,
+  labelled "Total · <code>"; it's a fixed 0 until groups exist. Totals will be
+  **converted into one home currency** (for now the locale's).
+- **Account zoom:** the avatar opens `AccountView` Revolut-style, not as a sheet: it grows
+  out of the avatar over a blurred, dimmed home (`zoomPresentation` /
+  `zoomPresentationBackdrop` / `zoomDestination` in `Core/UI/Extensions`). The overlay stays
+  mounted while hidden so its avatar's resting frame is known. Its content must **not** sit
+  in a `NavigationStack` — that's a UIKit hosting boundary, the destination then measures
+  in screen space including the zoom transform, and the feedback loop pins the CPU at
+  100%. If account sub-pages arrive, push them some other way or rethink the measurement.
+- **Placeholder:** `AccountView` shows the profile plus sign out / delete — there's no way
+  to edit the profile or payment methods after onboarding yet.
 - **Not started:** groups and everything to do with bills — capture, AI parsing, the
   split algorithm, reminders, invite links.
 

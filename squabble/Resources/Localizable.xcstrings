@@ -331,6 +331,17 @@
         }
       }
     },
+    "Close" : {
+      "comment" : "Accessibility label of the close (×) button on the account screen.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bezárás"
+          }
+        }
+      }
+    },
     "Confirm with Apple to delete your account." : {
       "comment" : "Re-authentication sheet heading before deletion.",
       "localizations" : {
@@ -404,17 +415,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nem kell egyedinek lennie. A barátaid tudják, ki vagy."
-          }
-        }
-      }
-    },
-    "Done" : {
-      "comment" : "Dismiss button on sheets.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kész"
           }
         }
       }
