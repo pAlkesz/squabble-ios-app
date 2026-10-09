@@ -344,11 +344,16 @@ stutters on a device even when the simulator looks smooth.
   optional payment methods, saved in one transaction; `Feature/Profile` holds the
   models, Firestore/Storage adapters and shared views (`AvatarView`,
   `PaymentMethodEditor`). Account deletion wipes profile data and avatars.
-- **Placeholder:** `HomeView` is an empty state with an account button and nothing
-  else; it renders on plain system black and does **not** use `SquabbleBackdrop` yet.
-  `AccountView` is a stock `List` showing the profile, likewise unstyled — and there's
-  no way to edit the profile or payment methods after onboarding yet. Both need the
-  branding pass whenever real content lands — see "Never a plain black screen" above.
+- **Home, in progress:** `HomeView` follows a Revolut-style layout on `SquabbleBackdrop`,
+  one `NavigationStack` and **no tab bar** (decided Oct 2026: squabbles are pushed from
+  home like conversations; add a `TabView` only once there are 3+ peer destinations).
+  Top bar: avatar (opens `AccountView`), a search pill and a `+` for a new squabble —
+  search and `+` have no destination yet. Below it `TotalBalanceView`, the net of
+  everything owed either way, labelled "Total · <code>"; it's a fixed 0 until groups
+  exist. Totals will be **converted into one home currency** (for now the locale's).
+- **Placeholder:** `AccountView` is a stock `List` showing the profile, unstyled — and
+  there's no way to edit the profile or payment methods after onboarding yet. Needs
+  the branding pass — see "Never a plain black screen" above.
 - **Not started:** groups and everything to do with bills — capture, AI parsing, the
   split algorithm, reminders, invite links.
 

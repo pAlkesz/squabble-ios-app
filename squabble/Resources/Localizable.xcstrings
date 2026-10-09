@@ -90,7 +90,7 @@
       }
     },
     "Account" : {
-      "comment" : "Account screen title and toolbar button.",
+      "comment" : "Account screen title, and the accessibility label of the home avatar button.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
@@ -151,17 +151,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A számlaszám csak számjegyekből áll – vagy illessz be inkább egy IBAN-t."
-          }
-        }
-      }
-    },
-    "Add a bill and we'll find something." : {
-      "comment" : "Home empty-state description.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Adj hozzá egy számlát, találunk okot."
           }
         }
       }
@@ -606,6 +595,17 @@
         }
       }
     },
+    "New squabble" : {
+      "comment" : "Home: accessibility label of the plus button that starts a new squabble.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Új veszekedés"
+          }
+        }
+      }
+    },
     "Nice, it's all yours." : {
       "comment" : "Onboarding: handle is available.",
       "localizations" : {
@@ -624,17 +624,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Még senki sem tud fizetni neked. Nekik ez igazán kényelmes."
-          }
-        }
-      }
-    },
-    "Nothing to squabble about yet." : {
-      "comment" : "Home empty-state title.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Még nincs min veszekedni."
           }
         }
       }
@@ -778,6 +767,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Blokk beolvasása"
+          }
+        }
+      }
+    },
+    "Search" : {
+      "comment" : "Home: placeholder of the search bar in the top bar.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keresés"
           }
         }
       }
@@ -1031,6 +1031,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ÖSSZESEN"
+          }
+        }
+      }
+    },
+    "Total · %@" : {
+      "comment" : "Home: label above the overall balance, with the currency code it's shown in.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Összesen · %@"
           }
         }
       }
