@@ -4,7 +4,9 @@ import SwiftUI
 /// up and chirps, nearly dropping the receipt. Costs nothing, rewards the curious.
 /// Reduce Motion keeps the chirp and skips the movement.
 struct WelcomeBirdView: View {
-    var sounds: any LaunchSoundPlaying = LaunchSoundPlayer()
+    // State, not a plain property: SwiftUI rebuilds this struct whenever its inputs
+    // change, and a fresh player would have none of the prepared sounds loaded.
+    @State private var sounds: any LaunchSoundPlaying = LaunchSoundPlayer()
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isRuffled = false

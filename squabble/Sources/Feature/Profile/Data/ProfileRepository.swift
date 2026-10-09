@@ -1,7 +1,8 @@
 nonisolated protocol ProfileRepository: Sendable {
     /// Emits `nil` when the user has no profile yet (i.e. hasn't finished onboarding),
     /// then every change, until cancelled. Only emits "missing" once the server has
-    /// confirmed it — an empty cache on a fresh install proves nothing.
+    /// confirmed it — an empty cache on a fresh install proves nothing. If the server
+    /// can't be asked (offline, or it errors), the stream fails rather than waiting.
     func profileChanges(for uid: String) -> AsyncThrowingStream<UserProfile?, Error>
 
     /// Advisory only; `createProfile` is what actually claims the handle.

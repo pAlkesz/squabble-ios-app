@@ -43,11 +43,12 @@ struct SquabLogoTests {
         rects.reduce(CGRect.null) { $0.union($1) }
     }
 
-    @Test func launchScriptRunsForwardAndEndsDone() {
+    @Test func launchScriptRunsForwardAndHoldsOnTheFinishedBird() {
         let phases = LaunchPhase.script.map(\.phase)
         let times = LaunchPhase.script.map(\.at)
         #expect(phases == phases.sorted())
         #expect(times == times.sorted())
-        #expect(phases.last == .done)
+        #expect(phases.last == .unfurled)
+        #expect(times.last.map { $0 < LaunchPhase.hold } == true)
     }
 }

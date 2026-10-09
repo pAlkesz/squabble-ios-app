@@ -15,6 +15,10 @@ nonisolated final class FirestoreProfileRepository: ProfileRepository {
         }
         let reference = Self.user(uid, in: db)
         return AsyncThrowingStream { continuation in
+            // Offline, the listener never errors on a cache miss — it just waits for the
+            // server indefinitely. A one-off server read fails fast instead, so "we can't
+            // tell yet" becomes an error the UI can offer a retry for.
+            nonisolated(unsafe) var serverCheck: Task<Void, Never>?
             // Metadata changes are needed to hear the server confirm a cache miss.
             nonisolated(unsafe) let registration = reference.addSnapshotListener(includeMetadataChanges: true) { snapshot, error in
                 if let error {
@@ -23,7 +27,18 @@ nonisolated final class FirestoreProfileRepository: ProfileRepository {
                 }
                 guard let snapshot else { return }
                 guard snapshot.exists else {
-                    if !snapshot.metadata.isFromCache { continuation.yield(nil) }
+                    if !snapshot.metadata.isFromCache {
+                        continuation.yield(nil)
+                    } else if serverCheck == nil {
+                        serverCheck = Task {
+                            do {
+                                let server = try await reference.getDocument(source: .server)
+                                if !server.exists { continuation.yield(nil) }
+                            } catch {
+                                continuation.finish(throwing: Self.mapped(error))
+                            }
+                        }
+                    }
                     return
                 }
                 do {
@@ -32,7 +47,10 @@ nonisolated final class FirestoreProfileRepository: ProfileRepository {
                     continuation.finish(throwing: error)
                 }
             }
-            continuation.onTermination = { _ in registration.remove() }
+            continuation.onTermination = { _ in
+                registration.remove()
+                serverCheck?.cancel()
+            }
         }
     }
 

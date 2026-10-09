@@ -7,7 +7,7 @@ nonisolated struct UserProfile: Equatable, Sendable {
     var handle: Handle
     var avatar: Avatar
 
-    static let maxDisplayNameLength = 40
+    static let maxDisplayNameLength = 50
 
     /// Trims the name and rejects anything empty or too long to fit on a receipt line.
     static func validDisplayName(_ input: String) -> String? {

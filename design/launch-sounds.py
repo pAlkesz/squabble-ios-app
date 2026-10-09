@@ -1,4 +1,4 @@
-"""Synthesises the launch sounds: a few songbird chirps and a flapping exit.
+"""Synthesises the launch sounds: sparrow tweets and a flapping exit.
 Pure stdlib so it runs anywhere; output is 44.1 kHz mono 16-bit WAV.
 
     python3 design/launch-sounds.py <out dir>
@@ -8,32 +8,40 @@ import math, random, struct, wave, os, sys
 
 SR = 44100
 random.seed(7)
+# Long pure tones in the 2-5 kHz band were shrill in headphones, and moving them
+# lower just sounded muffled. Very short falling "tsip"s with a touch of overtone
+# stay bright without piercing, so they're kept quieter than the wing beats too.
+CHIRP_PEAK = 0.5
 
-def env(t, attack, hold, release, total):
-    if t < attack: return math.sin(math.pi / 2 * t / attack)
-    if t < attack + hold: return 1.0
-    r = (t - attack - hold) / max(release, 1e-6)
-    return max(0.0, 1.0 - r) ** 1.5 if t < total else 0.0
-
-def chirp(duration, freqs, vibrato_hz=0, vibrato=0.0, harmonic=0.06):
-    """One songbird note: a near-pure sine whose pitch follows `freqs` (Hz, evenly
-    spaced over the note) with smooth interpolation, so a rising or falling glide,
-    or an inverted V, is just a list of numbers."""
-    n = int(duration * SR)
+def tsip(duration, freqs, overtone=0.2, attack=0.012):
+    """One sparrow note: a sine whose pitch follows `freqs` (Hz, evenly spaced over
+    the note, smoothly interpolated) with a quiet second harmonic, a fast attack and
+    a decay that runs to the end of the note."""
     out = []
     phase = 0.0
     segs = len(freqs) - 1
-    for i in range(n):
+    for i in range(int(duration * SR)):
         t = i / SR
         p = min(t / duration, 1 - 1e-9) * segs
         k = int(p)
         u = p - k
         u = u * u * (3 - 2 * u)  # smoothstep between control points
         f0 = math.exp(math.log(freqs[k]) * (1 - u) + math.log(freqs[k + 1]) * u)
-        f0 *= 1 + vibrato * math.sin(2 * math.pi * vibrato_hz * t)
         phase += 2 * math.pi * f0 / SR
-        s = math.sin(phase) + harmonic * math.sin(2 * phase)
-        s *= env(t, 0.006, duration * 0.3, duration * 0.68, duration)
+        s = math.sin(phase) + overtone * math.sin(2 * phase)
+        if t < attack:
+            s *= math.sin(math.pi / 2 * t / attack)
+        else:
+            s *= max(0.0, 1 - (t - attack) / (duration - attack)) ** 1.6
+        out.append(s)
+    return out
+
+def soften(samples, cutoff=7000):
+    """One-pole low-pass that takes the edge off the overtone without muffling."""
+    a = 1 - math.exp(-2 * math.pi * cutoff / SR)
+    out, s = [], 0.0
+    for x in samples:
+        s += a * (x - s)
         out.append(s)
     return out
 
@@ -69,31 +77,28 @@ def normalise(samples, peak=0.8):
     m = max(abs(x) for x in samples) or 1.0
     return [x / m * peak for x in samples]
 
-def write(name, samples):
-    samples = normalise(samples)
+def write(name, samples, peak=0.8):
+    samples = normalise(samples, peak)
     with wave.open(name, 'wb') as w:
         w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR)
         w.writeframes(b''.join(struct.pack('<h', int(max(-1, min(1, x)) * 32767)) for x in samples))
     print(name, f'{len(samples)/SR:.2f}s')
 
 out = sys.argv[1]
-# arrival — four quick notes while the pieces fly in: two rising glides, an
-# inverted V, and a short falling one
-write(os.path.join(out, 'arrival.wav'), room(mix(
-    chirp(0.08, [2300, 3400, 3700]),
-    silence(0.05),
-    chirp(0.09, [2400, 3600, 3900]),
+# arrival — three quick falling tweets while the pieces fly in
+write(os.path.join(out, 'arrival.wav'), room(soften(mix(
+    tsip(0.035, [3200, 1900]),
     silence(0.07),
-    chirp(0.11, [2800, 4200, 3000], vibrato_hz=60, vibrato=0.02),
+    tsip(0.035, [3300, 2000]),
+    silence(0.07),
+    tsip(0.05, [3400, 1800]),
+)), gain=0.2), CHIRP_PEAK)
+# hop — a pleased pair as the bird lands and puffs up; the second one turns upward
+write(os.path.join(out, 'hop.wav'), room(soften(mix(
+    tsip(0.035, [3300, 2000]),
     silence(0.06),
-    chirp(0.07, [3800, 2900, 2600]),
-)))
-# hop — a pleased two-note tweet as the bird lands and puffs up
-write(os.path.join(out, 'hop.wav'), room(mix(
-    chirp(0.07, [3000, 4100, 3800]),
-    silence(0.04),
-    chirp(0.10, [3300, 4400, 3200], vibrato_hz=70, vibrato=0.02),
-)))
+    tsip(0.06, [2000, 3200, 2600]),
+)), gain=0.2), CHIRP_PEAK)
 # a flurry of wing beats, nothing else
 write(os.path.join(out, 'flyaway.wav'), room(mix(
     flap(), silence(0.03), flap(0.10), silence(0.03), flap(0.10), silence(0.03), flap(0.09),

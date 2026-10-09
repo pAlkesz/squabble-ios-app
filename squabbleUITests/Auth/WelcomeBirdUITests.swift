@@ -10,7 +10,10 @@ final class WelcomeBirdUITests: XCTestCase {
 
         let bird = app.descendants(matching: .any)["welcome.bird"]
         XCTAssertTrue(bird.waitForExistence(timeout: 20), "welcome bird never appeared")
-        XCTAssertTrue(bird.isHittable)
+        // The bird exists while the launch splash is still fading out over it; wait for it
+        // to be tappable rather than checking the instant it appears.
+        let hittable = XCTNSPredicateExpectation(predicate: NSPredicate(format: "isHittable == true"), object: bird)
+        XCTAssertEqual(XCTWaiter.wait(for: [hittable], timeout: 10), .completed, "welcome bird never became tappable")
 
         bird.tap()
         attach(XCUIScreen.main.screenshot(), named: "bird-ruffled")

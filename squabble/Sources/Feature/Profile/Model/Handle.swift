@@ -3,7 +3,7 @@ import Foundation
 /// A unique `@handle`, the only exact way to look someone up. Stored lowercased so
 /// `@Pal` and `@pal` can't be two different people.
 nonisolated struct Handle: Hashable, Sendable, CustomStringConvertible {
-    static let lengthRange = 3...20
+    static let lengthRange = 3...32
 
     let rawValue: String
 
@@ -11,6 +11,7 @@ nonisolated struct Handle: Hashable, Sendable, CustomStringConvertible {
 
     init(validating input: String) throws(HandleError) {
         let value = Self.normalized(input)
+        guard !value.isEmpty else { throw .missing }
         guard value.count >= Self.lengthRange.lowerBound else { throw .tooShort }
         guard value.count <= Self.lengthRange.upperBound else { throw .tooLong }
         guard value.unicodeScalars.allSatisfy(Self.isAllowed) else { throw .invalidCharacters }
@@ -46,16 +47,19 @@ nonisolated struct Handle: Hashable, Sendable, CustomStringConvertible {
 }
 
 nonisolated enum HandleError: LocalizedError, Equatable {
+    case missing
     case tooShort
     case tooLong
     case invalidCharacters
 
     var errorDescription: String? {
         switch self {
+        case .missing:
+            String(localized: "You need a handle. It's how people find you.")
         case .tooShort:
             String(localized: "At least 3 characters. Even birds have longer names.")
         case .tooLong:
-            String(localized: "20 characters max. Nobody's typing all that.")
+            String(localized: "32 characters max. Nobody's typing all that.")
         case .invalidCharacters:
             String(localized: "Only a–z, 0–9 and underscores.")
         }

@@ -12,6 +12,8 @@ nonisolated final class FakeProfileRepository: ProfileRepository, @unchecked Sen
     var saveError: Error?
     var availabilityError: Error?
     private(set) var availabilityLookups = 0
+    // Suggestion lookups run concurrently.
+    private let lock = NSLock()
     private var continuations: [String: [AsyncThrowingStream<UserProfile?, Error>.Continuation]] = [:]
 
     func seed(_ profile: UserProfile) {
@@ -35,9 +37,11 @@ nonisolated final class FakeProfileRepository: ProfileRepository, @unchecked Sen
     }
 
     func isHandleAvailable(_ handle: Handle, for uid: String) async throws -> Bool {
-        availabilityLookups += 1
-        if let availabilityError { throw availabilityError }
-        return claimedHandles[handle].map { $0 == uid } ?? true
+        try lock.withLock {
+            availabilityLookups += 1
+            if let availabilityError { throw availabilityError }
+            return claimedHandles[handle].map { $0 == uid } ?? true
+        }
     }
 
     func createProfile(_ profile: UserProfile, paymentMethods: [PaymentMethod]) async throws {
@@ -55,6 +59,11 @@ nonisolated final class FakeProfileRepository: ProfileRepository, @unchecked Sen
         profiles[uid] = nil
         paymentMethods[uid] = nil
         publish(uid)
+    }
+
+    /// Kills the live listeners for `uid`, as a Firestore listener error would.
+    func failListeners(for uid: String, with error: Error) {
+        continuations.removeValue(forKey: uid)?.forEach { $0.finish(throwing: error) }
     }
 
     private func publish(_ uid: String) {

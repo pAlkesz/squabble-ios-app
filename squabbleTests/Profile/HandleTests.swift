@@ -7,8 +7,10 @@ struct HandleTests {
     }
 
     @Test(arguments: [
-        ("ab", HandleError.tooShort),
-        (String(repeating: "a", count: 21), .tooLong),
+        ("", HandleError.missing),
+        ("  @ ", .missing),
+        ("ab", .tooShort),
+        (String(repeating: "a", count: 33), .tooLong),
         ("pál", .invalidCharacters),
         ("pal.papp", .invalidCharacters),
         ("pal papp", .invalidCharacters),
@@ -26,7 +28,7 @@ struct HandleTests {
         ("  Anna-Mária  Kovács ", "anna_maria_kovacs"),
         ("Łukasz", "ukasz"),
         ("", ""),
-        ("A very long name that goes on", "a_very_long_name_tha"),
+        ("A very long name that goes on and on and on", "a_very_long_name_that_goes_on_an"),
     ])
     func suggestsFromDisplayName(name: String, expected: String) {
         #expect(Handle.suggestion(from: name) == expected)

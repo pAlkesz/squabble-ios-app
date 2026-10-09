@@ -16,7 +16,6 @@ struct squabbleApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .launchSplash()
         }
     }
 }

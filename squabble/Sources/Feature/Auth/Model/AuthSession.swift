@@ -10,9 +10,16 @@ final class AuthSession {
         case signedOut
         /// Signed in with Apple, but hasn't finished onboarding.
         case needsOnboarding(AppUser)
-        /// The profile couldn't be loaded — usually rules or a broken document, not the network.
-        case profileUnavailable(AppUser)
         case signedIn(AppUser, UserProfile)
+    }
+
+    /// Whether the profile listener is alive. A failure leaves `state` at its last known
+    /// value, so it's shown over whatever screen is up instead of replacing it.
+    enum ProfileSync: Equatable {
+        case live
+        /// Offline with nothing cached, or the server refused; needs a retry.
+        case failed
+        case retrying
     }
 
     private enum AuthState: Equatable {
@@ -24,12 +31,12 @@ final class AuthSession {
     private enum ProfileState: Equatable {
         case loading
         case missing
-        case failed
         case loaded(UserProfile)
     }
 
     private var authState: AuthState = .loading
     private var profileState: ProfileState = .loading
+    private(set) var profileSync: ProfileSync = .live
     private var profileObservation: Task<Void, Never>?
     // Wiping the profile makes the listener report "no profile" a moment before the auth
     // user disappears; without this the onboarding screen would flash mid-deletion.
@@ -59,7 +66,6 @@ final class AuthSession {
         switch profileState {
         case .loading: return .loading
         case .missing: return .needsOnboarding(user)
-        case .failed: return .profileUnavailable(user)
         case .loaded(let profile): return .signedIn(user, profile)
         }
     }
@@ -67,6 +73,11 @@ final class AuthSession {
     var user: AppUser? {
         if case .signedIn(let user) = authState { return user }
         return nil
+    }
+
+    /// Signed in and still finding out whether there's a profile, with nothing gone wrong.
+    var isLoadingProfile: Bool {
+        user != nil && profileState == .loading && profileSync == .live
     }
 
     var profile: UserProfile? {
@@ -86,9 +97,11 @@ final class AuthSession {
         }
     }
 
-    /// Starts listening again after `profileUnavailable`.
+    /// Starts listening again after a failure, keeping the last known state meanwhile.
     func retryProfile() {
-        observeProfile(of: user)
+        guard profileSync == .failed else { return }
+        profileSync = .retrying
+        observeProfile(of: user, keepingLastKnown: true)
     }
 
     func signIn(with apple: AppleSignInResult) async throws {
@@ -109,9 +122,12 @@ final class AuthSession {
         try await service.deleteAccount(revoking: apple)
     }
 
-    private func observeProfile(of user: AppUser?) {
+    private func observeProfile(of user: AppUser?, keepingLastKnown: Bool = false) {
         profileObservation?.cancel()
-        profileState = .loading
+        if !keepingLastKnown {
+            profileState = .loading
+            profileSync = .live
+        }
         guard let user else { return }
         profileObservation = Task { [profiles] in
             do {
@@ -119,11 +135,14 @@ final class AuthSession {
                     guard !Task.isCancelled else { return }
                     if isDeletingAccount && profile == nil { continue }
                     profileState = profile.map(ProfileState.loaded) ?? .missing
+                    profileSync = .live
                 }
             } catch {
                 guard !Task.isCancelled else { return }
-                AppLog.error(error, "Profile listener failed")
-                profileState = .failed
+                if error as? ProfileError != .offline {
+                    AppLog.error(error, "Profile listener failed")
+                }
+                profileSync = .failed
             }
         }
     }

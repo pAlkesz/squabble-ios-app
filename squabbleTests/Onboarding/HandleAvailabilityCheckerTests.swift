@@ -9,8 +9,8 @@ struct HandleAvailabilityCheckerTests {
         HandleAvailabilityChecker(profiles: profiles, logFailure: { log.record($0) })
     }
 
-    @Test func emptyInputIsIdleWithoutAsking() async {
-        #expect(await checker().check("", for: "uid-1", isOnline: true) == .idle)
+    @Test func emptyInputIsAnErrorWithoutAsking() async {
+        #expect(await checker().check("", for: "uid-1", isOnline: true) == .invalid(.missing))
         #expect(profiles.availabilityLookups == 0)
     }
 
@@ -50,6 +50,23 @@ struct HandleAvailabilityCheckerTests {
         let log = LogSpy()
         #expect(await checker(logging: log).check("pal", for: "uid-1", isOnline: true) == .failed)
         #expect(log.count == 1)
+    }
+
+    @Test func keepsOnlyFreeHandlesInOrderUpToTheLimit() async throws {
+        profiles.claim(try Handle(validating: "pal_papp"), by: "uid-2")
+        profiles.claim(try Handle(validating: "pal_papp2"), by: "uid-3")
+        let free = await checker().freeHandles(
+            among: HandleSuggestions.candidates(fromName: "Pál Papp"), uid: "uid-1", limit: 3
+        )
+        #expect(free.map(\.rawValue) == ["pal_papp_pays", "the_pal_papp", "pal_papp_owed"])
+    }
+
+    @Test func failedLookupsMeanNoSuggestions() async {
+        profiles.availabilityError = ProfileError.offline
+        let free = await checker().freeHandles(
+            among: HandleSuggestions.candidates(fromName: "Pál Papp"), uid: "uid-1", limit: 3
+        )
+        #expect(free.isEmpty)
     }
 
     @Test(arguments: [

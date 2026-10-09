@@ -1,24 +1,79 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "20 characters max. Nobody's typing all that." : {
+    "%@ link" : {
+      "comment" : "Payment method editor sheet: title when adding a payment link, with the service's name.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ link"
+          }
+        }
+      }
+    },
+    "%@ username or link" : {
+      "comment" : "Payment method editor: link field header, with the service's name.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ felhasználónév vagy link"
+          }
+        }
+      }
+    },
+    "%lld/%lld" : {
+      "comment" : "Character counter under the handle field: characters used / limit.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld/%2$lld"
+          }
+        }
+      }
+    },
+    "32 characters max. Nobody's typing all that." : {
       "comment" : "HandleError.tooLong",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Legfeljebb 20 karakter. Ezt senki nem fogja begépelni."
+            "value" : "Legfeljebb 32 karakter. Ezt senki nem fogja begépelni."
           }
         }
       }
     },
-    "40 characters max. It has to fit on a receipt." : {
+    "50 characters max. It has to fit on a receipt." : {
       "comment" : "Onboarding: display name too long.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Legfeljebb 40 karakter. Rá kell férnie a blokkra."
+            "value" : "Legfeljebb 50 karakter. Rá kell férnie a blokkra."
+          }
+        }
+      }
+    },
+    "A Hungarian account number has 16 or 24 digits." : {
+      "comment" : "Bank account validation error.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A magyar számlaszám 16 vagy 24 számjegyből áll."
+          }
+        }
+      }
+    },
+    "A little trickles in here and there" : {
+      "comment" : "Avatar persona slogan: money keeps dripping in. Hungarian original: 'Egy kicsit csurran-cseppen'.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Egy kicsit csurran-cseppen"
           }
         }
       }
@@ -56,13 +111,46 @@
         }
       }
     },
-    "Add" : {
-      "comment" : "Payment editor: confirm button.",
+    "Account no." : {
+      "comment" : "Payment slip: field label, abbreviated as on a printed form.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hozzáadás"
+            "value" : "Számlasz."
+          }
+        }
+      }
+    },
+    "Account number or IBAN" : {
+      "comment" : "Payment method editor: bank account field.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Számlaszám vagy IBAN"
+          }
+        }
+      }
+    },
+    "Account number: %@" : {
+      "comment" : "Payment method editor: the typed IBAN as a Hungarian account number.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Számlaszám: %@"
+          }
+        }
+      }
+    },
+    "Account numbers are digits only — or paste an IBAN instead." : {
+      "comment" : "Bank account validation error.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A számlaszám csak számjegyekből áll – vagy illessz be inkább egy IBAN-t."
           }
         }
       }
@@ -78,6 +166,17 @@
         }
       }
     },
+    "Add a photo" : {
+      "comment" : "Avatar photo source sheet: title.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotó hozzáadása"
+          }
+        }
+      }
+    },
     "Add a way to pay you" : {
       "comment" : "Button and sheet title for adding a payment method.",
       "localizations" : {
@@ -85,6 +184,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fizetési mód hozzáadása"
+          }
+        }
+      }
+    },
+    "Also accepts" : {
+      "comment" : "Payment slip: label for any extra payment methods.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elfogad még"
+          }
+        }
+      }
+    },
+    "Amount" : {
+      "comment" : "Payment slip: field label.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Összeg"
           }
         }
       }
@@ -133,6 +254,17 @@
         }
       }
     },
+    "Arccal és névvel vállalom" : {
+      "comment" : "Avatar caption for the user's own photo. A Hungarian pop culture reference, deliberately the same in every language.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arccal és névvel vállalom"
+          }
+        }
+      }
+    },
     "At least 3 characters. Even birds have longer names." : {
       "comment" : "HandleError.tooShort",
       "localizations" : {
@@ -155,8 +287,19 @@
         }
       }
     },
+    "Bank" : {
+      "comment" : "Payment quick-add tile: bank account.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bank"
+          }
+        }
+      }
+    },
     "Bank account" : {
-      "comment" : "Payment editor: segment for IBAN entry.",
+      "comment" : "Payment method editor sheet: title when adding a bank account.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
@@ -166,13 +309,13 @@
         }
       }
     },
-    "Blue bird" : {
-      "comment" : "Avatar preset accessibility name.",
+    "Beneficiary" : {
+      "comment" : "Payment slip: field label.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kék madár"
+            "value" : "Kedvezm."
           }
         }
       }
@@ -188,13 +331,13 @@
         }
       }
     },
-    "Choose another" : {
-      "comment" : "Onboarding: pick a different avatar photo.",
+    "Choose from library" : {
+      "comment" : "Avatar photo source sheet: pick from the photo library.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Másikat választok"
+            "value" : "Választás a fotók közül"
           }
         }
       }
@@ -221,24 +364,13 @@
         }
       }
     },
-    "Coral bird" : {
-      "comment" : "Avatar preset accessibility name.",
+    "Couldn't check this handle. Tap the arrow to try again." : {
+      "comment" : "Onboarding: handle check failed (not offline); the retry arrow sits at the end of the field.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Korallszínű madár"
-          }
-        }
-      }
-    },
-    "Couldn't check this handle. Try again in a moment." : {
-      "comment" : "Onboarding: handle check failed for a reason other than being offline.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nem sikerült ellenőrizni a felhasználónevet. Próbáld újra kicsit később."
+            "value" : "Nem sikerült ellenőrizni a felhasználónevet. Koppints a nyílra, és újrapróbáljuk."
           }
         }
       }
@@ -320,17 +452,6 @@
         }
       }
     },
-    "Green bird" : {
-      "comment" : "Avatar preset accessibility name.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zöld madár"
-          }
-        }
-      }
-    },
     "Handle" : {
       "comment" : "Onboarding: field title for the unique @handle.",
       "localizations" : {
@@ -353,13 +474,123 @@
         }
       }
     },
-    "IBAN" : {
-      "comment" : "Payment editor: IBAN field title.",
+    "I didn't get state funding, my company did" : {
+      "comment" : "Avatar persona slogan: a famous non-denial. Hungarian original: 'Én nem kaptam állami támogatást, a cégem kapott'.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "IBAN"
+            "value" : "Én nem kaptam állami támogatást, a cégem kapott"
+          }
+        }
+      }
+    },
+    "I know everything about art" : {
+      "comment" : "Avatar persona slogan: the self-declared connoisseur. Hungarian original: 'Mindent tudok a művészetről'.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mindent tudok a művészetről"
+          }
+        }
+      }
+    },
+    "I'll bite a chunk out of your ass" : {
+      "comment" : "Avatar persona slogan: a rapper's threat. Hungarian original: 'Kiharapok egy darabot a seggedből'.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kiharapok egy darabot a seggedből"
+          }
+        }
+      }
+    },
+    "I'll pay you back after payday" : {
+      "comment" : "Avatar persona slogan: always broke until the next salary. Hungarian original: 'Majd ötödike után megadom'.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Majd ötödike után megadom"
+          }
+        }
+      }
+    },
+    "IBAN: %@" : {
+      "comment" : "Payment method editor: the typed account number as an IBAN.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "IBAN: %@"
+          }
+        }
+      }
+    },
+    "If I'm too much for you, you're not enough for me" : {
+      "comment" : "Avatar persona slogan: unapologetically a lot. Hungarian original: 'Akinek én sok vagyok, az nekem kevés'.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Akinek én sok vagyok, az nekem kevés"
+          }
+        }
+      }
+    },
+    "If you've got nothing, that's what you're worth" : {
+      "comment" : "Avatar persona slogan: a well-known Hungarian political quote, 'Akinek nincs semmije, az annyit is ér'.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Akinek nincs semmije, az annyit is ér"
+          }
+        }
+      }
+    },
+    "Jesus was an actor" : {
+      "comment" : "Avatar persona slogan: a quotable actor. Hungarian original: 'Jézus színész volt'.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jézus színész volt"
+          }
+        }
+      }
+    },
+    "Keep for your records. Or don't." : {
+      "comment" : "Payment slip: small print under the title.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Őrizd meg. Vagy ne."
+          }
+        }
+      }
+    },
+    "Loading…" : {
+      "comment" : "VoiceOver: the launch splash is waiting for the app to load.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Töltöm…"
+          }
+        }
+      }
+    },
+    "Money is no object" : {
+      "comment" : "Avatar persona slogan: the big spender.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A pénz nem számít"
           }
         }
       }
@@ -386,13 +617,13 @@
         }
       }
     },
-    "Not your fault. Probably. Try again, and if it keeps happening, sign out and back in." : {
-      "comment" : "Profile failed to load: explanation.",
+    "Nobody can pay you yet. Very convenient for them." : {
+      "comment" : "Payment slip: shown before any payment method is added.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nem a te hibád. Valószínűleg. Próbáld újra, és ha így marad, jelentkezz ki, aztán vissza."
+            "value" : "Még senki sem tud fizetni neked. Nekik ez igazán kényelmes."
           }
         }
       }
@@ -474,13 +705,13 @@
         }
       }
     },
-    "Payment link" : {
-      "comment" : "Payment editor: segment for Revolut/PayPal/Wise links.",
+    "PAYMENT SLIP" : {
+      "comment" : "Payment slip: printed title. In Hungarian, the yellow cheque everyone knows.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fizetési link"
+            "value" : "CSEKK"
           }
         }
       }
@@ -496,13 +727,13 @@
         }
       }
     },
-    "Pick a bird or use a photo. People pay faster when they can see who's asking." : {
-      "comment" : "Onboarding: avatar step subtitle.",
+    "Pick who you'll be when the bill comes. Or show your actual face — people pay faster when they can see who's asking." : {
+      "comment" : "Onboarding avatar step: subtitle.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Válassz egy madarat vagy egy fotót. Gyorsabban fizetnek, ha látják, ki kéri."
+            "value" : "Válaszd ki, ki leszel, amikor megjön a számla. Vagy mutasd az igazi arcod – gyorsabban fizetnek, ha látják, ki kéri."
           }
         }
       }
@@ -514,17 +745,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ebben a buildben nincsenek profilok."
-          }
-        }
-      }
-    },
-    "Purple bird" : {
-      "comment" : "Avatar preset accessibility name.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lila madár"
           }
         }
       }
@@ -551,17 +771,6 @@
         }
       }
     },
-    "Remove photo" : {
-      "comment" : "Onboarding: remove the picked avatar photo.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fotó eltávolítása"
-          }
-        }
-      }
-    },
     "Scan the receipt" : {
       "comment" : "Receipt line item — an app feature, priced at zero.",
       "localizations" : {
@@ -573,19 +782,8 @@
         }
       }
     },
-    "Service" : {
-      "comment" : "Payment editor: payment link provider picker.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Szolgáltatás"
-          }
-        }
-      }
-    },
     "Sign out" : {
-      "comment" : "Account screen button.",
+      "comment" : "Sign-out button — account screen, and the profile-failed sheet.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
@@ -705,6 +903,17 @@
         }
       }
     },
+    "Take a photo" : {
+      "comment" : "Avatar photo source sheet: take a new photo with the camera.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotó készítése"
+          }
+        }
+      }
+    },
     "Taken. Someone got there first." : {
       "comment" : "Onboarding: handle is taken.",
       "localizations" : {
@@ -712,6 +921,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Foglalt. Valaki gyorsabb volt."
+          }
+        }
+      }
+    },
+    "Tell us what to call you." : {
+      "comment" : "Onboarding: display name is empty.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mondd meg, hogyan szólíthatunk."
+          }
+        }
+      }
+    },
+    "That account number doesn't add up. Check for a typo." : {
+      "comment" : "Bank account validation error.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ez a számlaszám nem stimmel. Nézd meg, nincs-e elütés."
           }
         }
       }
@@ -805,23 +1036,12 @@
       }
     },
     "Try again" : {
-      "comment" : "Profile failed to load: retry button.",
+      "comment" : "Retry button — profile failed to load, or a handle check failed.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Újrapróbálom"
-          }
-        }
-      }
-    },
-    "Type" : {
-      "comment" : "Payment editor: kind picker label.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Típus"
           }
         }
       }
@@ -837,17 +1057,6 @@
         }
       }
     },
-    "Use a photo" : {
-      "comment" : "Onboarding: pick an avatar photo.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fotót választok"
-          }
-        }
-      }
-    },
     "username" : {
       "comment" : "Payment editor: payment link username placeholder.",
       "localizations" : {
@@ -859,24 +1068,24 @@
         }
       }
     },
-    "Username or link" : {
-      "comment" : "Payment editor: payment link field title.",
+    "We can't reach the nest" : {
+      "comment" : "Profile failed to load: sheet title.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Felhasználónév vagy link"
+            "value" : "Nem érjük el a fészket"
           }
         }
       }
     },
-    "We lost your profile" : {
-      "comment" : "Profile failed to load: title.",
+    "We cannot go into never-ending spirals of debt" : {
+      "comment" : "Avatar persona slogan: a European political quote, originally in English.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elkeveredett a profilod"
+            "value" : "Nem kerülhetünk véget nem érő adósságspirálokba"
           }
         }
       }
@@ -899,6 +1108,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hogy szólíthatunk?"
+          }
+        }
+      }
+    },
+    "Whatever you owe." : {
+      "comment" : "Payment slip: the amount field, filled in.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Amennyivel tartozol."
           }
         }
       }
@@ -936,13 +1156,13 @@
         }
       }
     },
-    "Yellow bird" : {
-      "comment" : "Avatar preset accessibility name.",
+    "You need a handle. It's how people find you." : {
+      "comment" : "HandleError.missing",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sárga madár"
+            "value" : "Kell egy felhasználónév. Ezzel találnak meg."
           }
         }
       }
@@ -980,6 +1200,17 @@
         }
       }
     },
+    "Your face, your rules. Mostly your face." : {
+      "comment" : "Avatar photo source sheet: subtitle.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A te arcod, a te szabályaid. Főleg a te arcod."
+          }
+        }
+      }
+    },
     "Your name" : {
       "comment" : "Onboarding: display name placeholder.",
       "localizations" : {
@@ -987,6 +1218,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A neved"
+          }
+        }
+      }
+    },
+    "Your profile won't load. Usually that's the internet, occasionally it's us. Check your connection and try again." : {
+      "comment" : "Profile failed to load: explanation.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nem töltődik be a profilod. Többnyire a net a ludas, néha mi. Nézd meg a kapcsolatot, és próbáld újra."
           }
         }
       }

@@ -16,7 +16,7 @@ nonisolated struct IBAN: Hashable, Sendable {
               scalars[0...1].allSatisfy(Self.isLetter),
               scalars[2...3].allSatisfy(Self.isDigit)
         else { throw .invalidFormat }
-        guard Self.checksum(of: scalars) == 1 else { throw .checksumMismatch }
+        guard Self.remainder(of: String(value.dropFirst(4) + value.prefix(4))) == 1 else { throw .checksumMismatch }
         self.value = value
     }
 
@@ -30,10 +30,11 @@ nonisolated struct IBAN: Hashable, Sendable {
         .joined(separator: " ")
     }
 
-    private static func checksum(of scalars: [Unicode.Scalar]) -> Int {
-        let rearranged = scalars[4...] + scalars[..<4]
+    /// ISO 7064 mod-97 of an alphanumeric string, as the IBAN check uses it. Shared with
+    /// `HungarianAccountNumber`, which derives an IBAN's check digits the same way.
+    static func remainder(of text: String) -> Int {
         var remainder = 0
-        for scalar in rearranged {
+        for scalar in text.unicodeScalars {
             // Letters count as two digits (A = 10 … Z = 35), so shift by 100 instead of 10.
             if isDigit(scalar) {
                 remainder = (remainder * 10 + Int(scalar.value - 48)) % 97

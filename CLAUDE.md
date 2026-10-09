@@ -100,10 +100,14 @@ ObjC-based SDK, NoSQL modeling, `Sendable` friction under Swift 6.
   - `AuthSession` (`Feature/Auth/Model`) is the app-wide `@Observable` state, created
     in the root view and shared via `.environment`. Views never touch `FirebaseAuth`.
     Its `state` combines the auth user with the profile listener: `loading`,
-    `signedOut`, `needsOnboarding`, `profileUnavailable`, `signedIn(user, profile)`.
+    `signedOut`, `needsOnboarding`, `signedIn(user, profile)`. A listener failure
+    doesn't change `state`; it sets `profileSync` to `.failed`, and the root shows
+    `ProfileSyncFailedSheet` (undismissable: retry or sign out) over whatever is up.
   - **"Needs onboarding" = no `users/{uid}` doc on the server**, never Firebase's
-    `isNewUser` (lost if the app dies mid-onboarding). A cache-only miss on a fresh
-    install is ignored until the server answers.
+    `isNewUser` (lost if the app dies mid-onboarding). A cache-only miss triggers one
+    `getDocument(source: .server)`, because offline the listener would wait silently
+    forever; that read fails fast, which surfaces as the error sheet. A cached
+    profile needs no server: signed in + cached profile goes straight home offline.
   - **Account deletion** order: re-authenticate with Apple → delete avatars → delete
     Firestore profile data → revoke the Apple token and delete the Auth user. Anything
     new stored per user must be added to this cleanup.
@@ -112,7 +116,8 @@ ObjC-based SDK, NoSQL modeling, `Sendable` friction under Swift 6.
 
 ```
 users/{uid}                      public profile — any signed-in user can read
-  displayName, handle, avatar: {kind: preset, preset} | {kind: photo, path, url},
+  displayName, handle, avatar: {kind: preset, preset} | {kind: persona, persona, color}
+                                 | {kind: photo, path, url},
   createdAt, updatedAt
 users/{uid}/private/payment      owner-only: { methods: [ {id, kind: bankAccount, iban, holderName}
                                                | {id, kind: link, provider, username} ] }
@@ -142,18 +147,31 @@ When groups land, profile edits must also update the user's entry in each group'
 ### Profiles, handles and payment details
 
 - **Display names are free-form and not unique; handles are unique** (`a–z 0–9 _`,
-  3–20, stored lowercase). Friends find each other by exact handle lookup and — later —
+  3–32, stored lowercase). Friends find each other by exact handle lookup and — later —
   invite links / QR codes. No display-name search (Firestore can't full-text search).
   Phone numbers / contact matching were considered and deferred (SMS cost, SIM-swap
   risk if linked as an auth provider, App Review 5.1.1).
-- **Payment details:** IBAN (mod-97 validated, with holder name) and payment links for
+- **Payment details:** bank accounts (stored as an IBAN, mod-97 validated, with holder
+  name — the field also takes a Hungarian domestic account number, checked with its own
+  9-7-3-1 check digits and converted exactly; Hungarian readers see that domestic format)
+  and payment links for
   an allow-list of providers (Revolut, PayPal, Wise). Links are stored as
   provider + username and rebuilt, never as free-form URLs, so a profile can't point
   people at an arbitrary site. Never store card numbers. IBANs are GDPR personal data:
   owner-only in Firestore, shared into groups later, deleted with the account, and
   declared as "Financial Info" on the App Store privacy label.
-- **Avatars** default to the bird on a coloured disc (`AvatarPreset`, picked stably
-  from the uid). Photos are cropped/resized on device by `AvatarImageProcessor`
+- **Avatars:** a **persona** (`AvatarPersona`, a joke character with a slogan like
+  "Money is no object") on a coloured disc (`AvatarColor`), or a photo. The plain bird
+  (`Avatar.preset`) is no longer offered — it stays for profiles that already have it and
+  as the fallback. Onboarding preselects a random persona; every tile gets its own colour
+  from a shuffled palette, and the chosen colour is stored with the avatar. Persona art ships in the asset
+  catalog as **transparent PNGs** (the app draws the disc), so only the id is stored.
+  The figure must **bleed off the bottom edge** of the square: a body that ends inside the
+  frame shows its straight cut line through the circle mask. Crop art that stops short.
+  An unreadable avatar falls back to the bird on `AvatarColor.default(for: uid)`. Rules check the id's shape, not a list, and an app that doesn't know an id
+  shows the default bird — so new personas need no rules deploy. Raw values are stored:
+  never rename one. Ten personas; case names and asset files describe
+  the persona, never the real person who may have inspired it, since the repo is public. Photos are cropped/resized on device by `AvatarImageProcessor`
   (ImageIO, no UIKit) before upload.
 - **Crashlytics:** Release builds use `DEBUG_INFORMATION_FORMAT = dwarf-with-dsym` and
   a dSYM upload run-script build phase (`upload-symbols` from the SPM checkout) — this
@@ -224,11 +242,18 @@ When groups land, profile edits must also update the user's entry in each group'
   and don't write `colorScheme`-dependent UI.
 - **Never a plain black screen.** Dark here means deep green, not black. A full-screen
   surface uses `SquabbleBackdrop`; anything else should at least sit on a backdrop
-  color rather than the system default.
+  color rather than the system default. Exception: onboarding's `OnboardingBackdrop`
+  fades a traffic-light colour into black — red, then amber, then green reaching further
+  down each step — as a progress cue.
+- **Primary buttons** are solid white capsules with dark text (`.squabblePrimary`),
+  matching the Sign in with Apple button; sheet actions use `SquabbleGlassButton`.
 - **Accent color** (`AccentColor` asset, drives `.tint`): one universal value,
   `#129955` — the classic green sampled from the app icon's background.
   - It's the single brand color — use `Color.accentColor` / `.tint`, don't scatter
-    ad-hoc greens. Additional named colors go in the asset catalog as single
+    ad-hoc greens. Exception: a large **fill** that can sit behind a sheet (the launch
+    splash) uses the asset symbol `Color.accent` instead — iOS greys out and thins the
+    tint behind a presented sheet, which turns `accentColor` fills see-through.
+    Additional named colors go in the asset catalog as single
     universal values, never hardcoded `Color(red:…)` in views.
   - Contrast note: on the dark backdrop `#129955` clears AA for body text (~5.7:1 on
     near-black), so it works as a text/link color here — unlike on white, where it was
@@ -238,8 +263,17 @@ When groups land, profile edits must also update the user's entry in each group'
     `BackdropDeep` `#06180F` — the four rows of `SquabbleBackdrop`'s mesh, bright at
     the top of the screen down to deep green at the bottom.
   - `ReceiptPaper` `#F4F0E4`, `ReceiptInk` `#271814` — prop-receipt paper and its ink.
+  - `OnboardingRed` `#E4502E`, `OnboardingAmber` `#F5BC2F` — the first two onboarding
+    steps' backdrop colours (the third is the accent).
+  - `SlipPaper` `#F2E2A0`, `SlipPrint` `#8C6414` — the payment step's prop payment slip
+    (a nod to the Hungarian yellow postal cheque) and its pre-printed form ink; the
+    details on it are "typed" in `ReceiptInk`. Deliberately a different prop from the
+    welcome receipt.
   - `AvatarLagoon` `#1E8FB3`, `AvatarCoral` `#E4674E`, `AvatarMustard` `#D9A21B`,
-    `AvatarPlum` `#8A4FB0` — preset avatar discs (the fifth, meadow, is the accent).
+    `AvatarPlum` `#8A4FB0`, `AvatarTangerine` `#E8862A`, `AvatarRose` `#D6457F`,
+    `AvatarIndigo` `#4C5BD4`, `AvatarOlive` `#7A9A2C`, `AvatarSlate` `#5B7083`,
+    `AvatarCocoa` `#8B5A3C` — avatar discs (`AvatarColor`; meadow is the accent). One per
+    onboarding tile, so the palette must stay at least as long as the persona list.
 - **Logo:** final — a flat, angular **paper-cut seabird** (a nod to "squab") holding
   a small curled **receipt** in its beak, white on the green field above. Shipped
   as `squabble/Resources/Assets.xcassets/AppIcon.appiconset/icon.png` — a single
@@ -280,19 +314,33 @@ first real file for it lands, following the layout above. The app target folder 
 `squabble/`; tests live in `squabbleTests/` and `squabbleUITests/` at the repo root.
 
 `ContentView` is the root router: it owns `AuthSession` and switches between
-`OnboardingFlowView`, `ProfileUnavailableView` and `HomeView` on its state.
-`OnboardingFlowView` is one native `NavigationStack`: `SignInView` is the root and each
-onboarding step is pushed on top (system back button and swipe-back). Popping back to
-sign-in signs out. It stays mounted while the profile loads after sign-in, so the first
-step arrives as a push rather than a screen swap.
-`squabbleApp` applies the launch splash.
+`OnboardingFlowView` and `HomeView` on its state. There is **no loading screen**: at
+launch the splash bird waits for the answer, and afterwards the current screen stays up
+while the next one is worked out (the sign-in button keeps spinning through the profile
+check via `AuthSession.isLoadingProfile`).
+`OnboardingFlowView` is one native `NavigationStack`: `SignInView` is the root and
+`OnboardingView` is pushed on top once signed in, with no way back (no back button, no
+swipe) — a signed-in user without a profile has nowhere to go on sign-in. It stays mounted
+while the profile loads after sign-in, so onboarding arrives as a push, not a screen swap.
+`OnboardingView` is **one screen with a pager** (name + handle → avatar → payment): an
+offset row of pages driven only by the buttons (no swipe, so the handle can't be skipped),
+not a paging `ScrollView`, whose content doesn't get the keyboard's safe area. The
+traffic-light `OnboardingBackdrop`, the progress segments (nav bar principal slot) and the
+white Continue button (`safeAreaBar`, `.squabblePrimary`) stay put; only pages slide.
+Nothing is written until the last page. Display names cap at 50 characters, handles at 32.
+`ContentView` applies the launch splash (`launchSplash(isContentReady:onReadyForContent:)`):
+the bird plays its intro, then holds still and calls back — only then does the root mount
+its first screen, so that main-thread stall lands while nothing moves — and flies off
+once the screen is ready. Never mount heavy UI under the splash mid-animation; it
+stutters on a device even when the simulator looks smooth.
 
 ### Current state (Sept 2026)
 
 - **Done:** launch splash, Firebase bootstrap, Sign in with Apple (sign in / out /
   delete), and the welcome screen — `SquabbleBackdrop` gradient, the tappable bird as
   hero, and the prop receipt that prints itself. First-run **onboarding**
-  (`Feature/Onboarding`): display name + unique handle → avatar (preset or photo) →
+  (`Feature/Onboarding`): display name + unique handle → avatar (a persona, or a photo
+  from the library or camera via a glass "add photo" tile) →
   optional payment methods, saved in one transaction; `Feature/Profile` holds the
   models, Firestore/Storage adapters and shared views (`AvatarView`,
   `PaymentMethodEditor`). Account deletion wipes profile data and avatars.
@@ -306,7 +354,7 @@ step arrives as a push rather than a screen swap.
 
 ### Screen conventions worth knowing
 
-- **Entrance animations on the root must wait for the splash.** `launchSplash()`
+- **Entrance animations on the root must wait for the splash.** `launchSplash`
   publishes `\.isLaunchSplashFinished` through the environment; anything that animates
   on appear (like the receipt unfurl) has to gate on it or it plays unseen behind the
   splash.

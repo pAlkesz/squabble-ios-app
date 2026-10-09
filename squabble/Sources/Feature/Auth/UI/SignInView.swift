@@ -45,11 +45,15 @@ struct SignInView: View {
 
     private var signIn: some View {
         AppleSignInButton(label: .signIn, onCompletion: signIn)
-            .disabled(isSigningIn)
+            .disabled(isBusy)
             .overlay {
-                if isSigningIn { ProgressView().tint(.black) }
+                if isBusy { ProgressView().tint(.black) }
             }
     }
+
+    /// Signing in isn't done until we know whether there's a profile, so the button keeps
+    /// spinning through that check rather than handing over to a separate loading state.
+    private var isBusy: Bool { isSigningIn || session.isLoadingProfile }
 
     private func signIn(_ result: Result<AppleSignInResult, Error>) {
         Task {

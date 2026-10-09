@@ -28,7 +28,14 @@ service cloud.firestore {
       return avatar is map && (
         (avatar.kind == 'preset'
           && avatar.keys().hasOnly(['kind', 'preset'])
-          && avatar.preset in ['meadow', 'lagoon', 'coral', 'mustard', 'plum'])
+          && avatar.preset in ['meadow', 'lagoon', 'coral', 'mustard', 'plum', 'tangerine', 'rose', 'indigo', 'olive', 'slate', 'cocoa'])
+        // Checked by shape, not a list, so new personas ship without a rules deploy;
+        // an app that doesn't know one shows the bird instead.
+        || (avatar.kind == 'persona'
+          && avatar.keys().hasOnly(['kind', 'persona', 'color'])
+          && avatar.persona is string
+          && avatar.persona.matches('[a-zA-Z0-9]{1,40}')
+          && avatar.color in ['meadow', 'lagoon', 'coral', 'mustard', 'plum', 'tangerine', 'rose', 'indigo', 'olive', 'slate', 'cocoa'])
         || (avatar.kind == 'photo'
           && avatar.keys().hasOnly(['kind', 'path', 'url'])
           && avatar.path is string
@@ -72,7 +79,7 @@ service cloud.firestore {
       allow read: if signedIn();
       // No updates: a handle is released (deleted) and claimed again, never transferred.
       allow create: if signedIn()
-        && handle.matches('[a-z0-9_]{3,20}')
+        && handle.matches('[a-z0-9_]{3,32}')
         && request.resource.data.keys().hasOnly(['uid'])
         && request.resource.data.uid == request.auth.uid
         && getAfter(userPath(request.auth.uid)).data.handle == handle;

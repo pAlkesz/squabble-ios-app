@@ -5,6 +5,7 @@ import Testing
 struct FirestoreMappingTests {
     @Test(arguments: [
         Avatar.preset(.mustard),
+        .persona(.bigSpender, .plum),
         .photo(path: "avatars/uid-1/a.jpg", url: URL(string: "https://example.com/a.jpg")!),
     ])
     func profileRoundTrips(avatar: Avatar) throws {
@@ -14,6 +15,12 @@ struct FirestoreMappingTests {
 
     @Test func unreadableAvatarFallsBackToTheDefaultBird() throws {
         let data: [String: Any] = ["displayName": "Pál", "handle": "pal", "avatar": ["kind": "hologram"]]
+        let profile = try UserProfile(id: "uid-1", firestoreData: data)
+        #expect(profile.avatar == .preset(.default(for: "uid-1")))
+    }
+
+    @Test func personaThisAppDoesntKnowFallsBackToTheDefaultBird() throws {
+        let data: [String: Any] = ["displayName": "Pál", "handle": "pal", "avatar": ["kind": "persona", "persona": "fromTheFuture", "color": "plum"]]
         let profile = try UserProfile(id: "uid-1", firestoreData: data)
         #expect(profile.avatar == .preset(.default(for: "uid-1")))
     }

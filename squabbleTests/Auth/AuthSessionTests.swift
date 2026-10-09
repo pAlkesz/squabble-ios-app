@@ -70,13 +70,70 @@ struct AuthSessionTests {
         observing.cancel()
     }
 
-    @Test func listenerFailureReportsProfileUnavailable() async throws {
-        profiles.listenerError = FirestoreMappingError.malformed("users/uid-1")
+    @Test func listenerFailureAtLaunchKeepsLoadingAndFlagsTheProfile() async throws {
+        profiles.listenerError = ProfileError.offline
         let session = makeSession()
         let observing = Task { await session.observe() }
 
         try await session.signIn(with: apple)
-        await waitUntil { if case .profileUnavailable = session.state { true } else { false } }
+        await waitUntil { session.profileSync == .failed }
+        #expect(session.state == .loading)
+        #expect(!session.isLoadingProfile)
+        observing.cancel()
+    }
+
+    @Test func retryAfterFailureRecovers() async throws {
+        profiles.listenerError = ProfileError.offline
+        let session = makeSession()
+        let observing = Task { await session.observe() }
+        try await session.signIn(with: apple)
+        await waitUntil { session.profileSync == .failed }
+
+        profiles.listenerError = nil
+        session.retryProfile()
+        #expect(session.profileSync == .retrying)
+        await waitUntil { session.profileSync == .live }
+        #expect(session.state == .needsOnboarding(AppUser(id: "uid-1", displayName: "Pal")))
+        observing.cancel()
+    }
+
+    @Test func failureAfterLoadingKeepsTheLastKnownProfile() async throws {
+        let existing = try profile()
+        profiles.seed(existing)
+        let session = makeSession()
+        let observing = Task { await session.observe() }
+        try await session.signIn(with: apple)
+        await waitUntil { session.profile == existing }
+
+        profiles.failListeners(for: "uid-1", with: ProfileError.offline)
+        await waitUntil { session.profileSync == .failed }
+        #expect(session.state == .signedIn(AppUser(id: "uid-1", displayName: "Pal"), existing))
+        observing.cancel()
+    }
+
+    @Test func signingInReportsLoadingProfileUntilItResolves() async throws {
+        profiles.seed(try profile())
+        let session = makeSession()
+        let observing = Task { await session.observe() }
+        await waitUntil { session.state == .signedOut }
+        #expect(!session.isLoadingProfile)
+
+        try await session.signIn(with: apple)
+        await waitUntil { session.profile != nil }
+        #expect(!session.isLoadingProfile)
+        observing.cancel()
+    }
+
+    @Test func signingOutClearsAProfileFailure() async throws {
+        profiles.listenerError = ProfileError.offline
+        let session = makeSession()
+        let observing = Task { await session.observe() }
+        try await session.signIn(with: apple)
+        await waitUntil { session.profileSync == .failed }
+
+        try session.signOut()
+        await waitUntil { session.state == .signedOut }
+        #expect(session.profileSync == .live)
         observing.cancel()
     }
 
