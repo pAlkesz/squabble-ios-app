@@ -1,10 +1,12 @@
 import AuthenticationServices
 import SwiftUI
 
-/// The profile and account screen, zoomed out of the home avatar. It has no background of
-/// its own: it floats over the blurred home screen.
+/// The profile and account screen, zoomed out of the home avatar by `ZoomPresenter`. It has
+/// no background of its own: it floats over the blurred home screen.
 struct AccountView: View {
     let onClose: () -> Void
+    /// The big avatar's frame on screen, so the zoom can land the home avatar on it.
+    var onAvatarFrameChange: (CGRect) -> Void = { _ in }
 
     @Environment(AuthSession.self) private var session
     @State private var isConfirmingDelete = false
@@ -13,8 +15,6 @@ struct AccountView: View {
     @State private var failure: AccountFailure?
 
     var body: some View {
-        // Deliberately no NavigationStack: it's a UIKit hosting boundary, and the zoom can't
-        // measure where the avatar rests through one. Wrap only what's pushed, if it comes to that.
         ScrollView {
             VStack(spacing: 28) {
                 if let profile = session.profile {
@@ -69,7 +69,9 @@ struct AccountView: View {
     private func header(for profile: UserProfile) -> some View {
         VStack(spacing: 10) {
             AvatarView(profile.avatar, size: 96)
-                .zoomDestination()
+                .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: {
+                    onAvatarFrameChange($0)
+                }
             VStack(spacing: 2) {
                 Text(verbatim: profile.displayName)
                     .font(.title.bold())

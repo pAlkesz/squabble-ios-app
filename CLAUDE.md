@@ -31,7 +31,8 @@ well-structured, and easy for the next agent session to pick up.
 
 ## Tech Stack
 
-- **UI:** SwiftUI (no UIKit unless wrapping legacy components)
+- **UI:** SwiftUI (no UIKit unless wrapping legacy components, or where SwiftUI can't do
+  the job — e.g. `ZoomPresenter`'s zoom transition; keep it behind a SwiftUI-facing API)
 - **Backend:** Firebase (`firebase-ios-sdk` via SPM). See "Backend — Firebase" below.
   - Database: Cloud Firestore (offline persistence on)
   - Auth: Firebase Auth
@@ -347,17 +348,22 @@ stutters on a device even when the simulator looks smooth.
 - **Home, in progress:** `HomeView` follows a Revolut-style layout on `SquabbleBackdrop`,
   one `NavigationStack` and **no tab bar** (decided Oct 2026: squabbles are pushed from
   home like conversations; add a `TabView` only once there are 3+ peer destinations).
-  Top bar: avatar, a search pill and a `+` for a new squabble — search and `+` have no
-  destination yet. Below it `TotalBalanceView`, the net of everything owed either way,
-  labelled "Total · <code>"; it's a fixed 0 until groups exist. Totals will be
-  **converted into one home currency** (for now the locale's).
-- **Account zoom:** the avatar opens `AccountView` Revolut-style, not as a sheet: it grows
-  out of the avatar over a blurred, dimmed home (`zoomPresentation` /
-  `zoomPresentationBackdrop` / `zoomDestination` in `Core/UI/Extensions`). The overlay stays
-  mounted while hidden so its avatar's resting frame is known. Its content must **not** sit
-  in a `NavigationStack` — that's a UIKit hosting boundary, the destination then measures
-  in screen space including the zoom transform, and the feedback loop pins the CPU at
-  100%. If account sub-pages arrive, push them some other way or rethink the measurement.
+  The avatar, a glass search pill and a `+` for a new squabble are real **toolbar items**
+  (search and `+` have no destination yet). Below them `TotalBalanceView`, the net of
+  everything owed either way, labelled "Total · <code>"; it's a fixed 0 until groups
+  exist. Totals will be **converted into one home currency** (for now the locale's).
+- **Account zoom:** the avatar opens `AccountView` Revolut-style via `ZoomPresenter`
+  (`Core/UI/Util`): UIKit's zoom transition out of the avatar's bar button, presented
+  `.overFullScreen` with `dimmingVisualEffect` blurring home during the zoom and a matching
+  blur behind the content once it's up. `alignmentRectProvider` lands the small avatar on
+  the big one. Decided Oct 2026 after prototyping both: SwiftUI's
+  `.navigationTransition(.zoom)` has no blur option, and a blur of our own drops out
+  mid-transition. Caveats: the bar button is found in SwiftUI's unpublished item groups on
+  the navigation bar's top item — if an iOS update moves it, the zoom falls back to the
+  `zoomSource(for:)` anchor view and logs a non-fatal, so check Crashlytics after iOS
+  bumps. The account is presented by UIKit outside SwiftUI's tree, so `HomeView` dismisses
+  it on disappear (sign-out / deletion swap the root). Toolbar buttons ignore `.tint` —
+  style their labels directly.
 - **Placeholder:** `AccountView` shows the profile plus sign out / delete — there's no way
   to edit the profile or payment methods after onboarding yet.
 - **Not started:** groups and everything to do with bills — capture, AI parsing, the
