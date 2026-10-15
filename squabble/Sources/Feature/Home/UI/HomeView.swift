@@ -2,12 +2,27 @@ import SwiftUI
 
 /// The hub of the app: the user's overall balance, with the account behind the avatar
 /// and search / new squabble in the toolbar. One navigation stack, no tab bar — every
-/// squabble is pushed from here. The account zooms out of the avatar over a blurred home.
+/// squabble is pushed from here. The account slides up as a sheet.
 struct HomeView: View {
     @Environment(AuthSession.self) private var session
-    @State private var accountZoom = ZoomPresenter()
+    @State private var isShowingAccount = false
 
     var body: some View {
+        home
+            .sheet(isPresented: $isShowingAccount) {
+                AccountView { isShowingAccount = false }
+                    // A frosted blur of home's green. At full height iOS puts an opaque layer
+                    // under every sheet (a clear background shows grey), so a material only
+                    // blurs grey; this blurs our own backdrop instead.
+                    .presentationBackground {
+                        SquabbleBackdrop()
+                            .blur(radius: 30)
+                            .overlay(.ultraThinMaterial)
+                    }
+            }
+    }
+
+    private var home: some View {
         NavigationStack {
             ScrollView {
                 // Nothing to total yet: groups and bills haven't landed.
@@ -21,17 +36,16 @@ struct HomeView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { toolbar }
         }
-        // The account is presented by UIKit, outside this view: signing out or deleting the
-        // account swaps the root away from home, and it would otherwise stay on top.
-        .onDisappear { accountZoom.dismiss(animated: false) }
     }
 
     @ToolbarContentBuilder
     private var toolbar: some ToolbarContent {
+        // Borderless: the toolbar's glass hidden, so the avatar shows edge to edge.
         ToolbarItem(placement: .topBarLeading) {
-            Button(action: openAccount) {
+            Button {
+                isShowingAccount = true
+            } label: {
                 avatar
-                    .zoomSource(for: accountZoom)
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Account")
@@ -66,14 +80,6 @@ struct HomeView: View {
         } else {
             AvatarView(content: .empty, size: 40)
         }
-    }
-
-    private func openAccount() {
-        let zoom = accountZoom
-        zoom.present(
-            AccountView(onClose: { zoom.dismiss() }, onAvatarFrameChange: { zoom.alignmentRect = $0 })
-                .environment(session)
-        )
     }
 
     // Until there's a currency setting, totals convert into the reader's local currency.

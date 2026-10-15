@@ -1,12 +1,10 @@
 import AuthenticationServices
 import SwiftUI
 
-/// The profile and account screen, zoomed out of the home avatar by `ZoomPresenter`. It has
-/// no background of its own: it floats over the blurred home screen.
+/// The profile and account screen, a sheet from the home avatar. It has no background of its
+/// own; the sheet provides it. Its `NavigationStack` is for account pages yet to come.
 struct AccountView: View {
     let onClose: () -> Void
-    /// The big avatar's frame on screen, so the zoom can land the home avatar on it.
-    var onAvatarFrameChange: (CGRect) -> Void = { _ in }
 
     @Environment(AuthSession.self) private var session
     @State private var isConfirmingDelete = false
@@ -15,20 +13,25 @@ struct AccountView: View {
     @State private var failure: AccountFailure?
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 28) {
-                if let profile = session.profile {
-                    header(for: profile)
+        // Pages pushed here later need a clear container background too, to share the sheet's.
+        NavigationStack {
+            root
+                // The × is a real toolbar item, not part of the page, so pushing and popping
+                // morph it into the back button in place instead of sliding it with the page.
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        // A styled label: toolbar buttons ignore `.tint`.
+                        Button(action: onClose) {
+                            Image(systemName: "xmark").foregroundStyle(.white)
+                        }
+                        .accessibilityLabel("Close")
+                    }
                 }
-                actions
-            }
-            .padding(.horizontal, 16)
-            .padding(.top, 8)
-            .padding(.bottom, 32)
-            .frame(maxWidth: 560)
-            .frame(maxWidth: .infinity)
+                .containerBackground(.clear, for: .navigation)
         }
-        .safeAreaBar(edge: .top) { topBar }
+        // The system back button follows the stack's tint.
+        .tint(.white)
         .foregroundStyle(.white)
         .accessibilityAction(.escape, onClose)
         .confirmationDialog("Delete your account?", isPresented: $isConfirmingDelete, titleVisibility: .visible) {
@@ -51,27 +54,25 @@ struct AccountView: View {
         }
     }
 
-    private var topBar: some View {
-        Button(action: onClose) {
-            Image(systemName: "xmark")
-                .font(.body.weight(.semibold))
-                .frame(width: 44, height: 44)
-                .contentShape(.circle)
+    private var root: some View {
+        ScrollView {
+            VStack(spacing: 28) {
+                if let profile = session.profile {
+                    header(for: profile)
+                }
+                actions
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 8)
+            .padding(.bottom, 32)
+            .frame(maxWidth: 560)
+            .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.plain)
-        .glassEffect(.regular.interactive(), in: .circle)
-        .accessibilityLabel("Close")
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 16)
-        .padding(.bottom, 8)
     }
 
     private func header(for profile: UserProfile) -> some View {
         VStack(spacing: 10) {
             AvatarView(profile.avatar, size: 96)
-                .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: {
-                    onAvatarFrameChange($0)
-                }
             VStack(spacing: 2) {
                 Text(verbatim: profile.displayName)
                     .font(.title.bold())

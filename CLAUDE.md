@@ -31,8 +31,8 @@ well-structured, and easy for the next agent session to pick up.
 
 ## Tech Stack
 
-- **UI:** SwiftUI (no UIKit unless wrapping legacy components, or where SwiftUI can't do
-  the job — e.g. `ZoomPresenter`'s zoom transition; keep it behind a SwiftUI-facing API)
+- **UI:** SwiftUI (no UIKit unless wrapping legacy components, or where SwiftUI genuinely
+  can't do the job; keep it behind a SwiftUI-facing API)
 - **Backend:** Firebase (`firebase-ios-sdk` via SPM). See "Backend — Firebase" below.
   - Database: Cloud Firestore (offline persistence on)
   - Auth: Firebase Auth
@@ -352,20 +352,25 @@ stutters on a device even when the simulator looks smooth.
   (search and `+` have no destination yet). Below them `TotalBalanceView`, the net of
   everything owed either way, labelled "Total · <code>"; it's a fixed 0 until groups
   exist. Totals will be **converted into one home currency** (for now the locale's).
-- **Account zoom:** the avatar opens `AccountView` Revolut-style via `ZoomPresenter`
-  (`Core/UI/Util`): UIKit's zoom transition out of the avatar's bar button, presented
-  `.overFullScreen` with `dimmingVisualEffect` blurring home during the zoom and a matching
-  blur behind the content once it's up. `alignmentRectProvider` lands the small avatar on
-  the big one. Decided Oct 2026 after prototyping both: SwiftUI's
-  `.navigationTransition(.zoom)` has no blur option, and a blur of our own drops out
-  mid-transition. Caveats: the bar button is found in SwiftUI's unpublished item groups on
-  the navigation bar's top item — if an iOS update moves it, the zoom falls back to the
-  `zoomSource(for:)` anchor view and logs a non-fatal, so check Crashlytics after iOS
-  bumps. The account is presented by UIKit outside SwiftUI's tree, so `HomeView` dismisses
-  it on disappear (sign-out / deletion swap the root). Toolbar buttons ignore `.tint` —
-  style their labels directly.
+- **Account sheet:** the borderless 40 pt avatar (toolbar glass hidden) opens `AccountView`
+  as a regular sheet on a frosted blur of `SquabbleBackdrop` (at full height iOS 26 puts an
+  opaque layer under every sheet, so a material or Liquid Glass background only blurs grey).
+  `AccountView` has its own `NavigationStack` with the × as a real toolbar item, so pages
+  pushed there later morph × ↔ back in place; give them a clear container background.
+  Decided Oct 2026 after prototyping a Revolut-style zoom out of the avatar every way we
+  could (custom SwiftUI overlay, SwiftUI/UIKit zoom transitions as full screen, push and
+  sheet). Findings worth keeping:
+  - iOS's curved "button morphs into the sheet" zoom only happens from a SwiftUI toolbar
+    item that shows its own glass, and that glass always pads its content (a ring around an
+    avatar). With the glass hidden, or a plain view as source, it falls back to a generic
+    zoom that lands as a square card. `matchedTransitionSource` only accepts rounded-rect
+    clip shapes.
+  - Measuring a view inside a `NavigationStack` that something is scaling feeds the scale
+    back into the measurement: read such frames once, never continuously (a continuous
+    read hung the app on device), and keep them out of SwiftUI state.
+  - Toolbar buttons ignore `.tint` — style their labels directly.
 - **Placeholder:** `AccountView` shows the profile plus sign out / delete — there's no way
-  to edit the profile or payment methods after onboarding yet.
+  to edit the profile or payment methods yet. Search and `+` on home have no destination.
 - **Not started:** groups and everything to do with bills — capture, AI parsing, the
   split algorithm, reminders, invite links.
 
