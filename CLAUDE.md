@@ -245,7 +245,8 @@ When groups land, profile edits must also update the user's entry in each group'
   surface uses `SquabbleBackdrop`; anything else should at least sit on a backdrop
   color rather than the system default. Exception: onboarding's `OnboardingBackdrop`
   fades a traffic-light colour into black — red, then amber, then green reaching further
-  down each step — as a progress cue.
+  down each step — as a progress cue. Home tints its backdrop by the balance (below), so
+  in the red the deep end is a maroon rather than green — still never black.
 - **Primary buttons** are solid white capsules with dark text (`.squabblePrimary`),
   matching the Sign in with Apple button; sheet actions use `SquabbleGlassButton`.
 - **Accent color** (`AccentColor` asset, drives `.tint`): one universal value,
@@ -263,6 +264,10 @@ When groups land, profile edits must also update the user's entry in each group'
   - `BackdropTop` `#4FDD97`, `BackdropHigh` `#13924F`, `BackdropMid` `#0A3A23`,
     `BackdropDeep` `#06180F` — the four rows of `SquabbleBackdrop`'s mesh, bright at
     the top of the screen down to deep green at the bottom.
+  - `BalanceNeutral*`, `BalancePale*`, `BalanceAmber*`, `BalanceRed*` (each `Top`/`High`/
+    `Mid`/`Deep`, mirroring the four `Backdrop*` rows) — home's balance moods: petrol
+    `#1A6670` at zero, pale green, amber `#C25E14`, red `#B3261E` (the `High` values).
+    The brand `Backdrop*` set is the fully-owed end.
   - `ReceiptPaper` `#F4F0E4`, `ReceiptInk` `#271814` — prop-receipt paper and its ink.
   - `OnboardingRed` `#E4502E`, `OnboardingAmber` `#F5BC2F` — the first two onboarding
     steps' backdrop colours (the third is the accent).
@@ -352,6 +357,15 @@ stutters on a device even when the simulator looks smooth.
   (search and `+` have no destination yet). Below them `TotalBalanceView`, the net of
   everything owed either way, labelled "Total · <code>"; it's a fixed 0 until groups
   exist. Totals will be **converted into one home currency** (for now the locale's).
+- **Balance backdrop:** `BalanceMood` (`Feature/Home/Model`) turns the total into a signed
+  intensity (−1…1) and a `BackdropPalette` for `SquabbleBackdrop` — hue says which way the
+  money flows, saturation how much. Petrol at zero (deliberately not a Revolut-ish royal
+  blue/indigo); pale green → brand green when owed, amber → red when owing. Log scale,
+  full strength at ~€250, mild colours fully in at ~€6; amounts are judged in rough euro
+  terms via a small per-currency table, to be replaced by real rates when totals convert.
+  The sheet's blurred background uses the same palette. `SquabbleBackdrop`'s drift is
+  driven by a `TimelineView` clock, not a repeating animation, so an animated palette
+  change can't cancel it. Debug builds: long-press the total to get a balance slider.
 - **Account sheet:** the borderless 40 pt avatar (toolbar glass hidden) opens `AccountView`
   as a regular sheet on a frosted blur of `SquabbleBackdrop` (at full height iOS 26 puts an
   opaque layer under every sheet, so a material or Liquid Glass background only blurs grey).
