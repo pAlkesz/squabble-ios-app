@@ -12,10 +12,14 @@ nonisolated protocol ProfileRepository: Sendable {
     /// Needs a connection: handle uniqueness can't be settled from the local cache.
     func createProfile(_ profile: UserProfile, paymentMethods: [PaymentMethod]) async throws
 
-    /// Saves the display name and avatar. The handle never changes here. Like the other
-    /// writes below, it lands in the local cache straight away and syncs when it can;
-    /// it only throws if the write can't be made at all.
-    func updateProfile(_ profile: UserProfile) throws
+    /// Saves the display name and avatar; the handle never changes here. The change shows
+    /// from the local cache straight away, but this only returns once the server has
+    /// accepted it (offline, that means waiting for a connection). A rejected write is
+    /// rolled back in the cache and thrown here.
+    func updateProfile(_ profile: UserProfile) async throws
+
+    // The writes below land in the local cache straight away and sync when they can; they
+    // only throw if the write can't be made at all.
 
     /// The owner's payment methods, from the cache first, then every change.
     func paymentMethodChanges(for uid: String) -> AsyncThrowingStream<[PaymentMethod], Error>

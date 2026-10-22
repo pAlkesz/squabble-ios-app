@@ -54,7 +54,7 @@ nonisolated final class FakeProfileRepository: ProfileRepository, @unchecked Sen
         publish(profile.id)
     }
 
-    func updateProfile(_ profile: UserProfile) throws {
+    func updateProfile(_ profile: UserProfile) async throws {
         if let saveError { throw saveError }
         profiles[profile.id] = profile
         publish(profile.id)

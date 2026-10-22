@@ -102,13 +102,18 @@ nonisolated final class FirestoreProfileRepository: ProfileRepository {
         }
     }
 
-    func updateProfile(_ profile: UserProfile) throws {
+    func updateProfile(_ profile: UserProfile) async throws {
         guard let db else { throw ProfileError.unavailable }
-        Self.user(profile.id, in: db).updateData([
+        nonisolated(unsafe) let fields: [String: Any] = [
             UserProfile.Field.displayName: profile.displayName,
             UserProfile.Field.avatar: profile.avatar.firestoreData,
             UserProfile.Field.updatedAt: FieldValue.serverTimestamp(),
-        ], completion: Self.logFailure("Profile update failed"))
+        ]
+        do {
+            try await Self.user(profile.id, in: db).updateData(fields)
+        } catch {
+            throw Self.mapped(error)
+        }
     }
 
     func paymentMethodChanges(for uid: String) -> AsyncThrowingStream<[PaymentMethod], Error> {

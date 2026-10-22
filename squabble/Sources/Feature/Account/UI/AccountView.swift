@@ -140,7 +140,7 @@ struct AccountView: View {
             }
             if profile.avatar.photoPath != nil {
                 Button("Remove photo", systemImage: "trash", role: .destructive) {
-                    Task { await removePhoto(from: profile) }
+                    ProfileEditor().removePhoto(from: profile)
                 }
             }
         } label: {
@@ -280,16 +280,6 @@ struct AccountView: View {
             try await ProfileEditor().setPhoto(jpeg, on: profile)
         } catch {
             AppLog.error(error, "Avatar photo change failed")
-            failure = AccountFailure(message: error.localizedDescription)
-        }
-    }
-
-    private func removePhoto(from profile: UserProfile) async {
-        isUpdatingAvatar = true
-        defer { isUpdatingAvatar = false }
-        do {
-            try await ProfileEditor().removePhoto(from: profile)
-        } catch {
             failure = AccountFailure(message: error.localizedDescription)
         }
     }

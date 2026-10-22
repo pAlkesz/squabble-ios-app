@@ -42,7 +42,8 @@ service cloud.firestore {
           && avatar.path is string
           && avatar.path.matches('avatars/' + uid + '/[^/]+[.]jpg')
           && avatar.url is string
-          && avatar.url.matches('https://firebasestorage[.]googleapis[.]com/.*'))
+          // The iOS SDK spells out the port in download URLs.
+          && avatar.url.matches('https://firebasestorage[.]googleapis[.]com(:443)?/.*'))
       );
     }
 

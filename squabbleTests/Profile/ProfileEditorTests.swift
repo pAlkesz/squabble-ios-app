@@ -14,10 +14,10 @@ struct ProfileEditorTests {
         UserProfile(id: "uid-1", displayName: "Pal", handle: try Handle(validating: "pal"), avatar: avatar)
     }
 
-    @Test func renameTrimsAndKeepsTheHandle() throws {
+    @Test func renameTrimsAndKeepsTheHandle() async throws {
         let original = try profile()
         profiles.seed(original)
-        try editor.rename(original, to: "  Pál Papp  ")
+        try await editor.rename(original, to: "  Pál Papp  ").value
         #expect(profiles.profiles["uid-1"]?.displayName == "Pál Papp")
         #expect(profiles.profiles["uid-1"]?.handle == original.handle)
     }
@@ -51,12 +51,26 @@ struct ProfileEditorTests {
         try await editor.setPhoto(Data([1]), on: original)
         let withPhoto = try #require(profiles.profiles["uid-1"])
 
-        try await editor.removePhoto(from: withPhoto)
+        await editor.removePhoto(from: withPhoto).value
 
         guard case .persona = profiles.profiles["uid-1"]?.avatar else {
             Issue.record("Expected a persona avatar")
             return
         }
         #expect(avatars.deletedPaths.contains("avatars/uid-1/1.jpg"))
+    }
+
+    @Test func rejectedPhotoChangeIsThrownAndKeepsTheOldPhoto() async throws {
+        let original = try profile()
+        profiles.seed(original)
+        try await editor.setPhoto(Data([1]), on: original)
+        let withPhoto = try #require(profiles.profiles["uid-1"])
+        profiles.saveError = ProfileError.offline
+
+        await #expect(throws: ProfileError.offline) {
+            try await editor.setPhoto(Data([2]), on: withPhoto)
+        }
+        #expect(profiles.profiles["uid-1"] == withPhoto)
+        #expect(!avatars.deletedPaths.contains("avatars/uid-1/1.jpg"))
     }
 }
