@@ -265,6 +265,17 @@
         }
       }
     },
+    "Automatic" : {
+      "comment" : "Home currency picker: follow the phone's region.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatikus"
+          }
+        }
+      }
+    },
     "Back" : {
       "comment" : "Onboarding: back button accessibility label.",
       "localizations" : {
@@ -316,6 +327,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mégse"
+          }
+        }
+      }
+    },
+    "Change photo" : {
+      "comment" : "Account screen: accessibility label of the avatar menu.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotó cseréje"
           }
         }
       }
@@ -430,6 +452,17 @@
         }
       }
     },
+    "Follows your phone's region. Totals are converted into this currency, so pick the one your bank account thinks in." : {
+      "comment" : "Home currency picker: footer under the Automatic row.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A telefonod régióját követi. Az összesítők ebbe a pénznembe váltódnak át, szóval azt válaszd, amiben a bankszámlád gondolkodik."
+          }
+        }
+      }
+    },
     "FREE. THE FALLOUT ISN'T." : {
       "comment" : "Receipt footer — the app is free, the consequences are not.",
       "localizations" : {
@@ -459,6 +492,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "felhasznalonev"
+          }
+        }
+      }
+    },
+    "Home currency" : {
+      "comment" : "Account screen row and page title: the currency the home total is shown in.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alap pénznem"
           }
         }
       }
@@ -628,6 +672,17 @@
         }
       }
     },
+    "Nothing here yet. Bold of you to expect people to pay you back by telepathy." : {
+      "comment" : "Payment details page: empty state.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Még semmi. Merész húzás telepátiás visszafizetésre számítani."
+          }
+        }
+      }
+    },
     "OK" : {
       "comment" : "Alert dismiss button.",
       "localizations" : {
@@ -646,6 +701,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Csak a–z, 0–9 és alulvonás. Ékezet nélkül, bocs."
+          }
+        }
+      }
+    },
+    "Only people you split bills with can see these." : {
+      "comment" : "Payment details page: privacy note under the list.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Csak azok látják, akikkel számlát osztasz."
           }
         }
       }
@@ -690,6 +756,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nem kötelező. Adj meg egy bankszámlát vagy fizetési linket, és a „nem tudtam, hová utaljak” többé nem kifogás."
+          }
+        }
+      }
+    },
+    "Payment details" : {
+      "comment" : "Account screen row and page title: the user's bank accounts and payment links.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fizetési adatok"
           }
         }
       }
@@ -756,6 +833,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Eltávolítás"
+          }
+        }
+      }
+    },
+    "Remove photo" : {
+      "comment" : "Account screen avatar menu: go back to a persona.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotó törlése"
           }
         }
       }
@@ -980,6 +1068,17 @@
         }
       }
     },
+    "That name won't fit on a receipt. Keep it between 1 and 50 characters." : {
+      "comment" : "Error when saving an empty or too long display name.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ez a név nem fér ki egy blokkra. Maradj 1 és 50 karakter között."
+          }
+        }
+      }
+    },
     "That picture didn't work. Try a different one." : {
       "comment" : "ProfileError.invalidImage",
       "localizations" : {
@@ -1009,6 +1108,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ez a név áll majd minden számlán — és minden emlékeztetőn, hogy tartoznak neked."
+          }
+        }
+      }
+    },
+    "This is what shows up on receipts and reminders. Your handle stays the same." : {
+      "comment" : "Display name editor: footnote under the field.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ez áll majd a blokkokon és az emlékeztetőkön. A felhasználóneved marad, ami volt."
           }
         }
       }

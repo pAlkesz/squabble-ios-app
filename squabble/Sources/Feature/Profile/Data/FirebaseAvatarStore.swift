@@ -19,10 +19,10 @@ nonisolated final class FirebaseAvatarStore: AvatarStore {
         return .photo(path: reference.fullPath, url: url)
     }
 
-    func deleteAll(for uid: String) async throws {
+    func deleteAll(for uid: String, keeping: String?) async throws {
         guard let storage else { throw ProfileError.unavailable }
         let listing = try await storage.reference(withPath: "avatars/\(uid)").listAll()
-        for item in listing.items {
+        for item in listing.items where item.fullPath != keeping {
             try await item.delete()
         }
     }

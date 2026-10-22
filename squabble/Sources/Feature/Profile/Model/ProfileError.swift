@@ -4,6 +4,7 @@ nonisolated enum ProfileError: LocalizedError, Equatable {
     case handleTaken
     case offline
     case invalidImage
+    case invalidDisplayName
     case unavailable
 
     var errorDescription: String? {
@@ -14,6 +15,8 @@ nonisolated enum ProfileError: LocalizedError, Equatable {
             String(localized: "You're offline. This part needs the internet — try again when you're back.")
         case .invalidImage:
             String(localized: "That picture didn't work. Try a different one.")
+        case .invalidDisplayName:
+            String(localized: "That name won't fit on a receipt. Keep it between 1 and 50 characters.")
         case .unavailable:
             String(localized: "Profiles aren't available in this build.")
         }

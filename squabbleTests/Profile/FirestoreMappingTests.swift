@@ -44,3 +44,25 @@ struct FirestoreMappingTests {
         #expect(PaymentMethod(firestoreData: data) == nil)
     }
 }
+
+struct UserPreferencesMappingTests {
+    @Test func homeCurrencyRoundTrips() {
+        let preferences = UserPreferences(homeCurrencyCode: "HUF")
+        #expect(UserPreferences(firestoreData: preferences.firestoreData) == preferences)
+    }
+
+    @Test func automaticIsStoredAsNoField() {
+        #expect(UserPreferences().firestoreData.isEmpty)
+        #expect(UserPreferences(firestoreData: [:]).homeCurrencyCode == nil)
+    }
+
+    @Test(arguments: ["huf", "EURO", "", "€"])
+    func malformedCodesFallBackToAutomatic(_ code: String) {
+        #expect(UserPreferences(firestoreData: ["homeCurrency": code]).homeCurrencyCode == nil)
+    }
+
+    @Test func resolvesToTheChosenCurrencyOverTheDevice() {
+        #expect(UserPreferences(homeCurrencyCode: "JPY").resolvedHomeCurrencyCode == "JPY")
+        #expect(UserPreferences().resolvedHomeCurrencyCode == UserPreferences.deviceCurrencyCode)
+    }
+}

@@ -3,6 +3,7 @@ rules_version = '2';
 // Layout (see CLAUDE.md, "Firestore data model"):
 //   users/{uid}                 public profile — any signed-in user can read it
 //   users/{uid}/private/payment owner-only payment methods
+//   users/{uid}/private/preferences owner-only settings (home currency)
 //   handles/{handle}            { uid } — the lock that keeps handles unique
 //
 // Deploy: firebase deploy --only firestore:rules,storage
@@ -67,11 +68,18 @@ service cloud.firestore {
 
       match /private/{document} {
         allow read, delete: if isUser(uid);
-        allow create, update: if isUser(uid)
-          && document == 'payment'
-          && request.resource.data.keys().hasOnly(['methods'])
-          && request.resource.data.methods is list
-          && request.resource.data.methods.size() <= 5;
+        allow create, update: if isUser(uid) && (
+          (document == 'payment'
+            && request.resource.data.keys().hasOnly(['methods'])
+            && request.resource.data.methods is list
+            && request.resource.data.methods.size() <= 5)
+          // No homeCurrency means "follow the device".
+          || (document == 'preferences'
+            && request.resource.data.keys().hasOnly(['homeCurrency'])
+            && (!('homeCurrency' in request.resource.data)
+              || (request.resource.data.homeCurrency is string
+                && request.resource.data.homeCurrency.matches('[A-Z]{3}'))))
+        );
       }
     }
 

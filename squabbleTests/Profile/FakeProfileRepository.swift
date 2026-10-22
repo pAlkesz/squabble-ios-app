@@ -7,6 +7,7 @@ nonisolated final class FakeProfileRepository: ProfileRepository, @unchecked Sen
     private(set) var profiles: [String: UserProfile] = [:]
     private(set) var paymentMethods: [String: [PaymentMethod]] = [:]
     private(set) var claimedHandles: [Handle: String] = [:]
+    private(set) var preferences: [String: UserPreferences] = [:]
     private(set) var deletedUIDs: [String] = []
     var listenerError: Error?
     var saveError: Error?
@@ -53,11 +54,36 @@ nonisolated final class FakeProfileRepository: ProfileRepository, @unchecked Sen
         publish(profile.id)
     }
 
+    func updateProfile(_ profile: UserProfile) throws {
+        if let saveError { throw saveError }
+        profiles[profile.id] = profile
+        publish(profile.id)
+    }
+
+    func paymentMethodChanges(for uid: String) -> AsyncThrowingStream<[PaymentMethod], Error> {
+        AsyncThrowingStream { $0.yield(paymentMethods[uid] ?? []) }
+    }
+
+    func setPaymentMethods(_ methods: [PaymentMethod], for uid: String) throws {
+        if let saveError { throw saveError }
+        paymentMethods[uid] = methods
+    }
+
+    func preferenceChanges(for uid: String) -> AsyncThrowingStream<UserPreferences, Error> {
+        AsyncThrowingStream { $0.yield(preferences[uid] ?? UserPreferences()) }
+    }
+
+    func setPreferences(_ preferences: UserPreferences, for uid: String) throws {
+        if let saveError { throw saveError }
+        self.preferences[uid] = preferences
+    }
+
     func deleteProfile(_ profile: UserProfile?, uid: String) async throws {
         deletedUIDs.append(uid)
         if let profile { claimedHandles[profile.handle] = nil }
         profiles[uid] = nil
         paymentMethods[uid] = nil
+        preferences[uid] = nil
         publish(uid)
     }
 

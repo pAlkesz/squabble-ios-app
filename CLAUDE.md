@@ -122,6 +122,8 @@ users/{uid}                      public profile — any signed-in user can read
   createdAt, updatedAt
 users/{uid}/private/payment      owner-only: { methods: [ {id, kind: bankAccount, iban, holderName}
                                                | {id, kind: link, provider, username} ] }
+users/{uid}/private/preferences  owner-only: { homeCurrency? } — no field means "follow the
+                                 device's region"; only written once the user picks one
 handles/{handle}                 { uid } — uniqueness lock, claimed in the same
                                  transaction as the profile (rules enforce both ways)
 avatars/{uid}/{random}.jpg       Storage: 512px square JPEG, < 1 MB
@@ -384,8 +386,17 @@ stutters on a device even when the simulator looks smooth.
     back into the measurement: read such frames once, never continuously (a continuous
     read hung the app on device), and keep them out of SwiftUI state.
   - Toolbar buttons ignore `.tint` — style their labels directly.
-- **Placeholder:** `AccountView` shows the profile plus sign out / delete — there's no way
-  to edit the profile or payment methods yet. Search and `+` on home have no destination.
+- **Account editing** (`Feature/Account`): tapping the avatar opens a `Menu` (library /
+  camera / remove photo), not another sheet. After onboarding the only avatar change is a
+  photo: removing one falls back to a random persona, and every change sweeps older uploads
+  (`AvatarStore.deleteAll(for:keeping:)`). Display name, payment details and home currency
+  are pages pushed on `AccountView`'s stack. Edits go through `ProfileEditor` and are
+  fire-and-forget writes to the local cache; the handle can't be changed.
+- **Home currency:** `PreferencesStore` (owned by `HomeView`, passed to the account sheet
+  via the environment) listens to `private/preferences`. Unset means
+  `Locale.current.currency` (the phone's Region, not its language), resolved at read time
+  so a move abroad updates the default. Nothing converts yet — it only relabels the total.
+- **Placeholder:** search and `+` on home have no destination.
 - **Not started:** groups and everything to do with bills — capture, AI parsing, the
   split algorithm, reminders, invite links.
 
