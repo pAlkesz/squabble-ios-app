@@ -18,19 +18,25 @@ nonisolated struct BalanceMood: Equatable, Sendable {
     // The colour assets' generated symbols are main-actor isolated.
     @MainActor var palette: BackdropPalette {
         let strength = abs(intensity)
-        let (mild, strong) = intensity < 0 ? (Self.amber, Self.red) : (Self.pale, BackdropPalette.brand)
-        if strength < Self.mildIntensity {
-            return Self.neutral.mixed(with: mild, by: strength / Self.mildIntensity)
+        let isOwing = intensity < 0
+        let (mild, strong) = isOwing ? (Self.amber, Self.red) : (Self.pale, BackdropPalette.brand)
+        let mildAt = isOwing ? Self.owingMildIntensity : Self.owedMildIntensity
+        if strength < mildAt {
+            return Self.neutral.mixed(with: mild, by: strength / mildAt)
         }
-        return mild.mixed(with: strong, by: (strength - Self.mildIntensity) / (1 - Self.mildIntensity))
+        return mild.mixed(with: strong, by: (strength - mildAt) / (1 - mildAt))
     }
 
     /// Log scale, so €5, €50 and €250 each read as a real step rather than everything
     /// under €100 looking the same.
     private static let fullIntensityEuros = 250.0
 
-    /// Where the mild colours (pale green, amber) sit fully: about €6.
-    private static let mildIntensity = 0.35
+    /// Where pale green sits fully: about €6.
+    private static let owedMildIntensity = 0.35
+
+    /// Where amber sits fully: about €1. Halfway between petrol and amber is a muddy
+    /// khaki, so a debt has to get through it quickly to read as a warning.
+    private static let owingMildIntensity = 0.125
 
     /// "Small" depends on the currency (5 HUF is nothing), so amounts are judged in rough
     /// euro terms. A vibe table, not exchange rates — swap for the real rates once home

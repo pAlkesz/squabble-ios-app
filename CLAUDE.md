@@ -361,7 +361,8 @@ stutters on a device even when the simulator looks smooth.
   intensity (−1…1) and a `BackdropPalette` for `SquabbleBackdrop` — hue says which way the
   money flows, saturation how much. Petrol at zero (deliberately not a Revolut-ish royal
   blue/indigo); pale green → brand green when owed, amber → red when owing. Log scale,
-  full strength at ~€250, mild colours fully in at ~€6; amounts are judged in rough euro
+  full strength at ~€250, pale green fully in at ~€6 but amber already at ~€1 (the
+  petrol–amber midpoint is a muddy khaki, so debts rush through it); amounts are judged in rough euro
   terms via a small per-currency table, to be replaced by real rates when totals convert.
   The sheet's blurred background uses the same palette. `SquabbleBackdrop`'s drift is
   driven by a `TimelineView` clock, not a repeating animation, so an animated palette
