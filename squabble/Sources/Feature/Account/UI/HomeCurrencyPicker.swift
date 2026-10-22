@@ -16,8 +16,9 @@ struct HomeCurrencyPicker: View {
                 Section {
                     row(
                         code: nil,
+                        flag: deviceCurrency,
                         title: Text("Automatic", comment: "Home currency picker: follow the phone's region."),
-                        detail: UserPreferences.deviceCurrencyCode
+                        detail: "\(deviceCurrency.code) · \(deviceCurrency.name)"
                     )
                 } footer: {
                     Text(
@@ -29,7 +30,7 @@ struct HomeCurrencyPicker: View {
             }
             Section {
                 ForEach(options.filter { $0.matches(query) }) { option in
-                    row(code: option.code, title: Text(verbatim: option.name), detail: option.code)
+                    row(code: option.code, flag: option, title: Text(verbatim: option.name), detail: detail(for: option))
                 }
             }
         }
@@ -48,17 +49,30 @@ struct HomeCurrencyPicker: View {
     }
 
     /// `nil` is the automatic row.
-    private func row(code: String?, title: Text, detail: String) -> some View {
+    private var deviceCurrency: CurrencyOption {
+        CurrencyOption(code: UserPreferences.deviceCurrencyCode)
+    }
+
+    /// "HUF · Hungary", or just the code when no single country goes with it.
+    private func detail(for option: CurrencyOption) -> String {
+        option.countryName.map { "\(option.code) · \($0)" } ?? option.code
+    }
+
+    private func row(code: String?, flag: CurrencyOption, title: Text, detail: String) -> some View {
         let isSelected = preferences.preferences.homeCurrencyCode == code
         return Button {
             choose(code)
         } label: {
-            HStack {
-                title
-                Spacer()
-                Text(verbatim: detail)
-                    .font(.body.monospaced())
-                    .foregroundStyle(.white.opacity(0.6))
+            HStack(spacing: 14) {
+                CurrencyFlag(option: flag)
+                VStack(alignment: .leading, spacing: 2) {
+                    title
+                        .font(.body.weight(.semibold))
+                    Text(verbatim: detail)
+                        .font(.subheadline)
+                        .foregroundStyle(.white.opacity(0.6))
+                }
+                Spacer(minLength: 0)
                 Image(systemName: "checkmark")
                     .font(.body.weight(.semibold))
                     .foregroundStyle(Color.accent)
