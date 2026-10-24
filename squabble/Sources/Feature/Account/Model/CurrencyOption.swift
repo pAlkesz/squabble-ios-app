@@ -12,11 +12,9 @@ nonisolated struct CurrencyOption: Identifiable, Equatable, Sendable {
 
     var id: String { code }
 
-    /// The flag as an emoji: two regional indicator symbols spelling the region code.
-    var flag: String? {
-        guard let flagRegion else { return nil }
-        let scalars = flagRegion.unicodeScalars.compactMap { Unicode.Scalar(0x1F1A5 + $0.value) }
-        return String(String.UnicodeScalarView(scalars))
+    /// The flag image in the asset catalog's `Flags` folder, named by lowercase region code.
+    var flagAssetName: String? {
+        flagRegion.map { "Flags/\($0.lowercased())" }
     }
 
     init(code: String, locale: Locale = .current) {

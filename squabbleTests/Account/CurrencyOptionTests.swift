@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 import Testing
 @testable import squabble
 
@@ -25,14 +26,22 @@ struct CurrencyOptionTests {
 
     @Test func euroGetsTheEUFlag() {
         let euro = CurrencyOption(code: "EUR", locale: Locale(identifier: "en_US"))
-        #expect(euro.flag == "🇪🇺")
+        #expect(euro.flagAssetName == "Flags/eu")
         #expect(euro.countryName == "European Union")
     }
 
     @Test func sharedCurrenciesGetNoFlag() {
         let franc = CurrencyOption(code: "XOF", locale: Locale(identifier: "en_US"))
-        #expect(franc.flag == nil)
+        #expect(franc.flagAssetName == nil)
         #expect(franc.countryName == nil)
+    }
+
+    /// Every flag the picker can ask for ships in the asset catalog, in every locale's list.
+    @Test func everyFlagHasAnAsset() {
+        let missing = CurrencyOption.all(in: Locale(identifier: "en_US"))
+            .compactMap(\.flagAssetName)
+            .filter { UIImage(named: $0) == nil }
+        #expect(missing.isEmpty)
     }
 
     @Test func searchMatchesTheCountry() throws {

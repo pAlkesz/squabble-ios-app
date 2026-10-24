@@ -396,6 +396,11 @@ stutters on a device even when the simulator looks smooth.
   via the environment) listens to `private/preferences`. Unset means
   `Locale.current.currency` (the phone's Region, not its language), resolved at read time
   so a move abroad updates the default. Nothing converts yet — it only relabels the total.
+  The picker lists `Locale.commonISOCurrencyCodes`, each with a round flag from
+  `Assets.xcassets/Flags` (SVGs copied from MIT-licensed circle-flags; notice in
+  `THIRD_PARTY_NOTICES.md`), named by lowercase region code. Only flags a currency maps to
+  ship; a test fails if one is missing. A currency's country is the region its code starts
+  with (HUF → HU, EUR → EU), else the only region using it; shared ones show a banknote.
 - **Placeholder:** search and `+` on home have no destination.
 - **Not started:** groups and everything to do with bills — capture, AI parsing, the
   split algorithm, reminders, invite links.
