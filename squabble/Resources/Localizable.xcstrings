@@ -353,17 +353,6 @@
         }
       }
     },
-    "Close" : {
-      "comment" : "Accessibility label of the close (×) button on the account screen.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bezárás"
-          }
-        }
-      }
-    },
     "Confirm with Apple to delete your account." : {
       "comment" : "Re-authentication sheet heading before deletion.",
       "localizations" : {

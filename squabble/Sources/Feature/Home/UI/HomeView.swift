@@ -2,11 +2,10 @@ import SwiftUI
 
 /// The hub of the app: the user's overall balance, with the account behind the avatar
 /// and search / new squabble in the toolbar. One navigation stack, no tab bar — every
-/// squabble is pushed from here. The account slides up as a sheet. The backdrop takes
-/// its colour from the balance (`BalanceMood`).
+/// squabble is pushed from here, and so is the account. The backdrop takes its colour from
+/// the balance (`BalanceMood`), on home and on every page pushed from it.
 struct HomeView: View {
     @Environment(AuthSession.self) private var session
-    @State private var isShowingAccount = false
     @State private var preferences = PreferencesStore()
     #if DEBUG
     @State private var debugBalance: Double?
@@ -17,18 +16,6 @@ struct HomeView: View {
             .task(id: session.user?.id) {
                 guard let uid = session.user?.id else { return }
                 await preferences.observe(uid: uid)
-            }
-            .sheet(isPresented: $isShowingAccount) {
-                AccountView { isShowingAccount = false }
-                    .environment(preferences)
-                    // A frosted blur of home's backdrop, in the balance's colour. At full height iOS puts an opaque layer
-                    // under every sheet (a clear background shows grey), so a material only
-                    // blurs grey; this blurs our own backdrop instead.
-                    .presentationBackground {
-                        SquabbleBackdrop(palette: mood.palette)
-                            .blur(radius: 30)
-                            .overlay(.ultraThinMaterial)
-                    }
             }
     }
 
@@ -50,23 +37,26 @@ struct HomeView: View {
                 .padding(.horizontal, 16)
                 .padding(.top, 72)
             }
-            .background {
-                SquabbleBackdrop(palette: mood.palette)
-                    .animation(.smooth(duration: 1.2), value: mood)
-            }
+            .background { backdrop }
             .containerBackground(.clear, for: .navigation)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { toolbar }
+            .navigationDestination(for: AccountPage.self) { page in
+                accountPage(page)
+                    .background { backdrop }
+                    .containerBackground(.clear, for: .navigation)
+            }
         }
+        // The system back button follows the stack's tint.
+        .tint(.white)
+        .environment(preferences)
     }
 
     @ToolbarContentBuilder
     private var toolbar: some ToolbarContent {
         // Borderless: the toolbar's glass hidden, so the avatar shows edge to edge.
         ToolbarItem(placement: .topBarLeading) {
-            Button {
-                isShowingAccount = true
-            } label: {
+            NavigationLink(value: AccountPage.account) {
                 avatar
             }
             .buttonStyle(.plain)
@@ -92,6 +82,23 @@ struct HomeView: View {
                     .foregroundStyle(.white)
             }
             .accessibilityLabel("New squabble")
+        }
+    }
+
+    /// Each pushed page carries its own copy, as onboarding's pages do: a shared one behind the
+    /// stack would show both pages' content overlapping mid-push.
+    private var backdrop: some View {
+        SquabbleBackdrop(palette: mood.palette)
+            .animation(.smooth(duration: 1.2), value: mood)
+    }
+
+    @ViewBuilder
+    private func accountPage(_ page: AccountPage) -> some View {
+        switch page {
+        case .account: AccountView()
+        case .displayName: DisplayNameEditView()
+        case .paymentDetails: PaymentDetailsView()
+        case .homeCurrency: HomeCurrencyPicker()
         }
     }
 

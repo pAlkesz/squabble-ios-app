@@ -2,19 +2,12 @@ import AuthenticationServices
 import PhotosUI
 import SwiftUI
 
-/// The profile and account screen, a sheet from the home avatar. It has no background of its
-/// own; the sheet provides it. The editing pages are pushed onto its own `NavigationStack`.
-/// Tapping the avatar opens a menu rather than another sheet: after onboarding the only
+/// The profile and account screen, pushed from the home avatar like any other page, so the
+/// photo picker and payment editor open as a single sheet instead of one on top of another.
+/// Its editing pages (`AccountPage`) are pushed on the same stack; home registers them and
+/// gives every page its backdrop. Tapping the avatar opens a menu: after onboarding the only
 /// avatar change is to upload a photo or remove it.
 struct AccountView: View {
-    enum Page: Hashable {
-        case displayName
-        case paymentDetails
-        case homeCurrency
-    }
-
-    let onClose: () -> Void
-
     @Environment(AuthSession.self) private var session
     @Environment(PreferencesStore.self) private var preferences
     @State private var isShowingLibrary = false
@@ -27,28 +20,9 @@ struct AccountView: View {
     @State private var failure: AccountFailure?
 
     var body: some View {
-        // Pages pushed here later need a clear container background too, to share the sheet's.
-        NavigationStack {
-            root
-                // The × is a real toolbar item, not part of the page, so pushing and popping
-                // morph it into the back button in place instead of sliding it with the page.
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        // A styled label: toolbar buttons ignore `.tint`.
-                        Button(action: onClose) {
-                            Image(systemName: "xmark").foregroundStyle(.white)
-                        }
-                        .accessibilityLabel("Close")
-                    }
-                }
-                .containerBackground(.clear, for: .navigation)
-                .navigationDestination(for: Page.self, destination: destination)
-        }
-        // The system back button follows the stack's tint.
-        .tint(.white)
-        .foregroundStyle(.white)
-        .accessibilityAction(.escape, onClose)
+        root
+            .navigationBarTitleDisplayMode(.inline)
+            .foregroundStyle(.white)
         .confirmationDialog("Delete your account?", isPresented: $isConfirmingDelete, titleVisibility: .visible) {
             Button("Continue", role: .destructive) { isReauthenticating = true }
             Button("Cancel", role: .cancel) {}
@@ -97,18 +71,6 @@ struct AccountView: View {
             .frame(maxWidth: 560)
             .frame(maxWidth: .infinity)
         }
-    }
-
-    @ViewBuilder
-    private func destination(for page: Page) -> some View {
-        Group {
-            switch page {
-            case .displayName: DisplayNameEditView()
-            case .paymentDetails: PaymentDetailsView()
-            case .homeCurrency: HomeCurrencyPicker()
-            }
-        }
-        .containerBackground(.clear, for: .navigation)
     }
 
     // MARK: - Header
@@ -201,7 +163,7 @@ struct AccountView: View {
     private func link(
         _ title: LocalizedStringKey,
         systemImage: String,
-        to page: Page,
+        to page: AccountPage,
         @ViewBuilder value: () -> some View = { EmptyView() }
     ) -> some View {
         NavigationLink(value: page) {

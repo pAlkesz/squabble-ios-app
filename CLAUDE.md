@@ -369,12 +369,12 @@ stutters on a device even when the simulator looks smooth.
   The sheet's blurred background uses the same palette. `SquabbleBackdrop`'s drift is
   driven by a `TimelineView` clock, not a repeating animation, so an animated palette
   change can't cancel it. Debug builds: long-press the total to get a balance slider.
-- **Account sheet:** the borderless 40 pt avatar (toolbar glass hidden) opens `AccountView`
-  as a regular sheet on a frosted blur of `SquabbleBackdrop` (at full height iOS 26 puts an
-  opaque layer under every sheet, so a material or Liquid Glass background only blurs grey).
-  `AccountView` has its own `NavigationStack` with the × as a real toolbar item, so pages
-  pushed there later morph × ↔ back in place; give them a clear container background.
-  Decided Oct 2026 after prototyping a Revolut-style zoom out of the avatar every way we
+- **Account page:** the borderless 40 pt avatar (toolbar glass hidden) **pushes**
+  `AccountView` onto home's stack (decided Oct 2026; it was a sheet, but the photo picker
+  and payment editor then stacked a sheet on a sheet). Home registers every `AccountPage`
+  destination and gives each pushed page its own `SquabbleBackdrop` in the balance palette —
+  a shared backdrop behind the stack would show both pages overlapping mid-push.
+  Before settling on a sheet we prototyped a Revolut-style zoom out of the avatar every way we
   could (custom SwiftUI overlay, SwiftUI/UIKit zoom transitions as full screen, push and
   sheet). Findings worth keeping:
   - iOS's curved "button morphs into the sheet" zoom only happens from a SwiftUI toolbar
@@ -390,7 +390,7 @@ stutters on a device even when the simulator looks smooth.
   camera / remove photo), not another sheet. After onboarding the only avatar change is a
   photo: removing one falls back to a random persona, and every change sweeps older uploads
   (`AvatarStore.deleteAll(for:keeping:)`). Display name, payment details and home currency
-  are pages pushed on `AccountView`'s stack. Edits go through `ProfileEditor` and are
+  are pages pushed after it on home's stack. Edits go through `ProfileEditor` and are
   fire-and-forget writes to the local cache; the handle can't be changed.
 - **Home currency:** `PreferencesStore` (owned by `HomeView`, passed to the account sheet
   via the environment) listens to `private/preferences`. Unset means
