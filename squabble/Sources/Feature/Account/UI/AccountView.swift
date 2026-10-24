@@ -85,8 +85,24 @@ struct AccountView: View {
                 Text(verbatim: profile.handle.description)
                     .font(.subheadline)
                     .foregroundStyle(.white.opacity(0.7))
+                Text("Known associates: everyone you owe.", comment: "Account screen: joke caption under the handle, on the mugshot height chart.")
+                    .font(.footnote.italic())
+                    .foregroundStyle(.white.opacity(0.6))
+                    .padding(.top, 6)
             }
+            .multilineTextAlignment(.center)
             .accessibilityElement(children: .combine)
+        }
+        .padding(.top, 16)
+        .padding(.bottom, 8)
+        .background {
+            // Full width and up under the navigation bar, fading out below the caption.
+            LineupChart()
+                .padding(.horizontal, -16)
+                .padding(.top, -60)
+                .mask {
+                    LinearGradient(stops: [.init(color: .black, location: 0.6), .init(color: .clear, location: 1)], startPoint: .top, endPoint: .bottom)
+                }
         }
     }
 
