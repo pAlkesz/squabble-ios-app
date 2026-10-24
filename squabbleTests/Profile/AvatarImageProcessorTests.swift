@@ -40,22 +40,3 @@ struct AvatarImageProcessorTests {
         return output as Data
     }
 }
-
-struct AvatarBackdropColorTests {
-    @Test func murkyColoursGetVivid() {
-        let brown = AvatarImageProcessor.vivid([0.45, 0.38, 0.32])
-        let saturation = (brown.max() - brown.min()) / brown.max()
-        #expect(saturation >= 0.54)
-        #expect(brown.x > brown.y && brown.y > brown.z)
-    }
-
-    @Test func greyStaysGrey() {
-        let grey = AvatarImageProcessor.vivid([0.2, 0.2, 0.2])
-        #expect(grey.max() - grey.min() < 0.001)
-        #expect(grey.max() >= 0.5)
-    }
-
-    @Test func brightnessIsCappedForWhiteText() {
-        #expect(AvatarImageProcessor.vivid([1, 0.9, 0.2]).max() <= 0.7 + 1e-9)
-    }
-}

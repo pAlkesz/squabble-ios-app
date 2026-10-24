@@ -43,7 +43,7 @@ struct HomeView: View {
             .toolbar { toolbar }
             .navigationDestination(for: AccountPage.self) { page in
                 accountPage(page)
-                    .background { ProfileBackdrop() }
+                    .background { backdrop }
                     .containerBackground(.clear, for: .navigation)
             }
         }
@@ -85,8 +85,8 @@ struct HomeView: View {
         }
     }
 
-    /// Account pages carry their own backdrop, as onboarding's pages do: a shared one behind
-    /// the stack would show both pages' content overlapping mid-push.
+    /// Each pushed page carries its own copy, as onboarding's pages do: a shared one behind the
+    /// stack would show both pages' content overlapping mid-push.
     private var backdrop: some View {
         SquabbleBackdrop(palette: mood.palette)
             .animation(.smooth(duration: 1.2), value: mood)

@@ -372,12 +372,8 @@ stutters on a device even when the simulator looks smooth.
 - **Account page:** the borderless 40 pt avatar (toolbar glass hidden) **pushes**
   `AccountView` onto home's stack (decided Oct 2026; it was a sheet, but the photo picker
   and payment editor then stacked a sheet on a sheet). Home registers every `AccountPage`
-  destination and gives each pushed page its own backdrop — a shared one behind the stack
-  would show both pages overlapping mid-push. Account pages use `ProfileBackdrop`, not the
-  balance mood (they're about the person, not their debts): `BackdropPalette.tinted` around
-  the avatar's disc colour, or a photo's average colour pushed vivid
-  (`AvatarImageProcessor.backdropColor`), sinking into deep green. Behind the header sits a
-  police-lineup `LineupChart` (cm, or ft/in in US locales) — the profile as a mugshot.
+  destination and gives each pushed page its own `SquabbleBackdrop` in the balance palette —
+  a shared backdrop behind the stack would show both pages overlapping mid-push.
   Before settling on a sheet we prototyped a Revolut-style zoom out of the avatar every way we
   could (custom SwiftUI overlay, SwiftUI/UIKit zoom transitions as full screen, push and
   sheet). Findings worth keeping:

@@ -595,17 +595,6 @@
         }
       }
     },
-    "Known associates: everyone you owe." : {
-      "comment" : "Account screen: joke caption under the handle, on the mugshot height chart.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ismert cinkosok: mindenki, akinek tartozol."
-          }
-        }
-      }
-    },
     "Loading…" : {
       "comment" : "VoiceOver: the launch splash is waiting for the app to load.",
       "localizations" : {

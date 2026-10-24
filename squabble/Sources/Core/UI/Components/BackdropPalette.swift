@@ -25,15 +25,4 @@ struct BackdropPalette: Equatable {
             deep: deep.mix(with: other.deep, by: fraction, in: .perceptual)
         )
     }
-
-    /// A ramp around one colour: a lighter tint at the top, the colour itself, then sinking
-    /// into the brand's deep green, so even a red or purple page never ends in black.
-    static func tinted(_ color: Color) -> BackdropPalette {
-        BackdropPalette(
-            top: color.mix(with: .white, by: 0.3, in: .perceptual),
-            high: color,
-            mid: color.mix(with: .backdropDeep, by: 0.7, in: .perceptual),
-            deep: .backdropDeep
-        )
-    }
 }
