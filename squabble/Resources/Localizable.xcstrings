@@ -397,6 +397,17 @@
         }
       }
     },
+    "Default currency" : {
+      "comment" : "Account screen row and page title: the currency the home total is shown in.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alapértelmezett pénznem"
+          }
+        }
+      }
+    },
     "Delete account" : {
       "comment" : "Account screen destructive button.",
       "localizations" : {
@@ -492,17 +503,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "felhasznalonev"
-          }
-        }
-      }
-    },
-    "Home currency" : {
-      "comment" : "Account screen row and page title: the currency the home total is shown in.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alap pénznem"
           }
         }
       }

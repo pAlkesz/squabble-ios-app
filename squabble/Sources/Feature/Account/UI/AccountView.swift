@@ -174,7 +174,7 @@ struct AccountView: View {
             divider
             link("Payment details", systemImage: "banknote", to: .paymentDetails)
             divider
-            link("Home currency", systemImage: "dollarsign.arrow.circlepath", to: .homeCurrency) {
+            link("Default currency", systemImage: "dollarsign.arrow.circlepath", to: .homeCurrency) {
                 Text(verbatim: preferences.homeCurrencyCode)
             }
         }

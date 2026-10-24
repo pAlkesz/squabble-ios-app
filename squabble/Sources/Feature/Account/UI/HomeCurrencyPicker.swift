@@ -36,7 +36,7 @@ struct HomeCurrencyPicker: View {
         }
         .scrollContentBackground(.hidden)
         .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always))
-        .navigationTitle(Text("Home currency"))
+        .navigationTitle(Text("Default currency"))
         .navigationBarTitleDisplayMode(.inline)
         .alert(
             "Something went wrong",
