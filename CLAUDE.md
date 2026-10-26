@@ -372,8 +372,13 @@ stutters on a device even when the simulator looks smooth.
 - **Account page:** the borderless 40 pt avatar (toolbar glass hidden) **pushes**
   `AccountView` onto home's stack (decided Oct 2026; it was a sheet, but the photo picker
   and payment editor then stacked a sheet on a sheet). Home registers every `AccountPage`
-  destination and gives each pushed page its own `SquabbleBackdrop` in the balance palette —
-  a shared backdrop behind the stack would show both pages overlapping mid-push.
+  destination and gives each pushed page its own backdrop — a shared one behind the stack
+  would show both pages overlapping mid-push. Account pages use the plain brand
+  `SquabbleBackdrop`, not the balance mood (tried avatar-tinted backdrops and a mugshot
+  height chart, Oct 2026 — dropped). The profile shows as a `MembershipCard`: a "Squabble
+  Club" prop card in `ReceiptPaper`/`ReceiptInk` with a green band, square ID photo (the
+  avatar menu), member-since date (`UserProfile.memberSince`, from `createdAt`) and the
+  handle as a Code 128 barcode — the slot a real QR code takes once invite links exist.
   Before settling on a sheet we prototyped a Revolut-style zoom out of the avatar every way we
   could (custom SwiftUI overlay, SwiftUI/UIKit zoom transitions as full screen, push and
   sheet). Findings worth keeping:

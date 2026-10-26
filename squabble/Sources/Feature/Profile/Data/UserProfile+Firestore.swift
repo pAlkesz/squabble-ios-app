@@ -11,6 +11,8 @@ nonisolated extension UserProfile {
         static let updatedAt = "updatedAt"
     }
 
+    /// Expects timestamps already converted to `Date` by the adapter, which owns the
+    /// Firebase types.
     init(id: String, firestoreData data: [String: Any]) throws(FirestoreMappingError) {
         guard let displayName = data[Field.displayName] as? String,
               let rawHandle = data[Field.handle] as? String,
@@ -21,7 +23,8 @@ nonisolated extension UserProfile {
             id: id,
             displayName: displayName,
             handle: handle,
-            avatar: Avatar(firestoreData: avatarData) ?? .preset(.default(for: id))
+            avatar: Avatar(firestoreData: avatarData) ?? .preset(.default(for: id)),
+            memberSince: data[Field.createdAt] as? Date
         )
     }
 

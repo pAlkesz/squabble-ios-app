@@ -441,6 +441,17 @@
         }
       }
     },
+    "Everyone pays up" : {
+      "comment" : "Membership card: the joke expiry date.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Amíg mindenki nem fizet"
+          }
+        }
+      }
+    },
     "Finish" : {
       "comment" : "Onboarding: final button once payment methods were added.",
       "localizations" : {
@@ -584,6 +595,17 @@
         }
       }
     },
+    "Just now" : {
+      "comment" : "Membership card: member-since value before the server has dated the profile.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Épp most"
+          }
+        }
+      }
+    },
     "Keep for your records. Or don't." : {
       "comment" : "Payment slip: small print under the title.",
       "localizations" : {
@@ -602,6 +624,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Töltöm…"
+          }
+        }
+      }
+    },
+    "MEMBER" : {
+      "comment" : "Membership card: top-right corner of the green band.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TAG"
+          }
+        }
+      }
+    },
+    "Member since" : {
+      "comment" : "Membership card: field label.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tag ennyi ideje"
           }
         }
       }
@@ -969,6 +1013,17 @@
         }
       }
     },
+    "SQUABBLE CLUB" : {
+      "comment" : "Membership card: the club's name in the green band.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SQUABBLE KLUB"
+          }
+        }
+      }
+    },
     "Step %lld of %lld" : {
       "comment" : "Onboarding progress accessibility label.",
       "localizations" : {
@@ -1174,6 +1229,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "felhasználónév"
+          }
+        }
+      }
+    },
+    "Valid until" : {
+      "comment" : "Membership card: field label.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Érvényes"
           }
         }
       }

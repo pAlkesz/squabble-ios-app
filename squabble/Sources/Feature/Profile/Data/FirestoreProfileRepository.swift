@@ -43,7 +43,11 @@ nonisolated final class FirestoreProfileRepository: ProfileRepository {
                     return
                 }
                 do {
-                    continuation.yield(try UserProfile(id: uid, firestoreData: snapshot.data() ?? [:]))
+                    var data = snapshot.data() ?? [:]
+                    if let createdAt = data[UserProfile.Field.createdAt] as? Timestamp {
+                        data[UserProfile.Field.createdAt] = createdAt.dateValue()
+                    }
+                    continuation.yield(try UserProfile(id: uid, firestoreData: data))
                 } catch {
                     continuation.finish(throwing: error)
                 }

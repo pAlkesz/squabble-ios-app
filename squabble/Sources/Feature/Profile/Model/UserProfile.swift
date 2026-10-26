@@ -6,6 +6,8 @@ nonisolated struct UserProfile: Equatable, Sendable {
     var displayName: String
     var handle: Handle
     var avatar: Avatar
+    /// When the profile was first saved; `nil` until the server has stamped it.
+    var memberSince: Date? = nil
 
     static let maxDisplayNameLength = 50
 

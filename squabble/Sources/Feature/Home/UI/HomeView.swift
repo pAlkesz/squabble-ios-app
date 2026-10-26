@@ -42,8 +42,9 @@ struct HomeView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { toolbar }
             .navigationDestination(for: AccountPage.self) { page in
+                // The brand green, not the balance mood: these pages are about the person.
                 accountPage(page)
-                    .background { backdrop }
+                    .background { SquabbleBackdrop() }
                     .containerBackground(.clear, for: .navigation)
             }
         }
@@ -85,7 +86,7 @@ struct HomeView: View {
         }
     }
 
-    /// Each pushed page carries its own copy, as onboarding's pages do: a shared one behind the
+    /// Pushed pages carry their own backdrop, as onboarding's pages do: a shared one behind the
     /// stack would show both pages' content overlapping mid-push.
     private var backdrop: some View {
         SquabbleBackdrop(palette: mood.palette)

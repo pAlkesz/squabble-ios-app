@@ -5,8 +5,8 @@ import SwiftUI
 /// The profile and account screen, pushed from the home avatar like any other page, so the
 /// photo picker and payment editor open as a single sheet instead of one on top of another.
 /// Its editing pages (`AccountPage`) are pushed on the same stack; home registers them and
-/// gives every page its backdrop. Tapping the avatar opens a menu: after onboarding the only
-/// avatar change is to upload a photo or remove it.
+/// gives every page its backdrop. The profile shows as a `MembershipCard`; tapping its photo
+/// opens a menu: after onboarding the only avatar change is to upload a photo or remove it.
 struct AccountView: View {
     @Environment(AuthSession.self) private var session
     @Environment(PreferencesStore.self) private var preferences
@@ -76,18 +76,10 @@ struct AccountView: View {
     // MARK: - Header
 
     private func header(for profile: UserProfile) -> some View {
-        VStack(spacing: 10) {
+        MembershipCard(profile: profile) {
             avatarMenu(for: profile)
-            VStack(spacing: 2) {
-                Text(verbatim: profile.displayName)
-                    .font(.title.bold())
-                    .multilineTextAlignment(.center)
-                Text(verbatim: profile.handle.description)
-                    .font(.subheadline)
-                    .foregroundStyle(.white.opacity(0.7))
-            }
-            .accessibilityElement(children: .combine)
         }
+        .padding(.top, 8)
     }
 
     private func avatarMenu(for profile: UserProfile) -> some View {
@@ -106,19 +98,20 @@ struct AccountView: View {
                 }
             }
         } label: {
-            AvatarView(profile.avatar, size: 96)
+            AvatarView(profile.avatar, size: 88, cornerRadius: 12)
                 .overlay {
                     if isUpdatingAvatar {
-                        Circle().fill(.black.opacity(0.35))
+                        RoundedRectangle(cornerRadius: 12).fill(.black.opacity(0.35))
                         ProgressView().tint(.white)
                     }
                 }
                 .overlay(alignment: .bottomTrailing) {
-                    Image(systemName: "pencil")
-                        .font(.footnote.weight(.bold))
+                    Image(systemName: "camera.fill")
+                        .font(.caption2.weight(.bold))
                         .foregroundStyle(.white)
-                        .frame(width: 30, height: 30)
-                        .glassEffect(.regular, in: .circle)
+                        .frame(width: 26, height: 26)
+                        .background(Color.receiptInk, in: .circle)
+                        .offset(x: 6, y: 6)
                 }
         }
         .buttonStyle(.plain)

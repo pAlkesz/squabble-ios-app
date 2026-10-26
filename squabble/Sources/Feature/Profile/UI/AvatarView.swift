@@ -11,15 +11,19 @@ struct AvatarView: View {
 
     let content: Content
     let size: CGFloat
+    /// Round by default; a corner radius makes it a square photo, as on an ID card.
+    let cornerRadius: CGFloat?
 
-    init(_ avatar: Avatar, size: CGFloat) {
+    init(_ avatar: Avatar, size: CGFloat, cornerRadius: CGFloat? = nil) {
         self.content = .avatar(avatar)
         self.size = size
+        self.cornerRadius = cornerRadius
     }
 
-    init(content: Content, size: CGFloat) {
+    init(content: Content, size: CGFloat, cornerRadius: CGFloat? = nil) {
         self.content = content
         self.size = size
+        self.cornerRadius = cornerRadius
     }
 
     var body: some View {
@@ -46,7 +50,7 @@ struct AvatarView: View {
             }
         }
         .frame(width: size, height: size)
-        .clipShape(.circle)
+        .clipShape(cornerRadius.map { AnyShape(.rect(cornerRadius: $0)) } ?? AnyShape(.circle))
         .accessibilityHidden(true)
     }
 

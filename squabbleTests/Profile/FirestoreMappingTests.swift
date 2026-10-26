@@ -66,3 +66,16 @@ struct UserPreferencesMappingTests {
         #expect(UserPreferences().resolvedHomeCurrencyCode == UserPreferences.deviceCurrencyCode)
     }
 }
+
+struct MemberSinceMappingTests {
+    @Test func readsTheCreatedDate() throws {
+        let created = Date(timeIntervalSince1970: 1_790_000_000)
+        let data: [String: Any] = ["displayName": "Pál", "handle": "pal", "createdAt": created]
+        #expect(try UserProfile(id: "uid-1", firestoreData: data).memberSince == created)
+    }
+
+    @Test func pendingServerTimestampIsUnknown() throws {
+        let data: [String: Any] = ["displayName": "Pál", "handle": "pal", "createdAt": NSNull()]
+        #expect(try UserProfile(id: "uid-1", firestoreData: data).memberSince == nil)
+    }
+}
