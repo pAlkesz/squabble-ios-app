@@ -14,19 +14,21 @@ struct HomeCurrencyPicker: View {
 
     var body: some View {
         List {
-            Section {
-                row(
-                    code: nil,
-                    flag: deviceCurrency,
-                    title: Text("Automatic", comment: "Home currency picker: follow the phone's region."),
-                    detail: "\(deviceCurrency.code) · \(deviceCurrency.name)"
-                )
-            } footer: {
-                Text(
-                    "Follows your phone's region. Totals are converted into this currency, so pick the one your bank account thinks in.",
-                    comment: "Home currency picker: footer under the Automatic row."
-                )
-                .foregroundStyle(.white.opacity(0.7))
+            if showsAutomatic {
+                Section {
+                    row(
+                        code: nil,
+                        flag: deviceCurrency,
+                        title: Text(verbatim: Self.automaticTitle),
+                        detail: "\(deviceCurrency.code) · \(deviceCurrency.name)"
+                    )
+                } footer: {
+                    Text(
+                        "Follows your phone's region. Totals are converted into this currency, so pick the one your bank account thinks in.",
+                        comment: "Home currency picker: footer under the Automatic row."
+                    )
+                    .foregroundStyle(.white.opacity(0.7))
+                }
             }
             Section {
                 ForEach(Self.options.filter { $0.matches(query) }) { option in
@@ -54,6 +56,17 @@ struct HomeCurrencyPicker: View {
         } message: {
             Text(verbatim: failure ?? "")
         }
+    }
+
+    private static let automaticTitle = String(localized: "Automatic", comment: "Home currency picker: follow the phone's region.")
+
+    /// While searching, only when it's a result in its own right: by its name, or by the
+    /// device currency it stands for.
+    private var showsAutomatic: Bool {
+        let trimmed = query.trimmingCharacters(in: .whitespaces)
+        return trimmed.isEmpty
+            || Self.automaticTitle.localizedStandardContains(trimmed)
+            || deviceCurrency.matches(trimmed)
     }
 
     /// `nil` is the automatic row.

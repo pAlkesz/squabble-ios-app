@@ -63,17 +63,21 @@ struct PaymentDetailsView: View {
             .font(.subheadline)
             .foregroundStyle(.white.opacity(0.7))
         } else {
-            VStack(spacing: 12) {
-                ForEach(methods) { method in
-                    PaymentMethodRow(method: method) {
-                        save(methods.filter { $0.id != method.id })
+            // The note sits right under the rows, inset like a grouped list's section footer.
+            VStack(alignment: .leading, spacing: 8) {
+                VStack(spacing: 12) {
+                    ForEach(methods) { method in
+                        PaymentMethodRow(method: method) {
+                            save(methods.filter { $0.id != method.id })
+                        }
+                        .transition(.move(edge: .leading).combined(with: .opacity))
                     }
-                    .transition(.move(edge: .leading).combined(with: .opacity))
                 }
+                Label("Only people you split bills with can see these.", systemImage: "lock.fill")
+                    .font(.footnote)
+                    .foregroundStyle(.white.opacity(0.7))
+                    .padding(.horizontal, 16)
             }
-            Label("Only people you split bills with can see these.", systemImage: "lock.fill")
-                .font(.footnote)
-                .foregroundStyle(.white.opacity(0.7))
         }
     }
 
