@@ -79,6 +79,8 @@ struct AccountView: View {
         MembershipCard(profile: profile) {
             avatarMenu(for: profile)
         }
+        // Inset from the rows below, so it reads as a card lying on the page.
+        .padding(.horizontal, 12)
         .padding(.top, 8)
     }
 
