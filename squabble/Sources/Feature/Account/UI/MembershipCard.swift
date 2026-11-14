@@ -23,8 +23,28 @@ struct MembershipCard<Photo: View>: View {
             .padding(16)
         }
         .background(Color.receiptPaper)
+        // A laminate sheen and a lit top edge, so it reads as a physical card.
+        .overlay {
+            LinearGradient(
+                colors: [.white.opacity(0.18), .clear, .black.opacity(0.06)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .allowsHitTesting(false)
+        }
         .clipShape(.rect(cornerRadius: 18))
-        .shadow(color: .black.opacity(0.45), radius: 18, x: 0, y: 12)
+        .overlay {
+            RoundedRectangle(cornerRadius: 18)
+                .strokeBorder(
+                    LinearGradient(colors: [.white.opacity(0.55), .white.opacity(0)], startPoint: .top, endPoint: .center),
+                    lineWidth: 1
+                )
+                .allowsHitTesting(false)
+        }
+        // A tight contact shadow under the edge plus a wide soft one: together they lift
+        // the card off the page more than one shadow can.
+        .shadow(color: .black.opacity(0.35), radius: 2, x: 0, y: 2)
+        .shadow(color: .black.opacity(0.55), radius: 28, x: 0, y: 22)
         .rotationEffect(.degrees(-1.5))
         .frame(maxWidth: 400)
     }

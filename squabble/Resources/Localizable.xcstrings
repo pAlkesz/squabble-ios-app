@@ -650,6 +650,17 @@
         }
       }
     },
+    "Membership" : {
+      "comment" : "Account screen: inline navigation title above the membership card.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagság"
+          }
+        }
+      }
+    },
     "Money is no object" : {
       "comment" : "Avatar persona slogan: the big spender.",
       "localizations" : {

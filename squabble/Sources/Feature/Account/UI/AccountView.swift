@@ -24,6 +24,7 @@ struct AccountView: View {
 
     var body: some View {
         root
+            .navigationTitle(Text("Membership", comment: "Account screen: inline navigation title above the membership card."))
             .navigationBarTitleDisplayMode(.inline)
             .task(id: session.user?.id) { await observePaymentMethods() }
             .foregroundStyle(.white)
@@ -111,17 +112,20 @@ struct AccountView: View {
                         ProgressView().tint(.white)
                     }
                 }
-                .overlay(alignment: .bottomTrailing) {
-                    Image(systemName: "camera.fill")
-                        .font(.caption2.weight(.bold))
-                        .foregroundStyle(.white)
-                        .frame(width: 26, height: 26)
-                        .background(Color.receiptInk, in: .circle)
-                        .offset(x: 6, y: 6)
-                }
         }
         .buttonStyle(.plain)
         .disabled(isUpdatingAvatar)
+        // On the menu, not in its label: the menu morphs its label clipped to the label's
+        // bounds, which cut the overhanging badge for a frame on every open and close.
+        .overlay(alignment: .bottomTrailing) {
+            Image(systemName: "camera.fill")
+                .font(.caption2.weight(.bold))
+                .foregroundStyle(.white)
+                .frame(width: 26, height: 26)
+                .background(Color.receiptInk, in: .circle)
+                .offset(x: 6, y: 6)
+                .allowsHitTesting(false)
+        }
         .accessibilityLabel(Text("Change photo", comment: "Account screen: accessibility label of the avatar menu."))
     }
 
