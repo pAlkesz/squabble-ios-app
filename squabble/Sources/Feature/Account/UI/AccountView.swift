@@ -1,4 +1,5 @@
 import AuthenticationServices
+import FactoryKit
 import PhotosUI
 import SwiftUI
 
@@ -18,10 +19,13 @@ struct AccountView: View {
     @State private var isReauthenticating = false
     @State private var isDeleting = false
     @State private var failure: AccountFailure?
+    @State private var paymentMethods: [PaymentMethod] = []
+    @Injected(\.profileRepository) private var profiles
 
     var body: some View {
         root
             .navigationBarTitleDisplayMode(.inline)
+            .task(id: session.user?.id) { await observePaymentMethods() }
             .foregroundStyle(.white)
         .confirmationDialog("Delete your account?", isPresented: $isConfirmingDelete, titleVisibility: .visible) {
             Button("Continue", role: .destructive) { isReauthenticating = true }
@@ -76,7 +80,7 @@ struct AccountView: View {
     // MARK: - Header
 
     private func header(for profile: UserProfile) -> some View {
-        MembershipCard(profile: profile) {
+        MembershipCard(profile: profile, paymentMethod: paymentMethods.first) {
             avatarMenu(for: profile)
         }
         // Inset from the rows below, so it reads as a card lying on the page.
@@ -210,6 +214,19 @@ struct AccountView: View {
         }
         .padding(24)
         .presentationDetents([.fraction(0.3)])
+    }
+
+    /// For the card only; a failure just leaves the joke line in its place.
+    private func observePaymentMethods() async {
+        guard let uid = session.user?.id else { return }
+        do {
+            for try await methods in profiles.paymentMethodChanges(for: uid) {
+                paymentMethods = methods
+            }
+        } catch {
+            guard !Task.isCancelled else { return }
+            AppLog.error(error, "Payment methods listener failed")
+        }
     }
 
     // MARK: - Avatar

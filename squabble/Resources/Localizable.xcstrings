@@ -903,6 +903,17 @@
         }
       }
     },
+    "Send money to" : {
+      "comment" : "Membership card: field label above the user's first payment method.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ide utalj"
+          }
+        }
+      }
+    },
     "Sign out" : {
       "comment" : "Sign-out button — account screen, and the profile-failed sheet.",
       "localizations" : {

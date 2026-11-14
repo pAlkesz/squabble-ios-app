@@ -47,9 +47,6 @@ struct PaymentMethodRow: View {
     }
 
     private var detail: String {
-        switch method.kind {
-        case .bankAccount(let iban, _): iban.preferredFormat()
-        case .link(let link): link.provider.linkPrefixes[0] + link.username
-        }
+        method.displayValue
     }
 }

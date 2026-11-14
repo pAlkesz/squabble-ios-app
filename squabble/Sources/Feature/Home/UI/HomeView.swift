@@ -42,9 +42,8 @@ struct HomeView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { toolbar }
             .navigationDestination(for: AccountPage.self) { page in
-                // The brand green, not the balance mood: these pages are about the person.
                 accountPage(page)
-                    .background { SquabbleBackdrop() }
+                    .background { ProfileBackdrop() }
                     .containerBackground(.clear, for: .navigation)
             }
         }

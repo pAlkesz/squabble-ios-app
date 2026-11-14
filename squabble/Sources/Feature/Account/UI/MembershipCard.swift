@@ -1,11 +1,13 @@
 import SwiftUI
 
 /// The profile as a "Squabble Club" membership card, a printed prop like the welcome receipt
-/// and the payment slip: an ID photo, name and handle, a couple of card fields, and the handle
-/// as a barcode (a real QR code can take its place once invite links exist). The photo slot
-/// is left to the caller, which puts the avatar menu there.
+/// and the payment slip: an ID photo, name and handle, member-since, where to send money
+/// (the first payment method, or a joke expiry date without one), and the handle as a
+/// barcode (a real QR code can take its place once invite links exist). The photo slot is
+/// left to the caller, which puts the avatar menu there.
 struct MembershipCard<Photo: View>: View {
     let profile: UserProfile
+    var paymentMethod: PaymentMethod?
     @ViewBuilder let photo: () -> Photo
 
     var body: some View {
@@ -64,8 +66,17 @@ struct MembershipCard<Photo: View>: View {
                     Text("Just now", comment: "Membership card: member-since value before the server has dated the profile.")
                 }
             }
-            field(Text("Valid until", comment: "Membership card: field label.")) {
-                Text("Everyone pays up", comment: "Membership card: the joke expiry date.")
+            if let paymentMethod {
+                field(Text("Send money to", comment: "Membership card: field label above the user's first payment method.")) {
+                    Text(verbatim: paymentMethod.displayValue)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.6)
+                        .truncationMode(.middle)
+                }
+            } else {
+                field(Text("Valid until", comment: "Membership card: field label.")) {
+                    Text("Everyone pays up", comment: "Membership card: the joke expiry date.")
+                }
             }
         }
         .foregroundStyle(Color.receiptInk)
@@ -85,15 +96,9 @@ struct MembershipCard<Photo: View>: View {
     }
 
     private var barcode: some View {
-        VStack(spacing: 4) {
-            BarcodeBars(modules: Code128Barcode.modules(for: profile.handle.description) ?? [])
-                .frame(height: 34)
-            Text(verbatim: profile.handle.description)
-                .font(.system(.caption2, design: .monospaced))
-                .tracking(3)
-                .opacity(0.6)
-        }
-        .foregroundStyle(Color.receiptInk)
+        BarcodeBars(modules: Code128Barcode.modules(for: profile.handle.description) ?? [])
+            .frame(height: 34)
+            .foregroundStyle(Color.receiptInk)
         .accessibilityHidden(true)
     }
 }

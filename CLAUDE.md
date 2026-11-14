@@ -373,12 +373,14 @@ stutters on a device even when the simulator looks smooth.
   `AccountView` onto home's stack (decided Oct 2026; it was a sheet, but the photo picker
   and payment editor then stacked a sheet on a sheet). Home registers every `AccountPage`
   destination and gives each pushed page its own backdrop — a shared one behind the stack
-  would show both pages overlapping mid-push. Account pages use the plain brand
-  `SquabbleBackdrop`, not the balance mood (tried avatar-tinted backdrops and a mugshot
-  height chart, Oct 2026 — dropped). The profile shows as a `MembershipCard`: a "Squabble
+  would show both pages overlapping mid-push. Account pages use `ProfileBackdrop` — the dark half of
+  the brand ramp with a faint glow behind the card — not the balance mood or the bright
+  `SquabbleBackdrop` (tried avatar-tinted backdrops, a mugshot height chart, a dark-brown
+  "desk" and charcoal, Oct–Nov 2026 — dropped). The profile shows as a `MembershipCard`: a "Squabble
   Club" prop card in `ReceiptPaper`/`ReceiptInk` with a green band, square ID photo (the
-  avatar menu), member-since date (`UserProfile.memberSince`, from `createdAt`) and the
-  handle as a Code 128 barcode — the slot a real QR code takes once invite links exist.
+  avatar menu), member-since date (`UserProfile.memberSince`, from `createdAt`), the first payment
+  method ("Send money to"; a joke "Valid until" line without one) and the handle as a
+  Code 128 barcode — the slot a real QR code takes once invite links exist.
   Before settling on a sheet we prototyped a Revolut-style zoom out of the avatar every way we
   could (custom SwiftUI overlay, SwiftUI/UIKit zoom transitions as full screen, push and
   sheet). Findings worth keeping:
