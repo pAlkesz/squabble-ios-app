@@ -8,33 +8,36 @@ struct HomeCurrencyPicker: View {
     @State private var query = ""
     @State private var failure: String?
 
-    private let options = CurrencyOption.all()
+    /// Built once: ~150 localized names are too much to redo on every view update, and
+    /// the first build would otherwise land in the middle of the push.
+    private static let options = CurrencyOption.all()
 
     var body: some View {
         List {
-            if query.isEmpty {
-                Section {
-                    row(
-                        code: nil,
-                        flag: deviceCurrency,
-                        title: Text("Automatic", comment: "Home currency picker: follow the phone's region."),
-                        detail: "\(deviceCurrency.code) · \(deviceCurrency.name)"
-                    )
-                } footer: {
-                    Text(
-                        "Follows your phone's region. Totals are converted into this currency, so pick the one your bank account thinks in.",
-                        comment: "Home currency picker: footer under the Automatic row."
-                    )
-                    .foregroundStyle(.white.opacity(0.7))
-                }
+            // Always shown, even while searching: inserting it as the search is cancelled
+            // shoved the list down just as the search bar slid back up.
+            Section {
+                row(
+                    code: nil,
+                    flag: deviceCurrency,
+                    title: Text("Automatic", comment: "Home currency picker: follow the phone's region."),
+                    detail: "\(deviceCurrency.code) · \(deviceCurrency.name)"
+                )
+            } footer: {
+                Text(
+                    "Follows your phone's region. Totals are converted into this currency, so pick the one your bank account thinks in.",
+                    comment: "Home currency picker: footer under the Automatic row."
+                )
+                .foregroundStyle(.white.opacity(0.7))
             }
             Section {
-                ForEach(options.filter { $0.matches(query) }) { option in
+                ForEach(Self.options.filter { $0.matches(query) }) { option in
                     row(code: option.code, flag: option, title: Text(verbatim: option.name), detail: detail(for: option))
                 }
             }
         }
         .scrollContentBackground(.hidden)
+        .scrollEdgeEffectStyle(.soft, for: .top)
         .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always))
         .navigationTitle(Text("Default currency"))
         .navigationBarTitleDisplayMode(.inline)

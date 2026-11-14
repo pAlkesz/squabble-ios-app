@@ -24,6 +24,8 @@ struct AccountView: View {
 
     var body: some View {
         root
+            // iOS 26's soft fade under the bar; iOS 27 no longer defaults to it.
+            .scrollEdgeEffectStyle(.soft, for: .top)
             .navigationTitle(Text("Membership", comment: "Account screen: inline navigation title above the membership card."))
             .navigationBarTitleDisplayMode(.inline)
             .task(id: session.user?.id) { await observePaymentMethods() }

@@ -29,6 +29,7 @@ struct PaymentDetailsView: View {
             .frame(maxWidth: 560)
             .frame(maxWidth: .infinity)
         }
+        .scrollEdgeEffectStyle(.soft, for: .top)
         .navigationTitle(Text("Payment details"))
         .navigationBarTitleDisplayMode(.inline)
         .task(id: session.user?.id) { await observe() }
