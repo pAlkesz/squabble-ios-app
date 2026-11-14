@@ -411,7 +411,7 @@ stutters on a device even when the simulator looks smooth.
   Search is the system `.searchable` (navigation-bar drawer). Two iOS 27 quirks, found by
   recording the simulator during an XCUITest and slit-scanning the frames: tapping cancel
   animated the `List` update inside UIKit's cancel animation (list dropped ~180 pt, then
-  snapped back) — fixed by applying query changes without animation; and the drawer's glass
+  snapped back, with or without typed text) — fixed by never animating the list's updates; and the drawer's glass
   only appears once the push finishes — a system bug (bar items set after the push lands
   late), left as is. A custom glass field avoided both but was dropped to stay native.
 - **Placeholder:** search and `+` on home have no destination.

@@ -37,10 +37,10 @@ struct HomeCurrencyPicker: View {
             }
         }
         .scrollContentBackground(.hidden)
-        // Tapping the search's cancel clears the text inside UIKit's cancel animation, and the
-        // list's update rode along with it: the list dropped ~180 pt, then snapped back. Applied
-        // without animation, the rows just follow the search bar.
-        .transaction(value: query) { transaction in
+        // Cancelling the search updates the list inside UIKit's cancel animation, typed text or
+        // not, and that update got animated too: the list dropped ~200 pt, then snapped back.
+        // Nothing in the list animates on purpose, so its updates never do.
+        .transaction { transaction in
             transaction.disablesAnimations = true
             transaction.animation = nil
         }
