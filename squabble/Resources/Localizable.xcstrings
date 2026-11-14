@@ -353,17 +353,6 @@
         }
       }
     },
-    "Clear search" : {
-      "comment" : "Currency picker: accessibility label of the button that empties the search field.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keresés törlése"
-          }
-        }
-      }
-    },
     "Confirm with Apple to delete your account." : {
       "comment" : "Re-authentication sheet heading before deletion.",
       "localizations" : {

@@ -408,10 +408,12 @@ stutters on a device even when the simulator looks smooth.
   `THIRD_PARTY_NOTICES.md`), named by lowercase region code. Only flags a currency maps to
   ship; a test fails if one is missing. A currency's country is the region its code starts
   with (HUF → HU, EUR → EU), else the only region using it; shared ones show a banknote.
-  Its search is our own glass `TextField` in a top `safeAreaBar`, not `.searchable`: on iOS 27
-  the system drawer's glass appeared only after the push, and tapping its cancel animated the
-  `List` update inside UIKit's animation (list dropped ~180 pt, then snapped back). Found by
-  recording the simulator during an XCUITest and slit-scanning the frames.
+  Search is the system `.searchable` (navigation-bar drawer). Two iOS 27 quirks, found by
+  recording the simulator during an XCUITest and slit-scanning the frames: tapping cancel
+  animated the `List` update inside UIKit's cancel animation (list dropped ~180 pt, then
+  snapped back) — fixed by applying query changes without animation; and the drawer's glass
+  only appears once the push finishes — a system bug (bar items set after the push lands
+  late), left as is. A custom glass field avoided both but was dropped to stay native.
 - **Placeholder:** search and `+` on home have no destination.
 - **Not started:** groups and everything to do with bills — capture, AI parsing, the
   split algorithm, reminders, invite links.

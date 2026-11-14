@@ -2,17 +2,11 @@ import SwiftUI
 
 /// Pushed from the account screen. "Automatic" follows the phone's region and stays the
 /// default until the user picks something else; choosing one saves it and pops back.
-///
-/// The search field is our own, pinned under the bar, not `.searchable`: on iOS 27 the system
-/// drawer's glass only appeared once the push had finished, and cancelling a search animated
-/// the list's update along with UIKit's cancel animation, dropping it well past its resting
-/// place before it snapped back.
 struct HomeCurrencyPicker: View {
     @Environment(PreferencesStore.self) private var preferences
     @Environment(\.dismiss) private var dismiss
     @State private var query = ""
     @State private var failure: String?
-    @FocusState private var isSearchFocused: Bool
 
     /// Built once: ~150 localized names are too much to redo on every view update, and
     /// the first build would otherwise land in the middle of the push.
@@ -41,13 +35,15 @@ struct HomeCurrencyPicker: View {
             }
         }
         .scrollContentBackground(.hidden)
-        .scrollEdgeEffectStyle(.soft, for: .top)
-        .scrollDismissesKeyboard(.immediately)
-        .safeAreaBar(edge: .top) {
-            searchField
-                .padding(.horizontal, 16)
-                .padding(.bottom, 8)
+        // Tapping the search's cancel clears the text inside UIKit's cancel animation, and the
+        // list's update rode along with it: the list dropped ~180 pt, then snapped back. Applied
+        // without animation, the rows just follow the search bar.
+        .transaction(value: query) { transaction in
+            transaction.disablesAnimations = true
+            transaction.animation = nil
         }
+        .scrollEdgeEffectStyle(.soft, for: .top)
+        .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always))
         .navigationTitle(Text("Default currency"))
         .navigationBarTitleDisplayMode(.inline)
         .alert(
@@ -58,33 +54,6 @@ struct HomeCurrencyPicker: View {
         } message: {
             Text(verbatim: failure ?? "")
         }
-    }
-
-    private var searchField: some View {
-        HStack(spacing: 8) {
-            Image(systemName: "magnifyingglass")
-                .foregroundStyle(.white.opacity(0.7))
-            TextField("Search", text: $query)
-                .focused($isSearchFocused)
-                .submitLabel(.search)
-                .autocorrectionDisabled()
-                .textInputAutocapitalization(.never)
-            if !query.isEmpty {
-                Button {
-                    query = ""
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundStyle(.white.opacity(0.7))
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel(Text("Clear search", comment: "Currency picker: accessibility label of the button that empties the search field."))
-            }
-        }
-        .padding(.horizontal, 14)
-        .frame(height: 44)
-        .glassEffect(.regular.interactive(), in: .capsule)
-        .contentShape(.capsule)
-        .onTapGesture { isSearchFocused = true }
     }
 
     /// `nil` is the automatic row.
