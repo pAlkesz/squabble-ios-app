@@ -93,8 +93,9 @@ ObjC-based SDK, NoSQL modeling, `Sendable` friction under Swift 6.
 - **Auth:** Sign in with Apple only, required at first launch (decided Sept 2026 over
   anonymous-first: one identity, no account-linking edge cases). Entitlement lives in
   `squabble/squabble.entitlements`. The Apple provider must be enabled in the Firebase
-  console, and account deletion needs the Sign in with Apple `.p8` key configured there
-  so `revokeToken(withAuthorizationCode:)` works — App Review requires deletion.
+  console, and account deletion needs the Apple provider's Services ID, Team ID, Key ID and
+  `.p8` private key configured there (Firebase calls it the code flow) so
+  `revokeToken(withAuthorizationCode:)` works — App Review requires deletion.
   - Apple hands over the user's name **once**, on the first authorization; it's stored
     on the Firebase Auth profile (`displayName`) in the same sign-in call, and is only
     used to prefill onboarding. The public name lives on the Firestore profile.
@@ -109,9 +110,11 @@ ObjC-based SDK, NoSQL modeling, `Sendable` friction under Swift 6.
     `getDocument(source: .server)`, because offline the listener would wait silently
     forever; that read fails fast, which surfaces as the error sheet. A cached
     profile needs no server: signed in + cached profile goes straight home offline.
-  - **Account deletion** order: re-authenticate with Apple → delete avatars → delete
-    Firestore profile data → revoke the Apple token and delete the Auth user. Anything
-    new stored per user must be added to this cleanup.
+  - **Account deletion** order: re-authenticate with Apple → revoke the Apple token →
+    delete avatars → delete Firestore profile data → delete the Auth user. Revocation goes
+    first so a refusal leaves the account whole (it once ran last, failed with "code flow is
+    not enabled" because the console lacked the Services ID/key, and left a signed-in user
+    with no profile). Anything new stored per user must be added to this cleanup.
 
 ### Firestore data model
 

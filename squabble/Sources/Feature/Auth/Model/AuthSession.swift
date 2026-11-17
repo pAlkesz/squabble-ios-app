@@ -115,11 +115,14 @@ final class AuthSession {
     func deleteAccount(confirmingWith apple: AppleSignInResult) async throws {
         guard let user else { throw AuthError.notSignedIn }
         try await service.reauthenticate(with: apple)
+        // Revoked before anything is deleted: if Apple refuses, the account is left whole
+        // rather than signed in with its profile gone.
+        try await service.revokeAppleAccess(apple)
         isDeletingAccount = true
         defer { isDeletingAccount = false }
         try await avatars.deleteAll(for: user.id)
         try await profiles.deleteProfile(profile, uid: user.id)
-        try await service.deleteAccount(revoking: apple)
+        try await service.deleteUser()
     }
 
     private func observeProfile(of user: AppUser?, keepingLastKnown: Bool = false) {

@@ -50,10 +50,20 @@ nonisolated final class FirebaseAuthService: AuthService {
         try await user.reauthenticate(with: credential(from: apple))
     }
 
-    func deleteAccount(revoking apple: AppleSignInResult) async throws {
+    func revokeAppleAccess(_ apple: AppleSignInResult) async throws {
+        guard let auth else { throw AuthError.unavailable }
+        do {
+            try await auth.revokeToken(withAuthorizationCode: apple.authorizationCode)
+        } catch {
+            // Firebase's message ("code flow is not enabled…") is meant for us, not the user.
+            AppLog.error(error, "Apple token revocation failed")
+            throw AuthError.appleRevocationFailed
+        }
+    }
+
+    func deleteUser() async throws {
         guard let auth else { throw AuthError.unavailable }
         guard let user = auth.currentUser else { throw AuthError.notSignedIn }
-        try await auth.revokeToken(withAuthorizationCode: apple.authorizationCode)
         try await user.delete()
     }
 

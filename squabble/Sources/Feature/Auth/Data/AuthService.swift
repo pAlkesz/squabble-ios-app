@@ -12,6 +12,11 @@ nonisolated protocol AuthService: Sendable {
     /// really the user and gives a fresh token for wiping their data before the account goes.
     func reauthenticate(with apple: AppleSignInResult) async throws
 
-    /// Revokes the Apple token, then removes the user. Call after `reauthenticate(with:)`.
-    func deleteAccount(revoking apple: AppleSignInResult) async throws
+    /// Revokes Squabble's Sign in with Apple access, which App Review requires on deletion.
+    /// Needs the Apple provider's Services ID and key set up in the Firebase console.
+    func revokeAppleAccess(_ apple: AppleSignInResult) async throws
+
+    /// Removes the auth user, which signs them out. Call last: deleting their data needs them
+    /// signed in.
+    func deleteUser() async throws
 }

@@ -243,6 +243,16 @@
         }
       }
     },
+    "Apple wouldn't let us unlink your account, so nothing was deleted. Try again later." : {
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Az Apple nem engedte leválasztani a fiókodat, így semmit sem töröltünk. Próbáld újra később."
+          }
+        }
+      }
+    },
     "Arccal és névvel vállalom" : {
       "comment" : "Avatar caption for the user's own photo. A Hungarian pop culture reference, deliberately the same in every language.",
       "localizations" : {

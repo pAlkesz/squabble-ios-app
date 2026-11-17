@@ -182,6 +182,26 @@ struct AuthSessionTests {
         observing.cancel()
     }
 
+    /// Firebase refuses to revoke when the Apple provider isn't fully set up in the console;
+    /// the account must then be left whole, not signed in with its profile gone.
+    @Test func failedAppleRevocationDeletesNothing() async throws {
+        profiles.seed(try profile())
+        service.revocationError = AuthError.appleRevocationFailed
+        let session = makeSession()
+        let observing = Task { await session.observe() }
+        try await session.signIn(with: apple)
+        await waitUntil { session.profile != nil }
+
+        await #expect(throws: AuthError.self) {
+            try await session.deleteAccount(confirmingWith: apple)
+        }
+        #expect(profiles.deletedUIDs.isEmpty)
+        #expect(avatars.deletedUIDs.isEmpty)
+        #expect(service.currentUser != nil)
+        #expect(session.profile != nil)
+        observing.cancel()
+    }
+
     @Test func signInFailurePropagatesAndLeavesStateUntouched() async {
         service.signInError = AuthError.unavailable
         let session = makeSession()

@@ -5,6 +5,7 @@ nonisolated enum AuthError: LocalizedError {
     case missingAuthorizationCode
     case notSignedIn
     case unavailable
+    case appleRevocationFailed
 
     var errorDescription: String? {
         switch self {
@@ -16,6 +17,8 @@ nonisolated enum AuthError: LocalizedError {
             String(localized: "You're not signed in.")
         case .unavailable:
             String(localized: "Sign-in isn't available in this build.")
+        case .appleRevocationFailed:
+            String(localized: "Apple wouldn't let us unlink your account, so nothing was deleted. Try again later.")
         }
     }
 }
