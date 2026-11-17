@@ -353,13 +353,13 @@
         }
       }
     },
-    "Confirm with Apple to delete your account." : {
-      "comment" : "Re-authentication sheet heading before deletion.",
+    "Confirm with Apple and your profile, payment details and photos are gone for good. No undo — not even we can bring them back." : {
+      "comment" : "Delete account sheet: description above the Apple button.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erősítsd meg Apple-lel a fiók törlését."
+            "value" : "Erősítsd meg Apple-lel, és a profilod, a fizetési adataid meg a fotóid végleg eltűnnek. Visszavonás nincs — még mi sem tudjuk visszahozni őket."
           }
         }
       }
@@ -617,6 +617,17 @@
         }
       }
     },
+    "Last chance" : {
+      "comment" : "Delete account sheet: title.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utolsó esély"
+          }
+        }
+      }
+    },
     "Loading…" : {
       "comment" : "VoiceOver: the launch splash is waiting for the app to load.",
       "localizations" : {
@@ -679,6 +690,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A számlán szereplő név"
+          }
+        }
+      }
+    },
+    "Never mind" : {
+      "comment" : "Delete account sheet: button that closes it without deleting.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inkább mégse"
           }
         }
       }

@@ -7,6 +7,7 @@ import SwiftUI
 struct HomeView: View {
     @Environment(AuthSession.self) private var session
     @State private var preferences = PreferencesStore()
+    @State private var path: [AccountPage] = []
     #if DEBUG
     @State private var debugBalance: Double?
     #endif
@@ -20,7 +21,7 @@ struct HomeView: View {
     }
 
     private var home: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             ScrollView {
                 VStack(spacing: 24) {
                     TotalBalanceView(amount: balance, currencyCode: homeCurrencyCode)
@@ -50,13 +51,16 @@ struct HomeView: View {
         // The system back button follows the stack's tint.
         .tint(.white)
         .environment(preferences)
+        .environment(\.showAccountPage, ShowAccountPageAction(push: show))
     }
 
     @ToolbarContentBuilder
     private var toolbar: some ToolbarContent {
         // Borderless: the toolbar's glass hidden, so the avatar shows edge to edge.
         ToolbarItem(placement: .topBarLeading) {
-            NavigationLink(value: AccountPage.account) {
+            Button {
+                show(.account)
+            } label: {
                 avatar
             }
             .buttonStyle(.plain)
@@ -90,6 +94,11 @@ struct HomeView: View {
     private var backdrop: some View {
         SquabbleBackdrop(palette: mood.palette)
             .animation(.smooth(duration: 1.2), value: mood)
+    }
+
+    private func show(_ page: AccountPage) {
+        guard path.last != page else { return }
+        path.append(page)
     }
 
     @ViewBuilder

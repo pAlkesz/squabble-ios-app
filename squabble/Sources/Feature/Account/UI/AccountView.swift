@@ -11,6 +11,7 @@ import SwiftUI
 struct AccountView: View {
     @Environment(AuthSession.self) private var session
     @Environment(PreferencesStore.self) private var preferences
+    @Environment(\.showAccountPage) private var showAccountPage
     @State private var isShowingLibrary = false
     @State private var isShowingCamera = false
     @State private var pickerItem: PhotosPickerItem?
@@ -44,7 +45,7 @@ struct AccountView: View {
             .ignoresSafeArea()
         }
         .sheet(isPresented: $isReauthenticating) {
-            reauthenticationSheet
+            DeleteAccountSheet(isDeleting: isDeleting, onConfirm: deleteAccount)
         }
         .alert(
             "Something went wrong",
@@ -173,7 +174,9 @@ struct AccountView: View {
         to page: AccountPage,
         @ViewBuilder value: () -> some View = { EmptyView() }
     ) -> some View {
-        NavigationLink(value: page) {
+        Button {
+            showAccountPage(page)
+        } label: {
             HStack(spacing: 12) {
                 Label(title, systemImage: systemImage)
                     .labelStyle(AccountRowLabelStyle())
@@ -210,18 +213,6 @@ struct AccountView: View {
                 .contentShape(.rect)
         }
         .buttonStyle(.plain)
-    }
-
-    private var reauthenticationSheet: some View {
-        VStack(spacing: 24) {
-            Text("Confirm with Apple to delete your account.")
-                .font(.headline)
-                .multilineTextAlignment(.center)
-            AppleSignInButton(label: .continue, onCompletion: deleteAccount)
-                .disabled(isDeleting)
-        }
-        .padding(24)
-        .presentationDetents([.fraction(0.3)])
     }
 
     /// For the card only; a failure just leaves the joke line in its place.
