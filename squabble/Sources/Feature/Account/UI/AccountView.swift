@@ -30,12 +30,6 @@ struct AccountView: View {
             .navigationBarTitleDisplayMode(.inline)
             .task(id: session.user?.id) { await observePaymentMethods() }
             .foregroundStyle(.white)
-        .confirmationDialog("Delete your account?", isPresented: $isConfirmingDelete, titleVisibility: .visible) {
-            Button("Continue", role: .destructive) { isReauthenticating = true }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("This wipes your account and everything in it. Your friends will still owe you money — that part's between you and them.")
-        }
         .photosPicker(isPresented: $isShowingLibrary, selection: $pickerItem, matching: .images)
         .onChange(of: pickerItem) { _, item in
             guard let item else { return }
@@ -154,6 +148,14 @@ struct AccountView: View {
             divider
             row("Delete account", systemImage: "trash", role: .destructive) {
                 isConfirmingDelete = true
+            }
+            // On the row, not the page: iOS 26+ shows the dialog as a popover growing out
+            // of the view it's attached to.
+            .confirmationDialog("Delete your account?", isPresented: $isConfirmingDelete, titleVisibility: .visible) {
+                Button("Continue", role: .destructive) { isReauthenticating = true }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("This wipes your account and everything in it. Your friends will still owe you money — that part's between you and them.")
             }
         }
         .background(.white.opacity(0.08), in: .rect(cornerRadius: 22))
