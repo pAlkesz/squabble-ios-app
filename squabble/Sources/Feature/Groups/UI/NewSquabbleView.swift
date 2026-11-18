@@ -92,8 +92,9 @@ struct NewSquabbleView: View {
             .frame(maxWidth: 560)
             .frame(maxWidth: .infinity)
         }
-        // iOS 26's soft fade under the bar; iOS 27 no longer defaults to it.
-        .scrollEdgeEffectStyle(.soft, for: .top)
+        // iOS 26's soft fade under the bar (and here above the button); iOS 27 no longer
+        // defaults to it.
+        .scrollEdgeEffectStyle(.soft, for: [.top, .bottom])
         .scrollDismissesKeyboard(.interactively)
         .foregroundStyle(.white)
         .tint(Color.accent)
@@ -103,18 +104,29 @@ struct NewSquabbleView: View {
             ToolbarItem(placement: .cancellationAction) {
                 Button(role: .cancel) { dismiss() }
             }
-            ToolbarItem(placement: .confirmationAction) {
-                if isCreating {
-                    ProgressView()
-                } else {
-                    Button(role: .confirm) {
-                        Task { await create() }
-                    }
-                    .disabled(!draft.canCreate || isPreparingPhoto)
-                }
+        }
+        .safeAreaBar(edge: .bottom) { createButton }
+        .interactiveDismissDisabled(isCreating)
+    }
+
+    /// A nod to the song; the same white capsule as onboarding's Continue.
+    private var createButton: some View {
+        Button {
+            Task { await create() }
+        } label: {
+            if isCreating {
+                ProgressView().tint(.backdropDeep)
+            } else {
+                Text("Squabble Up", comment: "Create squabble: the button that creates it. A nod to the song title; keep it as is if there's no punchier local equivalent.")
             }
         }
-        .interactiveDismissDisabled(isCreating)
+        .buttonStyle(.squabblePrimary)
+        .disabled(!draft.canCreate || isPreparingPhoto || isCreating)
+        .padding(.horizontal, 24)
+        .padding(.top, 16)
+        // Keeps clear air between the button and the keyboard when it's up.
+        .padding(.bottom, 20)
+        .frame(maxWidth: 560)
     }
 
     // MARK: - Picture
@@ -193,8 +205,8 @@ struct NewSquabbleView: View {
             }
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 14)
-        .background(.white.opacity(0.08), in: .rect(cornerRadius: 16))
+        .frame(minHeight: 54)
+        .background(.white.opacity(0.08), in: .rect(cornerRadius: 22))
     }
 
     private var presets: some View {
@@ -234,7 +246,7 @@ struct NewSquabbleView: View {
                 HStack(spacing: 14) {
                     CurrencyFlag(option: option, size: 44)
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Currency", comment: "Create squabble: label on the currency row.")
+                        Text("Squabble currency", comment: "Create squabble: label on the currency row.")
                             .font(.body.weight(.semibold))
                         Text(verbatim: "\(option.code) · \(option.name)")
                             .font(.subheadline)
@@ -249,14 +261,19 @@ struct NewSquabbleView: View {
                         .background(.white.opacity(0.12), in: .capsule)
                 }
                 .padding(16)
-                .background(.white.opacity(0.08), in: .rect(cornerRadius: 20))
+                .background(.white.opacity(0.08), in: .rect(cornerRadius: 22))
                 .contentShape(.rect)
             }
             .buttonStyle(.plain)
-            Text("Everyone's balance shows up in this currency.", comment: "Create squabble: note under the currency row.")
-                .font(.footnote)
-                .foregroundStyle(.white.opacity(0.7))
-                .padding(.horizontal, 4)
+            // Inset like a grouped list's section footer, as on the payment details page.
+            Label {
+                Text("Everyone's balance shows up in this currency.", comment: "Create squabble: note under the currency row.")
+            } icon: {
+                Image(systemName: "info.circle")
+            }
+            .font(.footnote)
+            .foregroundStyle(.white.opacity(0.7))
+            .padding(.horizontal, 16)
         }
     }
 

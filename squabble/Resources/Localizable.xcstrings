@@ -537,7 +537,7 @@
       }
     },
     "Currency" : {
-      "comment" : "Create squabble: label on the currency row, and the currency picker's title.",
+      "comment" : "Squabble currency picker: title.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
@@ -614,7 +614,7 @@
       }
     },
     "Emoji" : {
-      "comment" : "Squabble emoji picker: header above the emojis, and its title.",
+      "comment" : "Squabble emoji picker: header above the emojis.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
@@ -636,7 +636,7 @@
       }
     },
     "Everyone's balance shows up in this currency." : {
-      "comment" : "New squabble: footer under the currency row.",
+      "comment" : "Create squabble: note under the currency row.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
@@ -922,7 +922,7 @@
       }
     },
     "Members · %lld" : {
-      "comment" : "New squabble: header above the members, with how many there are.\nSquabble page: header above the members, with how many there are.",
+      "comment" : "Squabble page: header above the members, with how many there are.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
@@ -1493,6 +1493,17 @@
         }
       }
     },
+    "Squabble currency" : {
+      "comment" : "Create squabble: label on the currency row.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A veszekedés pénzneme"
+          }
+        }
+      }
+    },
     "Squabble picture" : {
       "comment" : "Create squabble: VoiceOver label for the picture menu.",
       "localizations" : {
@@ -1500,6 +1511,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A veszekedés képe"
+          }
+        }
+      }
+    },
+    "Squabble Up" : {
+      "comment" : "Create squabble: the button that creates it. A nod to the song title; keep it as is if there's no punchier local equivalent.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Squabble Up"
           }
         }
       }
@@ -1901,7 +1923,7 @@
       }
     },
     "You" : {
-      "comment" : "New squabble: tag on the creator's own row.\nSquabble page: tag on the user's own row.",
+      "comment" : "Squabble page: tag on the user's own row.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {

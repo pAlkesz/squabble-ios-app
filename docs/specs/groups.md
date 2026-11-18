@@ -114,8 +114,8 @@ are added afterwards from the squabble.
    and that preset's emoji: Trip 🏝️, Flat 🛋️, Dinner 🍝, Party 🎉, Family 👨‍👩‍👧,
    Us two 💑 (`SquabblePreset`). A chip shows as selected while the field holds its
    name. A chosen photo stays when a preset is tapped.
-4. **Currency**, defaulting to the home currency.
-5. Save.
+4. **Squabble currency**, defaulting to the home currency.
+5. Tap **Squabble Up** (the white button at the bottom; a nod to the song).
    - Without a photo, it's a single document write, so it works offline.
    - With a photo, the photo is uploaded first, which needs a connection. Offline, the
      app says so before trying, and the user can remove the photo to create the squabble
