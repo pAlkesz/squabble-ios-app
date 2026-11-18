@@ -352,6 +352,15 @@ not a paging `ScrollView`, whose content doesn't get the keyboard's safe area. T
 traffic-light `OnboardingBackdrop`, the progress segments (nav bar principal slot) and the
 white Continue button (`safeAreaBar`, `.squabblePrimary`) stay put; only pages slide.
 Nothing is written until the last page. Display names cap at 50 characters, handles at 32.
+The two roots are separate navigation stacks, so there's no push between them:
+`ContentView` cross-fades them (explicit `.opacity` transitions in a `ZStack`, switched with
+`withAnimation` — an implicit `.animation(value:)` on a `Group` didn't animate the swap).
+When the state goes from `needsOnboarding` to `signedIn` — onboarding just saved the profile,
+never a returning user — the root overlays `MembershipWelcomeView`: the new membership card
+slides up, gets an "APPROVED" stamp (heavy haptic) and a "Welcome to the club" line, then
+shrinks off towards home's toolbar avatar (a faked flight, since the avatar lives in another
+bar). It waits ~0.5 s first so home mounts underneath before anything moves; tap skips it,
+Reduce Motion fades it.
 `ContentView` applies the launch splash (`launchSplash(isContentReady:onReadyForContent:)`):
 the bird plays its intro, then holds still and calls back — only then does the root mount
 its first screen, so that main-thread stall lands while nothing moves — and flies off

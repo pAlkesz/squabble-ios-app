@@ -20,20 +20,31 @@ struct ContentView: View {
     /// Nil until the splash says the bird is standing still; see `launchSplash`.
     @State private var route: Route?
     @State private var canMountRoute = false
+    /// Set only when onboarding has just saved the profile, never for a returning user.
+    @State private var welcome: UserProfile?
 
     var body: some View {
-        Group {
+        // A ZStack with explicit transitions: the two roots are separate navigation stacks,
+        // and swapping them in a plain Group didn't pick up an implicit animation.
+        ZStack {
             switch route {
             case nil:
                 // Only ever behind the splash, which is the same colour.
                 Color.accent.ignoresSafeArea()
             case .signInFlow:
                 OnboardingFlowView()
+                    .transition(.opacity)
             case .home:
                 HomeView()
+                    .transition(.opacity)
             }
         }
-        .animation(.default, value: route)
+        .overlay {
+            if let welcome {
+                MembershipWelcomeView(profile: welcome) { self.welcome = nil }
+                    .transition(.opacity)
+            }
+        }
         .launchSplash(isContentReady: route != nil, hasError: session.profileSync != .live) {
             canMountRoute = true
             updateRoute()
@@ -42,16 +53,20 @@ struct ContentView: View {
             ProfileSyncFailedSheet()
         }
         .task { await session.observe() }
-        .onChange(of: session.state, initial: true) { updateRoute() }
+        .onChange(of: session.state, initial: true) { previous, state in
+            // Set before the route changes, so the welcome covers the swap to home.
+            if case .needsOnboarding = previous, case .signedIn(_, let profile) = state {
+                withAnimation(.smooth(duration: 0.4)) { welcome = profile }
+            }
+            updateRoute()
+        }
         .environment(session)
     }
 
     private func updateRoute() {
         guard canMountRoute, let next = Self.route(for: session.state) else { return }
         // The first screen appears under the splash, so it shouldn't fade in as well.
-        var transaction = Transaction()
-        transaction.disablesAnimations = route == nil
-        withTransaction(transaction) { route = next }
+        withAnimation(route == nil ? nil : .smooth(duration: 0.6)) { route = next }
     }
 
     /// Nil while still loading: stay on the current screen. Right after signing in that's

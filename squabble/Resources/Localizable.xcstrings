@@ -253,6 +253,17 @@
         }
       }
     },
+    "APPROVED" : {
+      "comment" : "Welcome animation: the rubber stamp thumped onto the new membership card.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JÓVÁHAGYVA"
+          }
+        }
+      }
+    },
     "Arccal és névvel vállalom" : {
       "comment" : "Avatar caption for the user's own photo. A Hungarian pop culture reference, deliberately the same in every language.",
       "localizations" : {
@@ -447,6 +458,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nem kell egyedinek lennie. A barátaid tudják, ki vagy."
+          }
+        }
+      }
+    },
+    "Dues are payable in guilt." : {
+      "comment" : "Welcome animation: joke line under the welcome headline.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagdíj bűntudatban fizetendő."
           }
         }
       }
@@ -1327,6 +1349,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "szépen fogalmazunk"
+          }
+        }
+      }
+    },
+    "Welcome to the club, %@." : {
+      "comment" : "Welcome animation: headline under the new membership card, with the user's name.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Üdv a klubban, %@!"
           }
         }
       }
