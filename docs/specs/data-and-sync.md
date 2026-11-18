@@ -13,7 +13,12 @@
   and one callable (`joinGroup`, for invite links, where a non-member needs the server
   to vouch for them).
 
-### Functions
+- **Documents are shaped around screens.** Small, rarely-changing fields are
+  denormalized, and whatever is always read together is embedded.
+- **Reads cost money.** Use one listener per screen on a scoped query, cache reads where
+  staleness is fine, and never re-query a whole collection to refresh a list.
+
+## Functions
 
 | Function | Kind | Status |
 | --- | --- | --- |
@@ -21,10 +26,6 @@
 | `joinGroup` | Callable | Planned ([Groups](groups.md#joining-with-an-invite-link)) |
 | People sync | Firestore triggers on groups and users | Planned ([People](people.md#keeping-it-up-to-date-cloud-functions)) |
 | Exchange rates | Scheduled, daily | Planned ([Bills](bills.md#exchange-rates)) |
-- **Documents are shaped around screens.** Small, rarely-changing fields are
-  denormalized, and whatever is always read together is embedded.
-- **Reads cost money.** Use one listener per screen on a scoped query, cache reads where
-  staleness is fine, and never re-query a whole collection to refresh a list.
 
 ## Current layout
 
