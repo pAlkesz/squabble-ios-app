@@ -56,12 +56,14 @@ struct SquabbleView: View {
             .frame(maxWidth: 640)
             .frame(maxWidth: .infinity)
         }
+        // iOS 26's soft fade under the bar; iOS 27 no longer defaults to it.
+        .scrollEdgeEffectStyle(.soft, for: .top)
         .navigationTitle(Text(verbatim: group.name))
     }
 
     private func header(_ group: SquabbleGroup) -> some View {
         VStack(spacing: 12) {
-            MemberAvatarStack(members: group.currentMembers, size: 56, limit: 4)
+            SquabbleImageView(group.image, size: 96)
             Text(verbatim: group.name)
                 .font(.title.bold())
                 .multilineTextAlignment(.center)

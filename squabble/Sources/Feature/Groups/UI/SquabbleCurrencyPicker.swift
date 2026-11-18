@@ -31,6 +31,7 @@ struct SquabbleCurrencyPicker: View {
             transaction.disablesAnimations = true
             transaction.animation = nil
         }
+        .scrollEdgeEffectStyle(.soft, for: .top)
         .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always))
         .navigationTitle(Text("Currency"))
         .navigationBarTitleDisplayMode(.inline)

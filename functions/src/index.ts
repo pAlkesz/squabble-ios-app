@@ -74,7 +74,17 @@ async function leaveAsDeletedMember(group: FirebaseFirestore.DocumentReference, 
     transaction.update(group, update);
     return false;
   });
-  if (isEmpty) await db.recursiveDelete(group);
+  if (isEmpty) await deleteGroup(group);
+}
+
+/** Deletes a group with everything under it, and its photo if it has one. */
+async function deleteGroup(group: FirebaseFirestore.DocumentReference): Promise<void> {
+  const image = (await group.get()).data()?.image;
+  if (image?.kind === "photo" && typeof image.path === "string") {
+    // Already gone on a retry; that's fine.
+    await getStorage().bucket().file(image.path).delete({ ignoreNotFound: true });
+  }
+  await getFirestore().recursiveDelete(group);
 }
 
 function earliestJoined(memberIds: string[], members: Record<string, { joinedAt?: Timestamp }>): string {

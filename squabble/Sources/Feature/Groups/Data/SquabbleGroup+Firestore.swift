@@ -7,6 +7,7 @@ nonisolated extension SquabbleGroup {
     enum Field {
         static let name = "name"
         static let currency = "currency"
+        static let image = "image"
         static let createdBy = "createdBy"
         static let createdAt = "createdAt"
         static let updatedAt = "updatedAt"
@@ -31,6 +32,8 @@ nonisolated extension SquabbleGroup {
             id: id,
             name: name,
             currencyCode: currencyCode,
+            image: (data[Field.image] as? [String: Any]).flatMap(SquabbleImage.init(firestoreData:))
+                ?? .default(for: id),
             createdBy: createdBy,
             createdAt: data[Field.createdAt] as? Date,
             updatedAt: data[Field.updatedAt] as? Date,
@@ -45,6 +48,7 @@ nonisolated extension SquabbleGroup {
         [
             Field.name: name,
             Field.currency: currencyCode,
+            Field.image: image.firestoreData,
             Field.createdBy: createdBy,
             Field.memberIds: memberIds,
             Field.members: members.mapValues(\.firestoreData),
@@ -89,5 +93,33 @@ nonisolated extension GroupMember {
         ]
         if let handle { data[Field.handle] = handle.rawValue }
         return data
+    }
+}
+
+nonisolated extension SquabbleImage {
+    init?(firestoreData data: [String: Any]) {
+        switch data["kind"] as? String {
+        case "emoji":
+            guard let emoji = data["emoji"] as? String, !emoji.isEmpty,
+                  let color = (data["color"] as? String).flatMap(AvatarColor.init(rawValue:))
+            else { return nil }
+            self = .emoji(emoji, color)
+        case "photo":
+            guard let path = data["path"] as? String,
+                  let url = (data["url"] as? String).flatMap(URL.init(string:))
+            else { return nil }
+            self = .photo(path: path, url: url)
+        default:
+            return nil
+        }
+    }
+
+    var firestoreData: [String: Any] {
+        switch self {
+        case .emoji(let emoji, let color):
+            ["kind": "emoji", "emoji": emoji, "color": color.rawValue]
+        case .photo(let path, let url):
+            ["kind": "photo", "path": path, "url": url.absoluteString]
+        }
     }
 }

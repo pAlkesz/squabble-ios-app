@@ -12,6 +12,7 @@ struct HomeView: View {
     @State private var groups = GroupsStore()
     @State private var path: [HomeRoute] = []
     @State private var isCreatingSquabble = false
+    @Namespace private var transitions
     #if DEBUG
     @State private var debugBalance: Double?
     #endif
@@ -53,6 +54,8 @@ struct HomeView: View {
                 .padding(.horizontal, 16)
                 .padding(.top, 72)
             }
+            // iOS 26's soft fade under the bar; iOS 27 no longer defaults to it.
+            .scrollEdgeEffectStyle(.soft, for: .top)
             .background { backdrop }
             .containerBackground(.clear, for: .navigation)
             .navigationBarTitleDisplayMode(.inline)
@@ -71,13 +74,13 @@ struct HomeView: View {
             }
             .sheet(isPresented: $isCreatingSquabble) {
                 if let profile = session.profile {
-                    NavigationStack {
-                        NewSquabbleView(creator: profile, currencyCode: homeCurrencyCode) { id in
-                            push(.squabble(id: id))
-                        }
+                    NewSquabbleView(creator: profile, currencyCode: homeCurrencyCode) { id in
+                        push(.squabble(id: id))
                     }
                     .presentationBackground(Color.backdropDeep)
                     .tint(.white)
+                    // Grows out of the + button's glass and shrinks back into it.
+                    .navigationTransition(.zoom(sourceID: Self.newSquabbleTransition, in: transitions))
                 }
             }
         }
@@ -124,6 +127,7 @@ struct HomeView: View {
             .disabled(session.profile == nil)
             .accessibilityLabel("New squabble")
         }
+        .matchedTransitionSource(id: Self.newSquabbleTransition, in: transitions)
     }
 
     /// Pushed pages carry their own backdrop, as onboarding's pages do: a shared one behind the
@@ -132,6 +136,8 @@ struct HomeView: View {
         SquabbleBackdrop(palette: mood.palette)
             .animation(.smooth(duration: 1.2), value: mood)
     }
+
+    private static let newSquabbleTransition = "newSquabble"
 
     private func push(_ route: HomeRoute) {
         guard path.last != route else { return }

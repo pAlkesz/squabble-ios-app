@@ -24,13 +24,16 @@ final class GroupsStore {
 
     private let repository: GroupRepository
     private let profiles: ProfileRepository
+    private let images: GroupImageStore
 
     init(
         repository: GroupRepository = Container.shared.groupRepository(),
-        profiles: ProfileRepository = Container.shared.profileRepository()
+        profiles: ProfileRepository = Container.shared.profileRepository(),
+        images: GroupImageStore = Container.shared.groupImageStore()
     ) {
         self.repository = repository
         self.profiles = profiles
+        self.images = images
     }
 
     func group(id: String) -> SquabbleGroup? {
@@ -44,11 +47,17 @@ final class GroupsStore {
         _ = await (groups, payment)
     }
 
-    /// Saves the new squabble to the local cache and returns its id; it shows up in
-    /// `groups` through the listener, offline too.
-    func create(_ draft: NewSquabbleDraft) throws -> String {
+    /// Uploads the photo if there is one (that part needs a connection), then saves the new
+    /// squabble to the local cache and returns its id; it shows up in `groups` through the
+    /// listener, offline too.
+    func create(_ draft: NewSquabbleDraft) async throws -> String {
         guard uid == draft.creator.id else { throw GroupError.notSignedIn }
-        guard let group = draft.makeGroup(id: UUID().uuidString, creatorPaymentMethods: paymentMethods ?? []) else {
+        guard draft.canCreate else { throw GroupError.invalidName }
+        var photo: SquabbleImage?
+        if let jpeg = draft.photoJPEG {
+            photo = try await images.upload(jpeg, by: draft.creator.id)
+        }
+        guard let group = draft.makeGroup(id: UUID().uuidString, photo: photo, creatorPaymentMethods: paymentMethods ?? []) else {
             throw GroupError.invalidName
         }
         try repository.createGroup(group)

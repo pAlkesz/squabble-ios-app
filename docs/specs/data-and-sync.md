@@ -36,6 +36,7 @@ users/{uid}/private/preferences  owner-only: { homeCurrency? }
 handles/{handle}                 { uid }: the uniqueness lock
 groups/{groupId}                 a squabble; current members can read it (see groups.md)
 avatars/{uid}/{random}.jpg       Storage: square JPEG, < 1 MB
+groupImages/{uid}/{random}.jpg   Storage: squabble photos, filed by uploader, < 1 MB
 ```
 
 The rules are in `firestore.rules` and `storage.rules`. Any change to this layout changes
@@ -50,6 +51,7 @@ the rules and this spec in the same commit.
 | `handles/{h}` | any signed-in user | create: own uid, valid handle, profile names it. Delete: owner. **Never updated.** |
 | `groups/{id}` | current members (`memberIds`) | create: creator first, ≤ 50 members, valid own entry. Update: a member's own entry only, not while archived |
 | `avatars/{uid}/*` | any signed-in user | owner; `.jpg`, `image/jpeg`, < 1 MB |
+| `groupImages/{uid}/*` | any signed-in user | uploader; `.jpg`, `image/jpeg`, < 1 MB |
 
 ## Offline behaviour
 
@@ -93,7 +95,10 @@ For groups (built Nov 2026), it also, for every group the user is a current memb
 - removes the uid from `memberIds`
 - replaces the user's entry in `members` with `{ deleted: true }`
 - hands `createdBy` on to the earliest-joined member (ties go by `memberIds` order)
-- deletes the group if nobody is left
+- deletes the group (and its photo) if nobody is left
+
+Squabble photos the user uploaded (`groupImages/{uid}/`) are **not** deleted with the
+account: they belong to squabbles other people are still in.
 
 **Planned:** it will also delete every `people` document about the user from other
 users' lists.

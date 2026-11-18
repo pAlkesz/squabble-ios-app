@@ -6,41 +6,15 @@ struct NewSquabbleDraftTests {
     private let creator = GroupTestData.profile("pal")
 
     private func draft() -> NewSquabbleDraft {
-        NewSquabbleDraft(creator: creator, currencyCode: "HUF")
-    }
-
-    @Test func addsPeopleOnceAndNeverTheCreator() {
-        var draft = draft()
-        let anna = GroupTestData.profile("anna")
-        #expect(draft.add(anna) == .added)
-        #expect(draft.add(anna) == .alreadyAdded)
-        #expect(draft.add(creator) == .isCreator)
-        #expect(draft.members == [anna])
-        #expect(draft.memberCount == 2)
-    }
-
-    @Test func stopsAtTheMemberLimitCountingTheCreator() {
-        var draft = draft()
-        for index in 1..<SquabbleGroup.maxMembers {
-            #expect(draft.add(GroupTestData.profile("member\(index)")) == .added)
-        }
-        #expect(draft.memberCount == SquabbleGroup.maxMembers)
-        #expect(draft.add(GroupTestData.profile("onetoomany")) == .full)
-    }
-
-    @Test func removesAMember() {
-        var draft = draft()
-        draft.add(GroupTestData.profile("anna"))
-        draft.remove("anna")
-        #expect(draft.members.isEmpty)
+        NewSquabbleDraft(creator: creator, currencyCode: "HUF", emoji: .emoji("🧾", .plum))
     }
 
     @Test(arguments: ["", "   ", String(repeating: "x", count: 51)])
     func rejectsInvalidNames(_ name: String) {
         var draft = draft()
-        draft.name = name
-        #expect(!draft.canCreate)
-        #expect(draft.makeGroup(id: "g", creatorPaymentMethods: []) == nil)
+        draft.setName(name)
+        // setName caps at 50, so the over-long name becomes valid; only blanks stay invalid.
+        #expect(draft.canCreate == !name.trimmingCharacters(in: .whitespaces).isEmpty)
     }
 
     @Test func setNameDropsAnythingPastTheLimit() {
@@ -49,21 +23,56 @@ struct NewSquabbleDraftTests {
         #expect(draft.name.count == SquabbleGroup.maxNameLength)
     }
 
-    @Test func makesAGroupWithTheCreatorFirstAndOnlyTheirPaymentDetails() throws {
+    @Test func presetFillsInItsNameAndEmojiAndShowsAsSelected() {
+        var draft = draft()
+        draft.choose(.trip)
+        #expect(draft.name == SquabblePreset.trip.name)
+        #expect(draft.emojiImage == .emoji(SquabblePreset.trip.emoji, .plum))
+        #expect(draft.selectedPreset == .trip)
+
+        draft.setName(draft.name + " to Rome")
+        #expect(draft.selectedPreset == nil)
+    }
+
+    @Test func presetKeepsAChosenPhoto() {
+        var draft = draft()
+        draft.setPhoto(Data([1]))
+        draft.choose(.party)
+        #expect(draft.photoJPEG == Data([1]))
+    }
+
+    @Test func pickingAnEmojiDropsThePhoto() {
+        var draft = draft()
+        draft.setPhoto(Data([1]))
+        draft.setEmoji("🍕")
+        #expect(draft.photoJPEG == nil)
+        #expect(draft.emojiImage == .emoji("🍕", .plum))
+    }
+
+    @Test func makesAGroupWithOnlyTheCreatorAndTheirPaymentDetails() throws {
         var draft = draft()
         draft.setName("  Lake trip  ")
-        draft.add(GroupTestData.profile("anna"))
-        draft.add(GroupTestData.profile("bence"))
         let payment = [GroupTestData.revolut("pal")]
 
         let group = try #require(draft.makeGroup(id: "g1", creatorPaymentMethods: payment))
 
         #expect(group.name == "Lake trip")
         #expect(group.currencyCode == "HUF")
+        #expect(group.image == .emoji("🧾", .plum))
         #expect(group.createdBy == "pal")
-        #expect(group.memberIds == ["pal", "anna", "bence"])
+        #expect(group.memberIds == ["pal"])
         #expect(group.members["pal"]?.paymentMethods == payment)
-        #expect(group.members["anna"]?.paymentMethods == [])
-        #expect(group.currentMembers.map(\.id) == ["pal", "anna", "bence"])
+    }
+
+    @Test func anUploadedPhotoWinsOverTheEmoji() throws {
+        var draft = draft()
+        draft.setName("Flat 4B")
+        let photo = SquabbleImage.photo(path: "groupImages/pal/a.jpg", url: URL(string: "https://example.com/a.jpg")!)
+        let group = try #require(draft.makeGroup(id: "g1", photo: photo, creatorPaymentMethods: []))
+        #expect(group.image == photo)
+    }
+
+    @Test func blankNameMakesNoGroup() {
+        #expect(draft().makeGroup(id: "g1", creatorPaymentMethods: []) == nil)
     }
 }

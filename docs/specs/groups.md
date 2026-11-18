@@ -2,12 +2,12 @@
 
 **Status:** Partly built (Nov 2026).
 
-- **Built:** creating a squabble (name, currency, members added by exact handle), home's
-  list, the squabble page (members only), keeping your own entry current, the rules for
-  all of that, and the account-deletion cleanup.
-- **Not built yet:** invite links (`joinGroup`), adding members after creation,
-  leaving and removing, archive/delete, rename and currency change, and People in the
-  member picker.
+- **Built:** creating a squabble (picture, name with presets, currency), home's list,
+  the squabble page (members only), keeping your own entry current, the rules for all of
+  that, and the account-deletion cleanup.
+- **Not built yet:** adding people (by handle, from People, by invite link /
+  `joinGroup`), leaving and removing, archive/delete, rename, and changing the picture
+  or currency. Until adding people lands, a new squabble holds only its creator.
 
 In code a squabble is `SquabbleGroup` (`Feature/Groups`), because `Group` is taken by
 SwiftUI.
@@ -63,7 +63,7 @@ and in Firestore it's called a *group*; in the UI it's a *squabble*.
 
 ```
 groups/{groupId}
-  name, currency, createdBy, createdAt, updatedAt
+  name, currency, image, createdBy, createdAt, updatedAt
   archivedAt?                            ← set by the creator; read-only for everyone
   inviteCode                             ← current invite code; reset by the creator
   memberIds: [uid]                       ← current members; drives the rules + home query
@@ -101,15 +101,48 @@ groups/{gid}/reminders/{id}              see bills.md
 
 ## Creating a squabble
 
-1. Tap `+` on home.
-2. Enter a name, and pick a currency (defaults to the home currency).
-3. Add members:
-   - **People you've squabbled with before** (see [People](people.md))
-   - **Exact handle lookup** (`handles/{handle}` → `users/{uid}`)
-   - **Invite link** for anyone else: share it via the share sheet (or a QR code)
-4. The creator is always a member.
-5. Save. This is a single document write, so it works offline. Creating an invite link
-   may need a connection, depending on how links are built.
+**People aren't part of creating** (Nov 2026, like Revolut): the sheet asks only for a
+picture, a name and a currency, and the squabble starts with its creator alone. People
+are added afterwards from the squabble.
+
+1. Tap `+` on home. The "Create squabble" sheet zooms out of the button.
+2. **Picture** (optional; a big circle at the top, the same crop as everywhere else):
+   - a photo from the library or camera (prepared on the device as a 512 px square JPEG)
+   - or an emoji on one of the avatar colours, from a fixed set of 24
+     (`SquabbleImage.emojis`). A random one is preselected.
+3. **Name**, 1–50 characters, **not unique**. Preset chips under the field fill in a name
+   and that preset's emoji: Trip 🏝️, Flat 🛋️, Dinner 🍝, Party 🎉, Family 👨‍👩‍👧,
+   Us two 💑 (`SquabblePreset`). A chip shows as selected while the field holds its
+   name. A chosen photo stays when a preset is tapped.
+4. **Currency**, defaulting to the home currency.
+5. Save.
+   - Without a photo, it's a single document write, so it works offline.
+   - With a photo, the photo is uploaded first, which needs a connection. Offline, the
+     app says so before trying, and the user can remove the photo to create the squabble
+     straight away.
+
+Adding people (planned, from the squabble page):
+
+- **People you've squabbled with before** (see [People](people.md))
+- **Exact handle lookup** (`handles/{handle}` → `users/{uid}`;
+  `ProfileRepository.profile(forHandle:)` already exists)
+- **Invite link** for anyone else, shared via the share sheet or a QR code
+
+## Picture
+
+- Stored on the group as `image`: `{kind: emoji, emoji, color}` or
+  `{kind: photo, path, url}`.
+- **Always shown as a circle** (`SquabbleImageView`): on home's row, on the squabble
+  page, and on the create sheet. What you see when choosing is exactly what everyone
+  gets.
+- Groups saved without an `image`, or with one this app can't read, show 🧾 on
+  `AvatarColor.default(for: groupID)`.
+- **Photos live at `groupImages/{uploader uid}/{random}.jpg`.** They're filed by
+  uploader, not by squabble, so the Storage rules can check ownership without reading
+  Firestore, and the upload can happen before the squabble exists.
+  - A photo belongs to the squabble: deleting the uploader's account leaves it.
+  - Deleting the squabble deletes it (done in `deleteUserData` when a squabble is left
+    empty; the same goes for squabble deletion once that exists).
 
 ## Joining with an invite link
 
@@ -159,6 +192,8 @@ count.
 **Deployed (Nov 2026):** read, create, and updating your own entry. Everything else
 below is planned and gets its rule along with its screen.
 
+- At creation, the picture is shape-checked: the emoji is short and on a known colour,
+  and a photo's path must be in the creator's own `groupImages/` folder.
 - At creation, the rules check the shape of the creator's own entry only. Rules can't
   loop over the other entries; those are copies of public profiles, written by the
   creator, which the members then overwrite themselves.

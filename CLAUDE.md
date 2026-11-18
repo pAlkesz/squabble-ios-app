@@ -448,10 +448,16 @@ stutters on a device even when the simulator looks smooth.
   only appears once the push finishes — a system bug (bar items set after the push lands
   late), left as is. A custom glass field avoided both but was dropped to stay native.
 - **Squabbles, in progress** (`Feature/Groups`, spec `docs/specs/groups.md`): `+` on home
-  opens a sheet to name one, pick its currency and add people by exact handle. Home lists
-  the user's squabbles (one `array-contains` listener in `GroupsStore`, sorted on the
-  device) and pushes `SquabbleView` (members only so far) through `HomeRoute`. Not yet:
-  invite links, leaving, archive/delete, editing.
+  zooms open the "Create squabble" sheet (`navigationTransition(.zoom)` from the toolbar
+  item): a circular picture (photo, or an emoji on an avatar colour), a name with preset
+  chips, and a currency. No people at creation (like Revolut), so they're added from the
+  squabble later. Home lists the user's squabbles (one `array-contains` listener in
+  `GroupsStore`, sorted on the device) and pushes `SquabbleView` (members only so far)
+  through `HomeRoute`. Not yet: adding people, invite links, leaving, archive/delete,
+  editing.
+- Scrolling screens opt into `.scrollEdgeEffectStyle(.soft, for: .top)`: iOS 26's soft
+  fade under the bar, which iOS 27 no longer applies by default. Add it to every new
+  scrolling page.
 - **Placeholder:** search on home has no destination.
 - **Not started:** bills — capture, AI parsing, the split algorithm, settlements,
   reminders.

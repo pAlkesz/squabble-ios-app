@@ -1,26 +1,29 @@
 import Foundation
 
-/// Everything entered on the new-squabble screen, before anything is saved.
+/// Everything entered on the create-squabble sheet, before anything is saved. People are
+/// added after it exists, so a new squabble starts with its creator alone.
 nonisolated struct NewSquabbleDraft: Equatable {
-    enum AddOutcome: Equatable {
-        case added
-        case isCreator
-        case alreadyAdded
-        case full
-    }
-
     let creator: UserProfile
-    var name = ""
+    private(set) var name = ""
     var currencyCode: String
-    /// Everyone but the creator, in the order they were added.
-    private(set) var members: [UserProfile] = []
+    /// Shown whenever there's no photo, and kept while there is one, so removing the photo
+    /// goes back to it.
+    private(set) var emoji: String
+    var color: AvatarColor
+    /// A prepared square JPEG, uploaded only when the squabble is created.
+    private(set) var photoJPEG: Data?
 
-    init(creator: UserProfile, currencyCode: String) {
+    init(creator: UserProfile, currencyCode: String, emoji: SquabbleImage = .random()) {
         self.creator = creator
         self.currencyCode = currencyCode
+        if case .emoji(let symbol, let color) = emoji {
+            self.emoji = symbol
+            self.color = color
+        } else {
+            self.emoji = SquabbleImage.emojis[0]
+            self.color = .meadow
+        }
     }
-
-    var memberCount: Int { members.count + 1 }
 
     var validName: String? {
         SquabbleGroup.validName(name)
@@ -30,36 +33,52 @@ nonisolated struct NewSquabbleDraft: Equatable {
         validName != nil
     }
 
+    /// The preset whose name is in the field, if any; its chip shows as selected.
+    var selectedPreset: SquabblePreset? {
+        SquabblePreset.allCases.first { $0.name == validName }
+    }
+
     mutating func setName(_ input: String) {
         name = String(input.prefix(SquabbleGroup.maxNameLength))
     }
 
-    @discardableResult
-    mutating func add(_ profile: UserProfile) -> AddOutcome {
-        guard profile.id != creator.id else { return .isCreator }
-        guard !members.contains(where: { $0.id == profile.id }) else { return .alreadyAdded }
-        guard memberCount < SquabbleGroup.maxMembers else { return .full }
-        members.append(profile)
-        return .added
+    /// Fills in the preset's name and emoji; a chosen photo stays.
+    mutating func choose(_ preset: SquabblePreset) {
+        name = preset.name
+        emoji = preset.emoji
     }
 
-    mutating func remove(_ uid: String) {
-        members.removeAll { $0.id == uid }
+    /// Picking an emoji means not wanting the photo any more.
+    mutating func setEmoji(_ symbol: String) {
+        emoji = symbol
+        photoJPEG = nil
     }
 
-    /// The group to save, with the creator first. Only the creator's payment details are
-    /// known here; everyone else copies theirs in when they next open the app.
-    func makeGroup(id: String, creatorPaymentMethods: [PaymentMethod]) -> SquabbleGroup? {
+    mutating func setPhoto(_ jpeg: Data) {
+        photoJPEG = jpeg
+    }
+
+    mutating func removePhoto() {
+        photoJPEG = nil
+    }
+
+    var emojiImage: SquabbleImage {
+        .emoji(emoji, color)
+    }
+
+    /// The squabble to save, with its creator as the only member. `photo` is the uploaded
+    /// photo when there is one; otherwise it gets the emoji.
+    func makeGroup(id: String, photo: SquabbleImage? = nil, creatorPaymentMethods: [PaymentMethod]) -> SquabbleGroup? {
         guard let name = validName else { return nil }
-        let entries = [GroupMember(profile: creator, paymentMethods: creatorPaymentMethods)]
-            + members.map { GroupMember(profile: $0) }
+        let creatorEntry = GroupMember(profile: creator, paymentMethods: creatorPaymentMethods)
         return SquabbleGroup(
             id: id,
             name: name,
             currencyCode: currencyCode,
+            image: photo ?? emojiImage,
             createdBy: creator.id,
-            memberIds: entries.map(\.id),
-            members: Dictionary(uniqueKeysWithValues: entries.map { ($0.id, $0) })
+            memberIds: [creator.id],
+            members: [creator.id: creatorEntry]
         )
     }
 }

@@ -13,5 +13,17 @@ service firebase.storage {
         && request.resource.contentType == 'image/jpeg';
       allow delete: if request.auth != null && request.auth.uid == uid;
     }
+
+    // groupImages/{uploader uid}/{random}.jpg — squabble photos, filed by whoever uploaded
+    // them so ownership needs no Firestore read and the upload can precede the squabble.
+    match /groupImages/{uid}/{file} {
+      allow read: if request.auth != null;
+      allow create, update: if request.auth != null
+        && request.auth.uid == uid
+        && file.matches('.+[.]jpg')
+        && request.resource.size < 1024 * 1024
+        && request.resource.contentType == 'image/jpeg';
+      allow delete: if request.auth != null && request.auth.uid == uid;
+    }
   }
 }

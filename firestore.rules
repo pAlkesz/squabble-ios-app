@@ -98,6 +98,25 @@ service cloud.firestore {
         && (!('payment' in entry) || (entry.payment is list && entry.payment.size() <= 5));
     }
 
+    // An emoji on one of the avatar colours, or a photo the creator uploaded to their own
+    // groupImages/ folder.
+    function isValidSquabbleImage(image, uid) {
+      return image is map && (
+        (image.kind == 'emoji'
+          && image.keys().hasOnly(['kind', 'emoji', 'color'])
+          && image.emoji is string
+          && image.emoji.size() > 0
+          && image.emoji.size() <= 40
+          && image.color in ['meadow', 'lagoon', 'coral', 'mustard', 'plum', 'tangerine', 'rose', 'indigo', 'olive', 'slate', 'cocoa'])
+        || (image.kind == 'photo'
+          && image.keys().hasOnly(['kind', 'path', 'url'])
+          && image.path is string
+          && image.path.matches('groupImages/' + uid + '/[^/]+[.]jpg')
+          && image.url is string
+          && image.url.matches('https://firebasestorage[.]googleapis[.]com(:443)?/.*'))
+      );
+    }
+
     // See docs/specs/groups.md. Only what the app does so far is allowed: creating a
     // squabble and keeping your own entry current. Leaving, archiving and deleting come
     // with their screens; joining by invite goes through a Cloud Function.
@@ -107,7 +126,8 @@ service cloud.firestore {
       allow read: if signedIn() && request.auth.uid in resource.data.memberIds;
 
       allow create: if signedIn()
-        && request.resource.data.keys().hasOnly(['name', 'currency', 'createdBy', 'createdAt', 'updatedAt', 'memberIds', 'members'])
+        && request.resource.data.keys().hasOnly(['name', 'currency', 'image', 'createdBy', 'createdAt', 'updatedAt', 'memberIds', 'members'])
+        && (!('image' in request.resource.data) || isValidSquabbleImage(request.resource.data.image, request.auth.uid))
         && request.resource.data.name is string
         && request.resource.data.name.size() > 0
         && request.resource.data.name.size() <= 100

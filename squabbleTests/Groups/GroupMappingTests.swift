@@ -3,13 +3,26 @@ import Testing
 @testable import squabble
 
 struct GroupMappingTests {
-    @Test func groupRoundTripsWithoutTimestamps() throws {
-        var draft = NewSquabbleDraft(creator: GroupTestData.profile("pal"), currencyCode: "EUR")
-        draft.setName("Flat 4B")
-        draft.add(GroupTestData.profile("anna"))
-        let group = try #require(draft.makeGroup(id: "g1", creatorPaymentMethods: [GroupTestData.revolut("pal")]))
-
+    @Test(arguments: [
+        SquabbleImage.emoji("👨‍👩‍👧", .coral),
+        .photo(path: "groupImages/pal/a.jpg", url: URL(string: "https://example.com/a.jpg")!),
+    ])
+    func groupRoundTripsWithoutTimestamps(image: SquabbleImage) throws {
+        let members = [GroupMember(profile: GroupTestData.profile("pal"), paymentMethods: [GroupTestData.revolut("pal")]),
+                       GroupMember(profile: GroupTestData.profile("anna"))]
+        let group = SquabbleGroup(
+            id: "g1", name: "Flat 4B", currencyCode: "EUR", image: image, createdBy: "pal",
+            memberIds: members.map(\.id), members: Dictionary(uniqueKeysWithValues: members.map { ($0.id, $0) })
+        )
         #expect(try SquabbleGroup(id: "g1", firestoreData: group.firestoreData) == group)
+    }
+
+    @Test func missingOrUnreadableImageFallsBackToTheDefault() throws {
+        let base: [String: Any] = ["name": "Trip", "currency": "EUR", "createdBy": "pal", "memberIds": ["pal"]]
+        var unreadable = base
+        unreadable["image"] = ["kind": "hologram"]
+        #expect(try SquabbleGroup(id: "g1", firestoreData: base).image == .default(for: "g1"))
+        #expect(try SquabbleGroup(id: "g1", firestoreData: unreadable).image == .default(for: "g1"))
     }
 
     @Test func readsTimestampsAndDeletedMembers() throws {

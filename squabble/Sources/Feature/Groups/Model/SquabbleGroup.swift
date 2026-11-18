@@ -12,6 +12,8 @@ nonisolated struct SquabbleGroup: Identifiable, Equatable, Sendable {
     var name: String
     /// ISO 4217. The currency balances are shown and settled in; bills keep their own.
     var currencyCode: String
+    /// Squabbles saved before pictures existed read as `SquabbleImage.default(for:)`.
+    var image: SquabbleImage = .emoji(SquabbleImage.emojis[0], .meadow)
     /// Holds the creator's powers (archive, delete, remove members). Passes to the
     /// earliest-joined member when the creator goes.
     var createdBy: String

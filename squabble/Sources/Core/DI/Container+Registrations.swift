@@ -13,6 +13,10 @@ extension Container {
         self { FirestoreGroupRepository() }.singleton
     }
 
+    var groupImageStore: Factory<GroupImageStore> {
+        self { FirebaseGroupImageStore() }.singleton
+    }
+
     var avatarStore: Factory<AvatarStore> {
         self { FirebaseAvatarStore() }.singleton
     }

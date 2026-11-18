@@ -1,13 +1,12 @@
 import SwiftUI
 
-/// A squabble on home's list: who's in it, its name, and how many and in what currency.
+/// A squabble on home's list: its picture, its name, and how many and in what currency.
 struct SquabbleRow: View {
     let group: SquabbleGroup
 
     var body: some View {
         HStack(spacing: 14) {
-            MemberAvatarStack(members: group.currentMembers)
-                .frame(width: 84, alignment: .leading)
+            SquabbleImageView(group.image, size: 44)
             VStack(alignment: .leading, spacing: 2) {
                 Text(verbatim: group.name)
                     .font(.body.weight(.semibold))

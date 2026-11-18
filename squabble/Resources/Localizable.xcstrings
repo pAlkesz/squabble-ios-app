@@ -1,17 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%@ is already in." : {
-      "comment" : "New squabble: the person is already a member. The argument is their name.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ már benne van."
-          }
-        }
-      }
-    },
     "%@ link" : {
       "comment" : "Payment method editor sheet: title when adding a payment link, with the service's name.",
       "localizations" : {
@@ -71,17 +60,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "%lld people max. That's a crowd, not a squabble." : {
-      "comment" : "New squabble: the member limit is reached.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Legfeljebb %lld ember. Ez már tömeg, nem veszekedés."
           }
         }
       }
@@ -218,17 +196,6 @@
         }
       }
     },
-    "Add" : {
-      "comment" : "New squabble: add the person with the typed handle.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hozzáadás"
-          }
-        }
-      }
-    },
     "Add a photo" : {
       "comment" : "Avatar photo source sheet: title.",
       "localizations" : {
@@ -247,17 +214,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fizetési mód hozzáadása"
-          }
-        }
-      }
-    },
-    "Add people by their exact handle." : {
-      "comment" : "New squabble: footer under the members when nothing went wrong.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pontos felhasználónév alapján adhatsz hozzá embereket."
           }
         }
       }
@@ -437,6 +393,28 @@
         }
       }
     },
+    "Blue" : {
+      "comment" : "Colour name, read by VoiceOver in colour pickers.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kék"
+          }
+        }
+      }
+    },
+    "Brown" : {
+      "comment" : "Colour name, read by VoiceOver in colour pickers.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Barna"
+          }
+        }
+      }
+    },
     "Cancel" : {
       "comment" : "Generic cancel button.",
       "localizations" : {
@@ -444,6 +422,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mégse"
+          }
+        }
+      }
+    },
+    "Change" : {
+      "comment" : "Create squabble: button on the currency row that opens the currency list.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Módosítás"
           }
         }
       }
@@ -470,6 +459,28 @@
         }
       }
     },
+    "Clear name" : {
+      "comment" : "Create squabble: VoiceOver label for the button that empties the name field.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Név törlése"
+          }
+        }
+      }
+    },
+    "Colour" : {
+      "comment" : "Squabble emoji picker: header above the colours.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szín"
+          }
+        }
+      }
+    },
     "Confirm with Apple and your profile, payment details and photos are gone for good. No undo — not even we can bring them back." : {
       "comment" : "Delete account sheet: description above the Apple button.",
       "localizations" : {
@@ -492,6 +503,17 @@
         }
       }
     },
+    "Coral" : {
+      "comment" : "Colour name, read by VoiceOver in colour pickers.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Korall"
+          }
+        }
+      }
+    },
     "Couldn't check this handle. Tap the arrow to try again." : {
       "comment" : "Onboarding: handle check failed (not offline); the retry arrow sits at the end of the field.",
       "localizations" : {
@@ -503,30 +525,19 @@
         }
       }
     },
-    "Couldn't look that up. Try again." : {
-      "comment" : "New squabble: handle lookup failed for another reason.",
+    "Create squabble" : {
+      "comment" : "Create squabble sheet: title.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ezt most nem sikerült kikeresni. Próbáld újra."
-          }
-        }
-      }
-    },
-    "Create" : {
-      "comment" : "New squabble: confirm button.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Létrehozás"
+            "value" : "Veszekedés indítása"
           }
         }
       }
     },
     "Currency" : {
-      "comment" : "New squabble: header above the currency row, and the currency picker's title.",
+      "comment" : "Create squabble: label on the currency row, and the currency picker's title.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
@@ -569,6 +580,17 @@
         }
       }
     },
+    "Dinner" : {
+      "comment" : "Squabble name preset: a meal out.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vacsora"
+          }
+        }
+      }
+    },
     "Display name" : {
       "comment" : "Onboarding: field title.",
       "localizations" : {
@@ -587,6 +609,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nem kell egyedinek lennie. A barátaid tudják, ki vagy."
+          }
+        }
+      }
+    },
+    "Emoji" : {
+      "comment" : "Squabble emoji picker: header above the emojis, and its title.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Emoji"
           }
         }
       }
@@ -613,6 +646,17 @@
         }
       }
     },
+    "Family" : {
+      "comment" : "Squabble name preset: family expenses.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Család"
+          }
+        }
+      }
+    },
     "Finish" : {
       "comment" : "Onboarding: final button once payment methods were added.",
       "localizations" : {
@@ -620,6 +664,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kész"
+          }
+        }
+      }
+    },
+    "Flat" : {
+      "comment" : "Squabble name preset: a shared flat or house.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Albérlet"
           }
         }
       }
@@ -657,13 +712,13 @@
         }
       }
     },
-    "Handle" : {
-      "comment" : "Onboarding: field title for the unique @handle.",
+    "Green" : {
+      "comment" : "Colour name, read by VoiceOver in colour pickers.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Felhasználónév"
+            "value" : "Zöld"
           }
         }
       }
@@ -675,6 +730,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "felhasznalonev"
+          }
+        }
+      }
+    },
+    "Handle" : {
+      "comment" : "Onboarding: field title for the unique @handle.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Felhasználónév"
           }
         }
       }
@@ -756,6 +822,17 @@
         }
       }
     },
+    "Indigo" : {
+      "comment" : "Colour name, read by VoiceOver in colour pickers.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Indigó"
+          }
+        }
+      }
+    },
     "Jesus was an actor" : {
       "comment" : "Avatar persona slogan: a quotable actor. Hungarian original: 'Jézus színész volt'.",
       "localizations" : {
@@ -785,17 +862,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Őrizd meg. Vagy ne."
-          }
-        }
-      }
-    },
-    "Lake trip, flat 4B, Tuesday's pizza…" : {
-      "comment" : "New squabble: placeholder in the name field.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Balatoni hétvége, albérlet, keddi pizza…"
           }
         }
       }
@@ -856,7 +922,7 @@
       }
     },
     "Members · %lld" : {
-      "comment" : "Header above a squabble's members, with how many there are.",
+      "comment" : "New squabble: header above the members, with how many there are.\nSquabble page: header above the members, with how many there are.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
@@ -888,6 +954,17 @@
         }
       }
     },
+    "Mustard" : {
+      "comment" : "Colour name, read by VoiceOver in colour pickers.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mustár"
+          }
+        }
+      }
+    },
     "Name" : {
       "comment" : "New squabble: header above the name field.",
       "localizations" : {
@@ -906,6 +983,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A számlán szereplő név"
+          }
+        }
+      }
+    },
+    "Name your squabble" : {
+      "comment" : "Create squabble: placeholder in the name field.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nevezd el a veszekedést"
           }
         }
       }
@@ -976,17 +1064,6 @@
         }
       }
     },
-    "Nobody goes by %@. Check the spelling?" : {
-      "comment" : "New squabble: no user holds the typed handle.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Senki nem hallgat erre: %@. Elgépelted?"
-          }
-        }
-      }
-    },
     "Nobody owes anybody anything. Enjoy it while it lasts." : {
       "comment" : "Squabble page: empty bills message.",
       "localizations" : {
@@ -1016,6 +1093,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "OK"
+          }
+        }
+      }
+    },
+    "Olive" : {
+      "comment" : "Colour name, read by VoiceOver in colour pickers.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Olíva"
           }
         }
       }
@@ -1086,6 +1174,28 @@
         }
       }
     },
+    "Orange" : {
+      "comment" : "Colour name, read by VoiceOver in colour pickers.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Narancs"
+          }
+        }
+      }
+    },
+    "Party" : {
+      "comment" : "Squabble name preset: a party.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buli"
+          }
+        }
+      }
+    },
     "Payment details" : {
       "comment" : "Account screen row and page title: the user's bank accounts and payment links.",
       "localizations" : {
@@ -1119,6 +1229,17 @@
         }
       }
     },
+    "Pick an emoji" : {
+      "comment" : "Create squabble: picture menu item that opens the emoji picker.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Emoji választása"
+          }
+        }
+      }
+    },
     "Pick who you'll be when the bill comes. Or show your actual face — people pay faster when they can see who's asking." : {
       "comment" : "Onboarding avatar step: subtitle.",
       "localizations" : {
@@ -1126,6 +1247,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Válaszd ki, ki leszel, amikor megjön a számla. Vagy mutasd az igazi arcod – gyorsabban fizetnek, ha látják, ki kéri."
+          }
+        }
+      }
+    },
+    "Pink" : {
+      "comment" : "Colour name, read by VoiceOver in colour pickers.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rózsaszín"
+          }
+        }
+      }
+    },
+    "Plum" : {
+      "comment" : "Colour name, read by VoiceOver in colour pickers.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szilva"
           }
         }
       }
@@ -1159,17 +1302,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Eltávolítás"
-          }
-        }
-      }
-    },
-    "Remove %@" : {
-      "comment" : "New squabble: remove a member. The argument is their name.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ eltávolítása"
           }
         }
       }
@@ -1273,6 +1405,17 @@
         }
       }
     },
+    "Slate" : {
+      "comment" : "Colour name, read by VoiceOver in colour pickers.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Palaszürke"
+          }
+        }
+      }
+    },
     "Someone already took that handle. Pick another one." : {
       "comment" : "ProfileError.handleTaken",
       "localizations" : {
@@ -1317,17 +1460,6 @@
         }
       }
     },
-    "SQUABBLE" : {
-      "comment" : "Receipt header on the welcome screen; uppercase on purpose.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "SQUABBLE"
-          }
-        }
-      }
-    },
     "Squabble" : {
       "comment" : "App name, read by VoiceOver for the welcome-screen bird.\nApp name, read by VoiceOver on the launch splash.",
       "localizations" : {
@@ -1339,6 +1471,17 @@
         }
       }
     },
+    "SQUABBLE" : {
+      "comment" : "Receipt header on the welcome screen; uppercase on purpose.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SQUABBLE"
+          }
+        }
+      }
+    },
     "SQUABBLE CLUB" : {
       "comment" : "Membership card: the club's name in the green band.",
       "localizations" : {
@@ -1346,6 +1489,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "SQUABBLE KLUB"
+          }
+        }
+      }
+    },
+    "Squabble picture" : {
+      "comment" : "Create squabble: VoiceOver label for the picture menu.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A veszekedés képe"
           }
         }
       }
@@ -1515,17 +1669,6 @@
         }
       }
     },
-    "That's you. You're in this one whether you like it or not." : {
-      "comment" : "New squabble: the user typed their own handle.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ez te vagy. Akár tetszik, akár nem, benne vagy."
-          }
-        }
-      }
-    },
     "This is the name on every bill — and on every reminder that you're owed money." : {
       "comment" : "Onboarding: name step subtitle.",
       "localizations" : {
@@ -1592,6 +1735,17 @@
         }
       }
     },
+    "Trip" : {
+      "comment" : "Squabble name preset: a holiday or trip.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utazás"
+          }
+        }
+      }
+    },
     "Try again" : {
       "comment" : "Retry button — profile failed to load, or a handle check failed.",
       "localizations" : {
@@ -1610,6 +1764,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Egyedi. Ezzel találnak meg."
+          }
+        }
+      }
+    },
+    "Us two" : {
+      "comment" : "Squabble name preset: a couple splitting things.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mi ketten"
           }
         }
       }
@@ -1736,7 +1901,7 @@
       }
     },
     "You" : {
-      "comment" : "Tag on the user's own row in a squabble's member list.",
+      "comment" : "New squabble: tag on the creator's own row.\nSquabble page: tag on the user's own row.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
@@ -1768,6 +1933,17 @@
         }
       }
     },
+    "You're offline, and the photo needs the internet. Remove it to create the squabble now, or try again when you're back." : {
+      "comment" : "Create squabble: tried to create with a photo while offline.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nincs net, a képhez pedig kellene. Vedd ki, és máris létrehozhatod, vagy próbáld újra, ha visszajött a net."
+          }
+        }
+      }
+    },
     "You're offline. Connect to the internet so we can check this handle." : {
       "comment" : "Onboarding: handle can't be checked because the device is offline; blocks continuing.",
       "localizations" : {
@@ -1775,17 +1951,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nincs net. Csatlakozz, hogy ellenőrizni tudjuk ezt a felhasználónevet."
-          }
-        }
-      }
-    },
-    "You're offline. Finding people needs the internet." : {
-      "comment" : "New squabble: handle lookup while offline.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nincs net. Emberek kereséséhez internet kell."
           }
         }
       }
