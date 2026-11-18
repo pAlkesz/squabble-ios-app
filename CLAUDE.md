@@ -38,7 +38,7 @@ well-structured, and easy for the next agent session to pick up.
   - Auth: Firebase Auth
   - Files: Cloud Storage for Firebase (avatars only; project is on the Blaze plan)
   - Telemetry: Crashlytics (crashes + non-fatals), Analytics
-  - Server: Cloud Functions (TypeScript, `functions/`) for background triggers only
+  - Server: Cloud Functions (TypeScript, `functions/`) for server-side work only, never reads
 - **Networking:** async/await with Alamofire — for non-Firebase HTTP only (the AI
   service). Firebase traffic goes through the Firebase SDK, never hand-rolled REST.
 - **Persistence:** Firestore's local cache for anything that syncs; SwiftData only for
@@ -62,9 +62,10 @@ ObjC-based SDK, NoSQL modeling, `Sendable` friction under Swift 6.
   product means adding it to the target in `project.pbxproj` (a sanctioned hand-edit).
 - **No REST layer.** The app talks to Firestore directly through the SDK, with security
   rules as the access control — a Cloud Functions API would lose the offline cache and
-  live listeners, and wouldn't make reads cheaper. Functions are for background
-  triggers later (invite-link joins, reminder pushes, server-side cleanup), not for
-  reads. Design documents around screens instead of joining: denormalize small,
+  live listeners, and wouldn't make reads cheaper. Functions do server-side work only:
+  background triggers (cleanup, people lists, reminder pushes), a daily exchange-rate job,
+  and the `joinGroup` callable for invite links (planned list in
+  `docs/specs/data-and-sync.md`), never reads. Design documents around screens instead of joining: denormalize small,
   rarely-changing fields and embed what's always read together.
 - **Cloud Functions** live in `functions/` (TypeScript, Node 22, `firebase-functions` +
   `firebase-admin`; `node_modules/` and the compiled `lib/` are gitignored). Deploy with

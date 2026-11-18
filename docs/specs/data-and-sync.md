@@ -8,8 +8,19 @@
 - **The app talks to Firestore directly through the SDK.** The security rules are the
   access control. There's no REST layer: a Cloud Functions API would lose the offline
   cache and live listeners, and wouldn't make reads any cheaper.
-- **Cloud Functions are for background triggers only**, such as data cleanup, invite
-  joins and reminder pushes. They aren't used for reads.
+- **Cloud Functions do server-side work, never reads.** That covers background triggers
+  (data cleanup, the people lists, reminder pushes), one scheduled job (exchange rates)
+  and one callable (`joinGroup`, for invite links, where a non-member needs the server
+  to vouch for them).
+
+### Functions
+
+| Function | Kind | Status |
+| --- | --- | --- |
+| `deleteUserData` | Auth `onDelete` trigger | Built |
+| `joinGroup` | Callable | Planned ([Groups](groups.md#joining-with-an-invite-link)) |
+| People sync | Firestore triggers on groups and users | Planned ([People](people.md#keeping-it-up-to-date-cloud-functions)) |
+| Exchange rates | Scheduled, daily | Planned ([Bills](bills.md#exchange-rates)) |
 - **Documents are shaped around screens.** Small, rarely-changing fields are
   denormalized, and whatever is always read together is embedded.
 - **Reads cost money.** Use one listener per screen on a scoped query, cache reads where
@@ -75,9 +86,14 @@ on, Admin SDK so the rules don't apply) deletes:
 Every step is safe to repeat. **Anything new stored per user must be added to this
 function.**
 
-**Planned, once groups exist:** the function also removes the uid from every group's
-`memberIds` and replaces the user's entry in `members` with `{ deleted: true }` (see
-[Groups](groups.md#account-deletion)).
+**Planned, once groups exist:** the function also:
+
+- removes the uid from every group's `memberIds`
+- replaces the user's entry in `members` with `{ deleted: true }`
+- hands `createdBy` on to the earliest-joined member
+- deletes every `people` document about the user from other users' lists
+
+See [Groups](groups.md#account-deletion) and [People](people.md).
 
 ## Telemetry
 

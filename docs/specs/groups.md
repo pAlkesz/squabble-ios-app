@@ -1,7 +1,7 @@
 # Groups (squabbles)
 
-**Status:** Draft. Not built. Membership decisions settled Nov 2026; see "Open
-questions" for what's left.
+**Status:** Draft. Not built. All product questions settled (Nov 2026); ready to
+implement.
 
 ## Summary
 
@@ -22,13 +22,22 @@ and in Firestore it's called a *group*; in the UI it's a *squabble*.
   someone new.
 - **Users already on Squabble are added directly** (from People or by exact handle), with
   no accept step. Someone added against their will can leave, as long as they're settled.
+- **Invite links work until they're reset.** Each squabble has one reusable link, which
+  any member can share. Joining goes through a **callable Cloud Function**, which checks
+  the code server-side.
 - **Leaving or being removed is allowed only when settled.** The member's balance in that
   squabble must be zero, so totals never break. Bills they were part of stay unchanged.
+  **The app enforces this check, not the server.** A tampered app could skip it, but the
+  bills stay intact either way, so no money record is lost.
+- **Only the creator can remove other members.** Any member can remove themselves.
+- **The creator role passes on.** If the creator leaves or deletes their account, the
+  member who joined earliest becomes the creator. A squabble always has someone in charge.
 - **The creator can delete or archive a squabble at any time, even with open balances.**
   With open balances, a warning lists who owes whom and asks for confirmation.
 - **Archiving makes the squabble read-only for everyone** and moves it out of home's main
   list. Its balances stay visible and **still count** towards everyone's home total, so
-  archiving can't hide a debt.
+  archiving can't hide a debt. **Archiving can be undone:** the creator can reopen the
+  squabble.
 - **Deleting a squabble** removes it and all its bills for everyone. This wipes open
   debts, which is why there's a confirmation step.
 - **When a member deletes their account**, their entry stays as an anonymous **"Deleted
@@ -47,6 +56,7 @@ and in Firestore it's called a *group*; in the UI it's a *squabble*.
 groups/{groupId}
   name, currency, createdBy, createdAt, updatedAt
   archivedAt?                            ← set by the creator; read-only for everyone
+  inviteCode                             ← current invite code; reset by the creator
   memberIds: [uid]                       ← current members; drives the rules + home query
   members: {
     uid: { displayName, handle, avatar, payment?, joinedAt, leftAt?, deleted? }
@@ -87,10 +97,32 @@ groups/{gid}/reminders/{id}              see bills.md
 
 ## Joining with an invite link
 
+- **One link per squabble**, `https://<our domain>/join/<inviteCode>`. Any member can
+  share it (share sheet or QR code). It keeps working until the creator **resets** it,
+  which generates a new code and kills the old link.
+- `inviteCode` is a random, unguessable string (at least 128 bits).
+- **Universal links** need an `apple-app-site-association` file on a domain we control.
+  We'll serve it from Firebase Hosting. (Firebase Dynamic Links is shut down, so it
+  isn't an option.)
+
+**Flow:**
+
 1. The recipient opens the link. Without the app, they install it, sign in and finish
-   onboarding, and the link is then picked up again.
-2. They see the squabble's name and members, and confirm to join.
-3. They're added to `memberIds` and their entry is written to `members`.
+   onboarding, and the link is then picked up again. If the code can't survive the
+   install, they can open the link once more.
+2. The app shows the squabble's name and member count, and the user confirms to join.
+3. The app calls the **`joinGroup` callable function** with the code. It:
+   - finds the group by `inviteCode`
+   - refuses if the code is unknown/reset, the group is archived, or it already has
+     50 members
+   - otherwise adds the caller to `memberIds` and copies their profile and payment
+     details into `members[uid]`
+   - does nothing if the caller is already a member
+4. Joining needs a connection.
+
+Showing the name before joining also needs the server, since a non-member can't read
+the group. The same function can answer a "preview" call with only the name and member
+count.
 
 ## Currency
 
@@ -103,7 +135,7 @@ groups/{gid}/reminders/{id}              see bills.md
   rewriting every bill, the rounding drift of repeated conversion, and conflicting edits
   from offline devices.
 - The conversion uses the same exchange-rate source as the home total (see
-  [Bills](bills.md#open-questions)).
+  [Bills](bills.md#exchange-rates)).
 - Groups whose bills all share one currency need no conversion at all.
 
 ## Rules (planned)
@@ -114,12 +146,22 @@ groups/{gid}/reminders/{id}              see bills.md
 - **Update by a member** (not allowed while `archivedAt` is set):
   - edit their own `members[uid]` entry
   - add members (each added uid must exist)
-  - remove themselves (whether "settled" is checked by the app or by the server is an
-    open question)
+  - remove themselves (the app checks they're settled)
   - rename the group / change its currency
-- **Creator only:** set or clear `archivedAt`, and delete the group.
-- **Joining via invite:** a non-member may add only themselves, and only with a valid
-  invite (mechanism open, see below).
+- **Creator only:** set or clear `archivedAt`, reset `inviteCode`, remove other members,
+  and delete the group.
+- **No `inviteCode` reads for non-members.** Joining only happens through `joinGroup`,
+  which runs as the Admin SDK, so the rules never let a non-member write.
+
+## Creator succession
+
+When the creator leaves or deletes their account, `createdBy` moves to the remaining
+member with the earliest `joinedAt`:
+
+- **Leaving:** the app makes this change in the same write that removes the creator.
+- **Account deletion:** `deleteUserData` makes it.
+
+If no members remain, the group is deleted.
 
 ## Account deletion
 
@@ -127,6 +169,7 @@ groups/{gid}/reminders/{id}              see bills.md
 
 - remove the uid from `memberIds`
 - replace `members[uid]` with `{ deleted: true }`
+- hand `createdBy` on if the user was the creator (see "Creator succession" above)
 
 The Cloud Function runs with admin rights, so the security rules don't constrain it.
 Before deletion, the app shows the user's open balances as a warning (see
@@ -134,17 +177,5 @@ Before deletion, the app shows the user's open balances as a warning (see
 
 ## Open questions
 
-1. **Invite link mechanism:**
-   - The link format and domain (universal links need an `apple-app-site-association`
-     file on a domain we control, e.g. via Firebase Hosting; Firebase Dynamic Links is
-     shut down).
-   - How joining is authorised: a rules-only check against an `invites/{code}` document,
-     or a callable Cloud Function.
-   - Whether links expire.
-2. **"Only when settled" enforcement:** the security rules can't sum the bills, so is a
-   check in the app enough, or does leaving go through a Cloud Function?
-3. **Removing other members:** can any member remove another (settled) member, or only
-   the creator?
-4. **Creator leaves or deletes their account:** who inherits delete/archive rights? The
-   longest-standing member, or nobody (archived automatically)?
-5. **Un-archiving:** can the creator reopen an archived squabble?
+None at the product level. Details like copy and screen layout get settled while
+building.

@@ -1,6 +1,7 @@
 # People
 
-**Status:** Draft. Not built. Depends on [Groups](groups.md).
+**Status:** Draft. Not built. Depends on [Groups](groups.md). All product questions
+settled (Nov 2026).
 
 ## Summary
 
@@ -10,10 +11,12 @@ social network: there are no friend requests, followers or feeds.
 
 ## Decisions (Nov 2026)
 
+- **A list kept up by the server** (approach B below). Each user's list is maintained by
+  Cloud Functions, so **people stay on it after you leave every squabble you shared**,
+  and it can be sorted by recency.
 - **No guests exist** (see [Groups](groups.md#decisions-nov-2026)), so everyone in the
   list is a real user with a uid. No matching people by name.
-- **No hiding in v1.** The list only shows people you already share a squabble with. Add
-  hiding later if it's wanted.
+- **No hiding in v1.** Add it later if it's wanted.
 - New people arrive by **exact handle** or an **invite link**. Contact matching stays
   deferred (see [Profile](profile.md#handles)).
 
@@ -25,32 +28,45 @@ social network: there are no friend requests, followers or feeds.
 - **Later:** a person's page (shared squabbles, net balance with them) and the "friend
   leaderboard" on the roadmap.
 
-## Approaches considered
+## Data model
 
-| | How it works | Pros | Cons |
-| --- | --- | --- | --- |
-| **A. Derived from groups** | Everyone in the `members` maps of the user's groups, deduplicated by uid | No extra documents or reads (home already listens to the groups); works offline; nothing to keep in sync | People disappear when you leave every group you shared with them; data only as fresh as the copies in those groups |
-| **B. Server-kept list** | `users/{uid}/people/{otherUid}`, maintained by a Cloud Function on group member changes (`lastSharedAt`, `sharedGroupCount`) | Persists after leaving groups; "recent" and "frequent" sorting for free | Extra writes; another thing for `deleteUserData`; deleting an account fans out to everyone's lists |
-| **C. Explicit friends** | Friend requests / accept | Familiar | A whole social graph a bill splitter doesn't need |
+```
+users/{uid}/people/{otherUid}
+  uid                    ← the other user's uid, repeated so collection-group queries can find it
+  displayName, handle, avatar
+  firstSharedAt          ← when you first became members of the same squabble
+  lastSharedAt           ← the last time you became members of the same squabble
+```
 
-**Recommendation:** start with **A**, behind a protocol-typed `PeopleRepository`, so it
-can be swapped for **B** without changing any screens. Move to B only if "they vanished
-from my list" or recency ranking turns out to matter.
+**Rules:** only the owner can read it. **Nobody writes it from the app**: only Cloud
+Functions (Admin SDK) do.
 
-## Behaviour (with approach A)
+## Keeping it up to date (Cloud Functions)
 
-- **Source:** every `members` entry in any group the user belongs to (including archived
-  groups), excluding the user themselves and **deleted members**. Former members of a
-  group (those with `leftAt`) still count.
-- **Dedup:** by uid. The displayed name and avatar come from the most recently updated
-  group.
-- **Order:** most recent shared activity first (the group's `updatedAt`), then by name.
-- **Search:** local filter on display name and handle, ignoring case and diacritics. If
-  the query is a valid handle that isn't in the list, also offer an exact
+| Trigger | Does |
+| --- | --- |
+| A group's `memberIds` gains uids | For each new member *N* and each existing member *M*, write `users/M/people/N` and `users/N/people/M`, setting `lastSharedAt` (and `firstSharedAt` if new) |
+| A user's profile (`users/{uid}`) changes name, handle or avatar | Update every `people` document about them (collection-group query on `uid`) |
+| A user's account is deleted (`deleteUserData`) | Delete every `people` document about them (collection-group query on `uid`). Their own `people` list goes with `users/{uid}` |
+
+- **Leaving a group removes nobody from anyone's list.** That's the point of a server-kept
+  list.
+- **Cost:** someone joining a squabble of *n* members takes 2*n* writes (at most about
+  100). A profile edit takes one write per person who has that user in their list.
+- All triggers are safe to repeat (they set values, they don't count), so retries are
+  harmless.
+
+## Behaviour in the app
+
+- **One listener** on `users/{uid}/people`, ordered by `lastSharedAt` (most recent
+  first). It works offline from the cache.
+- **Search:** a local filter on display name and handle, ignoring case and diacritics.
+  If the query is a valid handle that isn't in the list, also offer an exact
   `handles/{handle}` lookup in the same results.
-- **Privacy:** only people the user already shares a group with are listed, using data
-  already visible to them. Nothing new is exposed.
+- Behind a protocol-typed `PeopleRepository`, like the other data layers.
+- **Privacy:** only people you've shared a squabble with are listed, using profile fields
+  that are already public. Nothing new is exposed.
 
 ## Open questions
 
-1. **Approach A vs. B:** confirm A for v1.
+None at the product level.
