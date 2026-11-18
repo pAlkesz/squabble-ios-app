@@ -153,22 +153,6 @@ nonisolated final class FirestoreProfileRepository: ProfileRepository {
         )
     }
 
-    func deleteProfile(_ profile: UserProfile?, uid: String) async throws {
-        guard let db else { throw ProfileError.unavailable }
-        let batch = db.batch()
-        batch.deleteDocument(Self.payment(uid, in: db))
-        batch.deleteDocument(Self.preferences(uid, in: db))
-        if let profile {
-            batch.deleteDocument(Self.handle(profile.handle, in: db))
-        }
-        batch.deleteDocument(Self.user(uid, in: db))
-        do {
-            try await batch.commit()
-        } catch {
-            throw Self.mapped(error)
-        }
-    }
-
     private static func user(_ uid: String, in db: Firestore) -> DocumentReference {
         db.collection("users").document(uid)
     }

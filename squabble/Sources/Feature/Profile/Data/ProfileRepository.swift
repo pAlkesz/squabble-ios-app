@@ -29,7 +29,4 @@ nonisolated protocol ProfileRepository: Sendable {
     func preferenceChanges(for uid: String) -> AsyncThrowingStream<UserPreferences, Error>
 
     func setPreferences(_ preferences: UserPreferences, for uid: String) throws
-
-    /// Removes everything stored for the user, including releasing their handle.
-    func deleteProfile(_ profile: UserProfile?, uid: String) async throws
 }

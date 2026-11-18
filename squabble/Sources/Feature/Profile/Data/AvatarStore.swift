@@ -9,9 +9,3 @@ nonisolated protocol AvatarStore: Sendable {
     /// earlier failed change left behind.
     func deleteAll(for uid: String, keeping: String?) async throws
 }
-
-nonisolated extension AvatarStore {
-    func deleteAll(for uid: String) async throws {
-        try await deleteAll(for: uid, keeping: nil)
-    }
-}

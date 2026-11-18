@@ -16,7 +16,7 @@ nonisolated protocol AuthService: Sendable {
     /// Needs the Apple provider's Services ID and key set up in the Firebase console.
     func revokeAppleAccess(_ apple: AppleSignInResult) async throws
 
-    /// Removes the auth user, which signs them out. Call last: deleting their data needs them
-    /// signed in.
+    /// Removes the auth user, which signs them out. Their data is wiped server-side
+    /// afterwards, by the `deleteUserData` Cloud Function.
     func deleteUser() async throws
 }

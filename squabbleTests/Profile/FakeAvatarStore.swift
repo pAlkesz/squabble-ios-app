@@ -3,7 +3,6 @@ import Foundation
 
 nonisolated final class FakeAvatarStore: AvatarStore, @unchecked Sendable {
     private(set) var uploads: [String: [Data]] = [:]
-    private(set) var deletedUIDs: [String] = []
     private(set) var deletedPaths: [String] = []
 
     func upload(_ jpeg: Data, for uid: String) async throws -> Avatar {
@@ -13,7 +12,6 @@ nonisolated final class FakeAvatarStore: AvatarStore, @unchecked Sendable {
     }
 
     func deleteAll(for uid: String, keeping: String?) async throws {
-        if keeping == nil { deletedUIDs.append(uid) }
         let paths = (uploads[uid] ?? []).indices.map { "avatars/\(uid)/\($0 + 1).jpg" }
         deletedPaths += paths.filter { $0 != keeping }
     }

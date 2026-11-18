@@ -43,3 +43,7 @@ GoogleService-Info.plist
 firebase-debug.log
 firestore-debug.log
 .firebase/
+
+# Cloud Functions
+functions/node_modules/
+functions/lib/

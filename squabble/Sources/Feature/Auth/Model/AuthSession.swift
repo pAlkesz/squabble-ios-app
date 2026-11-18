@@ -38,22 +38,16 @@ final class AuthSession {
     private var profileState: ProfileState = .loading
     private(set) var profileSync: ProfileSync = .live
     private var profileObservation: Task<Void, Never>?
-    // Wiping the profile makes the listener report "no profile" a moment before the auth
-    // user disappears; without this the onboarding screen would flash mid-deletion.
-    private var isDeletingAccount = false
 
     private let service: AuthService
     private let profiles: ProfileRepository
-    private let avatars: AvatarStore
 
     init(
         service: AuthService = Container.shared.authService(),
-        profiles: ProfileRepository = Container.shared.profileRepository(),
-        avatars: AvatarStore = Container.shared.avatarStore()
+        profiles: ProfileRepository = Container.shared.profileRepository()
     ) {
         self.service = service
         self.profiles = profiles
-        self.avatars = avatars
     }
 
     var state: State {
@@ -112,16 +106,15 @@ final class AuthSession {
         try service.signOut()
     }
 
+    /// Deleting the Auth user is the only data step here: the `deleteUserData` Cloud Function
+    /// wipes the profile, handle and photos once it's gone, retrying until it succeeds. So a
+    /// failure at any point leaves either the whole account or none of it.
     func deleteAccount(confirmingWith apple: AppleSignInResult) async throws {
-        guard let user else { throw AuthError.notSignedIn }
+        guard user != nil else { throw AuthError.notSignedIn }
         try await service.reauthenticate(with: apple)
-        // Revoked before anything is deleted: if Apple refuses, the account is left whole
-        // rather than signed in with its profile gone.
+        // Before the user goes: revoking needs them signed in, and if Apple refuses, nothing
+        // has been deleted yet.
         try await service.revokeAppleAccess(apple)
-        isDeletingAccount = true
-        defer { isDeletingAccount = false }
-        try await avatars.deleteAll(for: user.id)
-        try await profiles.deleteProfile(profile, uid: user.id)
         try await service.deleteUser()
     }
 
@@ -136,7 +129,6 @@ final class AuthSession {
             do {
                 for try await profile in profiles.profileChanges(for: user.id) {
                     guard !Task.isCancelled else { return }
-                    if isDeletingAccount && profile == nil { continue }
                     profileState = profile.map(ProfileState.loaded) ?? .missing
                     profileSync = .live
                 }

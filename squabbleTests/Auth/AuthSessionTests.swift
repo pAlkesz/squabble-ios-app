@@ -6,7 +6,6 @@ import Testing
 struct AuthSessionTests {
     private let service = FakeAuthService()
     private let profiles = FakeProfileRepository()
-    private let avatars = FakeAvatarStore()
     private let apple = AppleSignInResult(
         identityToken: "token",
         authorizationCode: "code",
@@ -19,7 +18,7 @@ struct AuthSessionTests {
     )
 
     private func makeSession() -> AuthSession {
-        AuthSession(service: service, profiles: profiles, avatars: avatars)
+        AuthSession(service: service, profiles: profiles)
     }
 
     private func profile(uid: String = "uid-1", handle: String = "pal") throws -> UserProfile {
@@ -148,19 +147,17 @@ struct AuthSessionTests {
         observing.cancel()
     }
 
-    @Test func deleteAccountWipesDataRevokesAppleTokenAndSignsOut() async throws {
-        let existing = try profile()
-        profiles.seed(existing)
+    /// The data itself is wiped server-side once the Auth user is gone.
+    @Test func deleteAccountRevokesAppleTokenAndDeletesTheUser() async throws {
+        profiles.seed(try profile())
         let session = makeSession()
         let observing = Task { await session.observe() }
         try await session.signIn(with: apple)
         await waitUntil { session.profile != nil }
 
         try await session.deleteAccount(confirmingWith: apple)
-        #expect(avatars.deletedUIDs == ["uid-1"])
-        #expect(profiles.deletedUIDs == ["uid-1"])
-        #expect(try await profiles.isHandleAvailable(existing.handle, for: "someone-else"))
         #expect(service.revokedCodes == ["code"])
+        #expect(service.currentUser == nil)
         await waitUntil { session.state == .signedOut }
         observing.cancel()
     }
@@ -176,8 +173,8 @@ struct AuthSessionTests {
         await #expect(throws: AuthError.self) {
             try await session.deleteAccount(confirmingWith: apple)
         }
-        #expect(profiles.deletedUIDs.isEmpty)
-        #expect(avatars.deletedUIDs.isEmpty)
+        #expect(service.revokedCodes.isEmpty)
+        #expect(service.currentUser != nil)
         #expect(session.profile != nil)
         observing.cancel()
     }
@@ -195,8 +192,6 @@ struct AuthSessionTests {
         await #expect(throws: AuthError.self) {
             try await session.deleteAccount(confirmingWith: apple)
         }
-        #expect(profiles.deletedUIDs.isEmpty)
-        #expect(avatars.deletedUIDs.isEmpty)
         #expect(service.currentUser != nil)
         #expect(session.profile != nil)
         observing.cancel()

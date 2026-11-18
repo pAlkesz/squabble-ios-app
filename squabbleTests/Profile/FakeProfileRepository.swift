@@ -8,7 +8,6 @@ nonisolated final class FakeProfileRepository: ProfileRepository, @unchecked Sen
     private(set) var paymentMethods: [String: [PaymentMethod]] = [:]
     private(set) var claimedHandles: [Handle: String] = [:]
     private(set) var preferences: [String: UserPreferences] = [:]
-    private(set) var deletedUIDs: [String] = []
     var listenerError: Error?
     var saveError: Error?
     var availabilityError: Error?
@@ -76,15 +75,6 @@ nonisolated final class FakeProfileRepository: ProfileRepository, @unchecked Sen
     func setPreferences(_ preferences: UserPreferences, for uid: String) throws {
         if let saveError { throw saveError }
         self.preferences[uid] = preferences
-    }
-
-    func deleteProfile(_ profile: UserProfile?, uid: String) async throws {
-        deletedUIDs.append(uid)
-        if let profile { claimedHandles[profile.handle] = nil }
-        profiles[uid] = nil
-        paymentMethods[uid] = nil
-        preferences[uid] = nil
-        publish(uid)
     }
 
     /// Kills the live listeners for `uid`, as a Firestore listener error would.

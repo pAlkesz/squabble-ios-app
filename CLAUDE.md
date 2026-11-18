@@ -38,6 +38,7 @@ well-structured, and easy for the next agent session to pick up.
   - Auth: Firebase Auth
   - Files: Cloud Storage for Firebase (avatars only; project is on the Blaze plan)
   - Telemetry: Crashlytics (crashes + non-fatals), Analytics
+  - Server: Cloud Functions (TypeScript, `functions/`) for background triggers only
 - **Networking:** async/await with Alamofire — for non-Firebase HTTP only (the AI
   service). Firebase traffic goes through the Firebase SDK, never hand-rolled REST.
 - **Persistence:** Firestore's local cache for anything that syncs; SwiftData only for
@@ -55,9 +56,9 @@ Chosen over Supabase (Sept 2026) for offline-out-of-the-box Firestore, free
 Crashlytics, and a free tier that never auto-pauses. Trade-offs accepted: heavy
 ObjC-based SDK, NoSQL modeling, `Sendable` friction under Swift 6.
 
-- **Products in use:** Firestore, Auth, Storage, Crashlytics, Analytics. Don't pull in
-  other Firebase products (Functions, Remote Config, Messaging, Phone Auth…) without
-  checking first — each one is an SPM product and a config decision. Linking a new
+- **Products in use:** Firestore, Auth, Storage, Crashlytics, Analytics, and Cloud Functions
+  (server-side only, approved Nov 2026). Don't pull in other Firebase products (Remote
+  Config, Messaging, Phone Auth…) without checking first — each one is an SPM product and a config decision. Linking a new
   product means adding it to the target in `project.pbxproj` (a sanctioned hand-edit).
 - **No REST layer.** The app talks to Firestore directly through the SDK, with security
   rules as the access control — a Cloud Functions API would lose the offline cache and
@@ -65,6 +66,13 @@ ObjC-based SDK, NoSQL modeling, `Sendable` friction under Swift 6.
   triggers later (invite-link joins, reminder pushes, server-side cleanup), not for
   reads. Design documents around screens instead of joining: denormalize small,
   rarely-changing fields and embed what's always read together.
+- **Cloud Functions** live in `functions/` (TypeScript, Node 22, `firebase-functions` +
+  `firebase-admin`; `node_modules/` and the compiled `lib/` are gitignored). Deploy with
+  `firebase deploy --only functions` — Claude deploys them itself, like the rules. So far
+  one function: `deleteUserData`, a first-generation `auth.user().onDelete` trigger (the
+  newer API has no Auth delete trigger) with retries on, which wipes `users/{uid}` and its
+  subcollections, the user's `handles/` lock and `avatars/{uid}/`. Admin SDK, so the
+  security rules don't apply to it.
 - **Security rules** live in the repo: `firestore.rules`, `storage.rules`, wired up by
   `firebase.json`. Deploy with `firebase deploy --only firestore:rules,storage`
   (`.firebaserc` is gitignored — run `firebase use --add` once). Any change to the data
@@ -110,11 +118,13 @@ ObjC-based SDK, NoSQL modeling, `Sendable` friction under Swift 6.
     `getDocument(source: .server)`, because offline the listener would wait silently
     forever; that read fails fast, which surfaces as the error sheet. A cached
     profile needs no server: signed in + cached profile goes straight home offline.
-  - **Account deletion** order: re-authenticate with Apple → revoke the Apple token →
-    delete avatars → delete Firestore profile data → delete the Auth user. Revocation goes
-    first so a refusal leaves the account whole (it once ran last, failed with "code flow is
-    not enabled" because the console lacked the Services ID/key, and left a signed-in user
-    with no profile). Anything new stored per user must be added to this cleanup.
+  - **Account deletion** (Nov 2026): the app re-authenticates with Apple → revokes the Apple
+    token → deletes the Auth user, and nothing else; the `deleteUserData` Cloud Function then
+    wipes the user's data server-side, retrying until it succeeds. So a failure anywhere in
+    the app leaves the whole account or none of it. Revocation goes before the delete because
+    it needs the user signed in (it once ran after the data was gone, failed with "code flow
+    is not enabled" for want of the console's Services ID/key, and stranded a signed-in user
+    with no profile). Anything new stored per user must be added to `deleteUserData`.
 
 ### Firestore data model
 
@@ -320,6 +330,8 @@ squabble/
         Util/           Feature-local helpers
 ```
 
+`functions/` at the repo root holds the Cloud Functions (TypeScript sources in `src/`).
+
 Empty folders aren't committed (git doesn't track them) — create each folder when the
 first real file for it lands, following the layout above. The app target folder is
 `squabble/`; tests live in `squabbleTests/` and `squabbleUITests/` at the repo root.
@@ -354,7 +366,8 @@ stutters on a device even when the simulator looks smooth.
   from the library or camera via a glass "add photo" tile) →
   optional payment methods, saved in one transaction; `Feature/Profile` holds the
   models, Firestore/Storage adapters and shared views (`AvatarView`,
-  `PaymentMethodEditor`). Account deletion wipes profile data and avatars.
+  `PaymentMethodEditor`). Account deletion: the app deletes the Auth user, a Cloud Function
+  wipes profile data and avatars.
 - **Home, in progress:** `HomeView` follows a Revolut-style layout on `SquabbleBackdrop`,
   one `NavigationStack` and **no tab bar** (decided Oct 2026: squabbles are pushed from
   home like conversations; add a `TabView` only once there are 3+ peer destinations).
