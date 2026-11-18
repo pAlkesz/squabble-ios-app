@@ -292,6 +292,8 @@ entry in any group where it differs (the rules allow a member to edit only their
     `#1A6670` at zero, pale green, amber `#C25E14`, red `#B3261E` (the `High` values).
     The brand `Backdrop*` set is the fully-owed end.
   - `ReceiptPaper` `#F4F0E4`, `ReceiptInk` `#271814` — prop-receipt paper and its ink.
+  - `ButtonDisabledFill` `#4D4C4F`, `ButtonDisabledLabel` `#000000` — the primary button's
+    disabled capsule: an opaque grey with black text, sampled from Revolut's.
   - `OnboardingRed` `#E4502E`, `OnboardingAmber` `#F5BC2F` — the first two onboarding
     steps' backdrop colours (the third is the accent).
   - `SlipPaper` `#F2E2A0`, `SlipPrint` `#8C6414` — the payment step's prop payment slip
