@@ -13,5 +13,8 @@ struct OnboardingPage<Content: View>: View {
                 .frame(maxWidth: .infinity)
         }
         .scrollDismissesKeyboard(.interactively)
+        // iOS 26's soft fade under the progress bar and the Continue button; iOS 27 no
+        // longer defaults to it.
+        .scrollEdgeEffectStyle(.soft, for: [.top, .bottom])
     }
 }
