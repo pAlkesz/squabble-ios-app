@@ -18,6 +18,11 @@ struct HomeView: View {
                 guard let uid = session.user?.id else { return }
                 await preferences.observe(uid: uid)
             }
+            // Signing out happens from the Membership page; the next sign-in should land on
+            // home, not back where the last one left off.
+            .onChange(of: session.user == nil) { _, isSignedOut in
+                if isSignedOut { path.removeAll() }
+            }
     }
 
     private var home: some View {

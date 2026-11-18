@@ -20,21 +20,23 @@ struct OnboardingPaymentStep: View {
             if draft.canAddPaymentMethod {
                 PaymentMethodTiles { editing = $0 }
             }
-            if !draft.paymentMethods.isEmpty {
-                VStack(spacing: 12) {
-                    ForEach(draft.paymentMethods) { method in
-                        PaymentMethodRow(method: method) {
-                            withAnimation { draft.paymentMethods.removeAll { $0.id == method.id } }
-                        }
-                        .transition(.move(edge: .leading).combined(with: .opacity))
-                    }
-                }
-            }
             // Reassurance about who sees the details only means something once there are some.
+            // It sits right under the rows, inset like a grouped list's section footer.
             if !draft.paymentMethods.isEmpty {
-                Label("Only people you split bills with can see these. You can change them any time.", systemImage: "lock.fill")
-                    .font(.footnote)
-                    .foregroundStyle(.white.opacity(0.7))
+                VStack(alignment: .leading, spacing: 8) {
+                    VStack(spacing: 12) {
+                        ForEach(draft.paymentMethods) { method in
+                            PaymentMethodRow(method: method) {
+                                withAnimation { draft.paymentMethods.removeAll { $0.id == method.id } }
+                            }
+                            .transition(.move(edge: .leading).combined(with: .opacity))
+                        }
+                    }
+                    Label("Only people you split bills with can see these. You can change them any time.", systemImage: "lock.fill")
+                        .font(.footnote)
+                        .foregroundStyle(.white.opacity(0.7))
+                        .padding(.horizontal, 16)
+                }
             }
         }
         .sheet(item: $editing) { kind in
