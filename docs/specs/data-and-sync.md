@@ -12,7 +12,6 @@
   (data cleanup, the people lists, reminder pushes), one scheduled job (exchange rates)
   and one callable (`joinGroup`, for invite links, where a non-member needs the server
   to vouch for them).
-
 - **Documents are shaped around screens.** Small, rarely-changing fields are
   denormalized, and whatever is always read together is embedded.
 - **Reads cost money.** Use one listener per screen on a scoped query, cache reads where
