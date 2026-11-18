@@ -75,8 +75,9 @@ on, Admin SDK so the rules don't apply) deletes:
 Every step is safe to repeat. **Anything new stored per user must be added to this
 function.**
 
-**Planned, once groups exist:** decide what happens to the user's entries in groups'
-`members` maps (see [Groups](groups.md#open-questions)).
+**Planned, once groups exist:** the function also removes the uid from every group's
+`memberIds` and replaces the user's entry in `members` with `{ deleted: true }` (see
+[Groups](groups.md#account-deletion)).
 
 ## Telemetry
 

@@ -65,8 +65,9 @@ the awkward case: ISO says 2 decimals, but there are no fillér coins and cash r
 
 ## Balances
 
-- A member's balance in a group = what they paid − their shares + settlements received −
-  settlements paid.
+- A member's balance in a group = what they paid − their shares + settlements paid −
+  settlements received. It's computed per original currency, then converted into the
+  group's currency for display (see [Groups](groups.md#currency)).
 - The balances in a group add up to zero.
 - **Settle-up suggestions:** keep the number of transfers small (greedy: the largest
   debtor pays the largest creditor). Proposed, not decided.
@@ -84,8 +85,9 @@ the awkward case: ISO says 2 decimals, but there are no fillér coins and cash r
 
 1. **Who can edit or delete a bill:** its creator, the payer, or any member?
 2. **Multiple payers** on one bill: needed, or split it into two bills?
-3. **Bills in a different currency** from the group's: allowed? If yes, which rate is used
-   and is it stored on the bill?
+3. **Bills in a different currency** from the group's: allowed at entry? Storage already
+   supports it: bills keep their own currency, and balances are converted for display
+   (see [Groups](groups.md#currency)).
 4. **Exchange rates for the home total:** where do they come from, and how often are they
    refreshed?
 5. **Settlements:** recorded by the payer only, or confirmed by the receiver?

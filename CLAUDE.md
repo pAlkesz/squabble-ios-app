@@ -149,9 +149,10 @@ group):
 ```
 groups/{groupId}                 name, currency, createdBy, createdAt,
   memberIds: [uid]               ← rules + "my groups" query (array-contains)
-  members: { memberId: { uid?, displayName, avatar, payment? } }
-                                 ← guests without the app have no uid; payment details
-                                   are copied here so group-mates can read them
+  members: { uid: { displayName, handle, avatar, payment?, ... } }
+                                 ← members are always app users (no guests, Nov 2026);
+                                   payment details are copied here so group-mates can
+                                   read them. Full plan: docs/specs/groups.md
 groups/{gid}/bills/{billId}      title, currency, totalMinor, paidBy, items (embedded),
                                  shares: { memberId: amountMinor }
 groups/{gid}/settlements/{id}    from, to, amountMinor, currency, createdAt

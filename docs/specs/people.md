@@ -8,10 +8,19 @@ A list of **people you've squabbled with before**, so that adding someone to a n
 squabble, or finding someone, doesn't mean typing their handle every time. It isn't a
 social network: there are no friend requests, followers or feeds.
 
+## Decisions (Nov 2026)
+
+- **No guests exist** (see [Groups](groups.md#decisions-nov-2026)), so everyone in the
+  list is a real user with a uid. No matching people by name.
+- **No hiding in v1.** The list only shows people you already share a squabble with. Add
+  hiding later if it's wanted.
+- New people arrive by **exact handle** or an **invite link**. Contact matching stays
+  deferred (see [Profile](profile.md#handles)).
+
 ## Where it shows up
 
-- **New squabble → add members:** recent people first, then handle lookup, then "add a
-  guest". This is the main use.
+- **New squabble → add members:** people first, then handle lookup, then an invite link.
+  This is the main use.
 - **Home search:** results across squabbles and people.
 - **Later:** a person's page (shared squabbles, net balance with them) and the "friend
   leaderboard" on the roadmap.
@@ -30,8 +39,9 @@ from my list" or recency ranking turns out to matter.
 
 ## Behaviour (with approach A)
 
-- **Source:** every member with a `uid` in any group the user belongs to, excluding the
-  user themselves.
+- **Source:** every `members` entry in any group the user belongs to (including archived
+  groups), excluding the user themselves and **deleted members**. Former members of a
+  group (those with `leftAt`) still count.
 - **Dedup:** by uid. The displayed name and avatar come from the most recently updated
   group.
 - **Order:** most recent shared activity first (the group's `updatedAt`), then by name.
@@ -43,10 +53,4 @@ from my list" or recency ranking turns out to matter.
 
 ## Open questions
 
-1. **Guests:** should they appear in the people list? They have no uid, so recognising
-   the same guest across groups would mean guessing from names. Proposed: no, guests stay
-   per-group, and the user can re-add one by name.
-2. **Hiding someone** from the list: needed for v1?
-3. **Do we need more** than "people from my groups + exact handle"? Contact matching was
-   deferred (see [Profile](profile.md#handles)), and invite links / QR codes cover the
-   "first time" case later.
+1. **Approach A vs. B:** confirm A for v1.

@@ -62,6 +62,10 @@ on the previous user's pushed pages.
 
 Required by App Review. Started from the account page.
 
+0. **Planned, once groups exist:** if the user still owes money in any squabble, show
+   what they owe and to whom first. This is a warning only, never a block, because App
+   Review requires that deletion is always possible. Their place in each group becomes an
+   anonymous "Deleted member" (see [Groups](groups.md#account-deletion)).
 1. The user confirms with Sign in with Apple again (a fresh authorization code).
 2. **Re-authenticate** the Firebase user with that credential.
 3. **Revoke the Apple token** (`revokeToken(withAuthorizationCode:)`). This has to come
