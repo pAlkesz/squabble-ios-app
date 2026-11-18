@@ -58,6 +58,9 @@ struct OnboardingNameStep: View {
         // that's the trigger alongside focus and message changes.
         ScrollViewReader { proxy in
             form
+                // A Form scrolls itself rather than through `OnboardingPage`, so it needs the
+                // soft fade iOS 27 no longer defaults to on its own.
+                .scrollEdgeEffectStyle(.soft, for: [.top, .bottom])
                 .onChange(of: focusedField) { reveal(with: proxy) }
                 .onChange(of: availability) { reveal(with: proxy) }
                 // Suggestions arrive on their own schedule and change the page's height.
