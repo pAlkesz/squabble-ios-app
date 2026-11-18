@@ -462,17 +462,6 @@
         }
       }
     },
-    "Dues are payable in guilt." : {
-      "comment" : "Welcome animation: joke line under the welcome headline.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tagdíj bűntudatban fizetendő."
-          }
-        }
-      }
-    },
     "Everyone pays up" : {
       "comment" : "Membership card: the joke expiry date.",
       "localizations" : {
@@ -656,6 +645,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Utolsó esély"
+          }
+        }
+      }
+    },
+    "Let's squabble" : {
+      "comment" : "Welcome animation: the button that closes it and goes to home.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vágjunk bele"
           }
         }
       }
@@ -1353,13 +1353,13 @@
         }
       }
     },
-    "Welcome to the club, %@." : {
-      "comment" : "Welcome animation: headline under the new membership card, with the user's name.",
+    "Welcome to the club" : {
+      "comment" : "Welcome animation: heading above the new membership card.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Üdv a klubban, %@!"
+            "value" : "Üdv a klubban"
           }
         }
       }
@@ -1459,6 +1459,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nincs net. Ehhez a részhez kell — próbáld újra, ha visszajött."
+          }
+        }
+      }
+    },
+    "Your card's printed. Dues are payable in guilt." : {
+      "comment" : "Welcome animation: subtitle under the heading.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kész a kártyád. A tagdíj bűntudatban fizetendő."
           }
         }
       }

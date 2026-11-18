@@ -6,6 +6,8 @@ import SwiftUI
 /// the balance (`BalanceMood`), on home and on every page pushed from it.
 struct HomeView: View {
     @Environment(AuthSession.self) private var session
+    @Environment(\.reportAvatarFrame) private var reportAvatarFrame
+    @Environment(\.isMembershipWelcomeShowing) private var isWelcomeShowing
     @State private var preferences = PreferencesStore()
     @State private var path: [AccountPage] = []
     #if DEBUG
@@ -118,11 +120,16 @@ struct HomeView: View {
 
     @ViewBuilder
     private var avatar: some View {
-        if let profile = session.profile {
-            AvatarView(profile.avatar, size: 40)
-        } else {
-            AvatarView(content: .empty, size: 40)
+        Group {
+            if let profile = session.profile {
+                AvatarView(profile.avatar, size: 40)
+            } else {
+                AvatarView(content: .empty, size: 40)
+            }
         }
+        // The membership welcome flies the card's photo onto this spot, then hands over.
+        .opacity(isWelcomeShowing ? 0 : 1)
+        .onGeometryChange(for: CGRect.self, of: { $0.frame(in: .global) }) { reportAvatarFrame($0) }
     }
 
     private var mood: BalanceMood {

@@ -1,14 +1,24 @@
 import SwiftUI
 
 /// Played once, over home, right after onboarding saves the profile: the new Squabble Club
-/// card slides up as if printed, gets stamped, then shrinks off towards the avatar in home's
-/// toolbar — where the profile lives from now on. Tap to skip.
+/// card slides up as if printed and gets stamped, then waits for the button. On the button
+/// the card and text fade away while the card's photo flies onto home's toolbar avatar,
+/// shrinking and rounding into it — where the profile lives from now on.
 struct MembershipWelcomeView: View {
     let profile: UserProfile
+    /// Where home's toolbar avatar sits on screen, once home has laid it out. Without it the
+    /// photo just fades with the card.
+    let avatarFrame: CGRect?
     let onFinished: () -> Void
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var phase = Phase.hidden
+    /// The card's photo on screen, measured so the flying copy starts exactly on top of it.
+    @State private var photoFrame: CGRect?
+    @State private var hasPhotoLanded = false
+
+    private static let photoSize: CGFloat = 88
+    private static let photoCornerRadius: CGFloat = 12
 
     private enum Phase: Int, Comparable {
         case hidden
@@ -20,38 +30,45 @@ struct MembershipWelcomeView: View {
     }
 
     var body: some View {
-        GeometryReader { proxy in
-            ZStack {
-                ProfileBackdrop()
-                    .opacity(phase == .leaving ? 0 : 1)
-                VStack(spacing: 28) {
-                    card(in: proxy)
-                    caption
-                        .opacity(phase == .stamped ? 1 : 0)
-                        .offset(y: phase == .stamped ? 0 : 12)
-                }
-                .padding(.horizontal, 28)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        ZStack {
+            ProfileBackdrop()
+            // Laid out like the onboarding pages it follows: the heading on top, then the card
+            // a little above centre (spacers 1 : 2), then the button.
+            VStack(spacing: 0) {
+                OnboardingHeading(
+                    title: "Welcome to the club",
+                    subtitle: "Your card's printed. Dues are payable in guilt."
+                )
+                .foregroundStyle(.white)
+                .padding(.top, 16)
+                .opacity(phase == .stamped ? 1 : 0)
+                .offset(y: phase == .stamped ? 0 : -8)
+                Spacer(minLength: 24)
+                card
+                Spacer(minLength: 0)
+                Spacer(minLength: 0)
             }
+            .padding(.horizontal, 24)
+            .frame(maxWidth: 560, maxHeight: .infinity)
+            .safeAreaInset(edge: .bottom) { continueButton }
         }
-        .contentShape(.rect)
-        .onTapGesture { finish() }
+        .opacity(phase == .leaving ? 0 : 1)
+        .overlay { flyingPhoto }
         .sensoryFeedback(.impact(weight: .heavy), trigger: phase == .stamped)
         .task { await play() }
-        .accessibilityElement(children: .combine)
-        .accessibilityAddTraits(.isButton)
-        .accessibilityAction { finish() }
     }
 
-    private func card(in proxy: GeometryProxy) -> some View {
+    private var card: some View {
         MembershipCard(profile: profile) {
-            AvatarView(profile.avatar, size: 88, cornerRadius: 12)
+            AvatarView(profile.avatar, size: Self.photoSize, cornerRadius: Self.photoCornerRadius)
+                .onGeometryChange(for: CGRect.self, of: { $0.frame(in: .global) }) { photoFrame = $0 }
+                // Gone at once when its copy takes off, so the photo doesn't show twice.
+                .opacity(isPhotoFlying ? 0 : 1)
+                .animation(nil, value: isPhotoFlying)
         }
         .overlay(alignment: .bottomTrailing) { stamp }
         .rotationEffect(.degrees(phase >= .printed ? 0 : 8))
-        .scaleEffect(isFlyingOff ? 0.1 : 1)
-        .offset(cardOffset(in: proxy))
-        .opacity(phase == .leaving ? 0 : 1)
+        .offset(y: phase >= .printed ? 0 : 900)
     }
 
     private var stamp: some View {
@@ -73,46 +90,45 @@ struct MembershipWelcomeView: View {
             .accessibilityHidden(true)
     }
 
-    private var caption: some View {
-        VStack(spacing: 6) {
-            Text("Welcome to the club, \(profile.displayName).", comment: "Welcome animation: headline under the new membership card, with the user's name.")
-                .font(.title3.bold())
-            Text("Dues are payable in guilt.", comment: "Welcome animation: joke line under the welcome headline.")
-                .font(.subheadline)
-                .foregroundStyle(.white.opacity(0.7))
+    private var continueButton: some View {
+        Button(action: leave) {
+            Text("Let's squabble", comment: "Welcome animation: the button that closes it and goes to home.")
         }
-        .foregroundStyle(.white)
-        .multilineTextAlignment(.center)
+        .buttonStyle(.squabblePrimary)
+        .padding(.horizontal, 24)
+        .padding(.bottom, 20)
+        .frame(maxWidth: 560)
+        .opacity(phase == .stamped ? 1 : 0)
+        .disabled(phase != .stamped)
     }
 
-    /// With Reduce Motion the card just fades out with the rest.
-    private var isFlyingOff: Bool {
-        phase == .leaving && !reduceMotion
+    private var isPhotoFlying: Bool {
+        phase == .leaving && !reduceMotion && photoFrame != nil && avatarFrame != nil
     }
 
-    /// Below the screen before it's printed; on the way out, up towards the toolbar avatar
-    /// (leading edge, just under the status bar). Faked rather than matched: the avatar
-    /// lives in another navigation bar.
-    private func cardOffset(in proxy: GeometryProxy) -> CGSize {
-        switch phase {
-        case .hidden:
-            return CGSize(width: 0, height: proxy.size.height)
-        case .printed, .stamped:
-            return .zero
-        case .leaving where reduceMotion:
-            return .zero
-        case .leaving:
-            let avatar = CGPoint(x: 36, y: 22)
-            let cardCenter = CGPoint(x: proxy.size.width / 2, y: proxy.size.height / 2 - 40)
-            return CGSize(width: avatar.x - cardCenter.x, height: avatar.y - cardCenter.y)
+    /// A copy of the card's photo that leaves it on the button: from the photo's frame to the
+    /// avatar's, shrinking from 88 pt to the avatar's size while its corners round into a
+    /// circle. Laid out in screen coordinates, so it ignores the safe area.
+    @ViewBuilder
+    private var flyingPhoto: some View {
+        if phase == .leaving, !reduceMotion, let start = photoFrame, let end = avatarFrame {
+            let frame = hasPhotoLanded ? end : start
+            let scale = frame.width / Self.photoSize
+            AvatarView(profile.avatar, size: Self.photoSize, cornerRadius: 0)
+                .clipShape(.rect(cornerRadius: hasPhotoLanded ? Self.photoSize / 2 : Self.photoCornerRadius))
+                .scaleEffect(scale)
+                .position(x: frame.midX, y: frame.midY)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .ignoresSafeArea()
+                .allowsHitTesting(false)
+                // Appears fully opaque on top of the card's photo, not faded in with the rest.
+                .transition(.identity)
         }
     }
 
     private func play() async {
         if reduceMotion {
             phase = .stamped
-            try? await Task.sleep(for: .seconds(2.2))
-            finish()
             return
         }
         // Home mounts underneath first; animating through that stall stutters on a device.
@@ -120,15 +136,18 @@ struct MembershipWelcomeView: View {
         withAnimation(.spring(duration: 0.8, bounce: 0.2)) { phase = .printed }
         try? await Task.sleep(for: .seconds(0.9))
         withAnimation(.spring(duration: 0.3, bounce: 0.35)) { phase = .stamped }
-        try? await Task.sleep(for: .seconds(2.0))
-        finish()
     }
 
-    private func finish() {
-        guard phase != .leaving else { return }
-        withAnimation(.smooth(duration: 0.6)) { phase = .leaving }
+    private func leave() {
+        guard phase == .stamped else { return }
+        // The flying copy appears on top of the card's photo in this update, unanimated; the
+        // next one sends it on its way while everything else fades.
+        withAnimation(.smooth(duration: 0.5)) { phase = .leaving }
         Task {
-            try? await Task.sleep(for: .seconds(0.6))
+            // A frame for the copy to be drawn at its start first, or it would begin landed.
+            try? await Task.sleep(for: .milliseconds(30))
+            withAnimation(.spring(duration: 0.6, bounce: 0.15)) { hasPhotoLanded = true }
+            try? await Task.sleep(for: .seconds(0.65))
             onFinished()
         }
     }

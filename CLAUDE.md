@@ -356,11 +356,16 @@ The two roots are separate navigation stacks, so there's no push between them:
 `ContentView` cross-fades them (explicit `.opacity` transitions in a `ZStack`, switched with
 `withAnimation` — an implicit `.animation(value:)` on a `Group` didn't animate the swap).
 When the state goes from `needsOnboarding` to `signedIn` — onboarding just saved the profile,
-never a returning user — the root overlays `MembershipWelcomeView`: the new membership card
-slides up, gets an "APPROVED" stamp (heavy haptic) and a "Welcome to the club" line, then
-shrinks off towards home's toolbar avatar (a faked flight, since the avatar lives in another
-bar). It waits ~0.5 s first so home mounts underneath before anything moves; tap skips it,
-Reduce Motion fades it.
+never a returning user — the root overlays `MembershipWelcomeView`, laid out like an onboarding
+page: an `OnboardingHeading` ("Welcome to the club"), the new membership card sliding up and
+getting an "APPROVED" stamp (heavy haptic), and a "Let's squabble" button — it stays until
+tapped. On tap everything fades while a copy of the card's ID photo flies onto home's toolbar
+avatar, shrinking and rounding into it. Home reports the avatar's on-screen frame and hides it
+while the welcome is up (`MembershipWelcomeHandoff`: `\.reportAvatarFrame`,
+`\.isMembershipWelcomeShowing`), so the photo lands exactly on it and the overlay is removed
+without a visible swap. Kept full screen rather than a sheet: a sheet slides away on dismiss,
+which would fight the photo's flight. It waits ~0.5 s first so home mounts underneath before
+anything moves; Reduce Motion skips the motion and the flight.
 `ContentView` applies the launch splash (`launchSplash(isContentReady:onReadyForContent:)`):
 the bird plays its intro, then holds still and calls back — only then does the root mount
 its first screen, so that main-thread stall lands while nothing moves — and flies off

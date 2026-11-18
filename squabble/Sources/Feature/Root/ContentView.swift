@@ -22,6 +22,7 @@ struct ContentView: View {
     @State private var canMountRoute = false
     /// Set only when onboarding has just saved the profile, never for a returning user.
     @State private var welcome: UserProfile?
+    @State private var avatarFrame: CGRect?
 
     var body: some View {
         // A ZStack with explicit transitions: the two roots are separate navigation stacks,
@@ -39,9 +40,12 @@ struct ContentView: View {
                     .transition(.opacity)
             }
         }
+        .environment(\.reportAvatarFrame, AvatarFrameReporter { avatarFrame = $0 })
+        .environment(\.isMembershipWelcomeShowing, welcome != nil)
         .overlay {
             if let welcome {
-                MembershipWelcomeView(profile: welcome) { self.welcome = nil }
+                MembershipWelcomeView(profile: welcome, avatarFrame: avatarFrame) { self.welcome = nil }
+                    // Fades in; leaves instantly, as the photo has just landed on the avatar.
                     .transition(.opacity)
             }
         }
