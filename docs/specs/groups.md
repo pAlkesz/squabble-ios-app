@@ -120,6 +120,9 @@ are added afterwards from the squabble.
    - With a photo, the photo is uploaded first, which needs a connection. Offline, the
      app says so before trying, and the user can remove the photo to create the squabble
      straight away.
+6. **Cancelling** (✕): an untouched sheet closes straight away, by ✕ or a swipe down. Once
+   anything is entered, swiping no longer closes it (too easy to do by accident while
+   typing or scrolling) and ✕ asks before discarding.
 
 Adding people (planned, from the squabble page):
 

@@ -591,6 +591,28 @@
         }
       }
     },
+    "Discard" : {
+      "comment" : "Create squabble: button in the cancel prompt that throws the entries away.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elvetés"
+          }
+        }
+      }
+    },
+    "Discard this squabble?" : {
+      "comment" : "Create squabble: title of the prompt when cancelling with something entered.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elveted ezt a veszekedést?"
+          }
+        }
+      }
+    },
     "Display name" : {
       "comment" : "Onboarding: field title.",
       "localizations" : {
@@ -851,6 +873,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Épp most"
+          }
+        }
+      }
+    },
+    "Keep editing" : {
+      "comment" : "Create squabble: button in the cancel prompt that goes back to the sheet.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szerkesztés folytatása"
           }
         }
       }
@@ -1214,6 +1247,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "CSEKK"
+          }
+        }
+      }
+    },
+    "Peace wins this round. Everything you entered goes." : {
+      "comment" : "Create squabble: message in the cancel prompt.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ezt a kört a béke nyerte. Minden, amit beírtál, elveszik."
           }
         }
       }

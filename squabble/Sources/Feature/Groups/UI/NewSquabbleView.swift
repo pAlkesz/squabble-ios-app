@@ -12,6 +12,9 @@ struct NewSquabbleView: View {
     @Environment(GroupsStore.self) private var groups
     @Environment(\.dismiss) private var dismiss
     @State private var draft: NewSquabbleDraft
+    /// What the sheet opened with, so it can tell whether anything would be lost.
+    @State private var original: NewSquabbleDraft
+    @State private var isConfirmingDiscard = false
     @State private var photoPreview: CGImage?
     @State private var path: [Page] = []
     @State private var isShowingLibrary = false
@@ -30,7 +33,9 @@ struct NewSquabbleView: View {
 
     init(creator: UserProfile, currencyCode: String, onCreate: @escaping (String) -> Void) {
         self.onCreate = onCreate
-        _draft = State(initialValue: NewSquabbleDraft(creator: creator, currencyCode: currencyCode))
+        let draft = NewSquabbleDraft(creator: creator, currencyCode: currencyCode)
+        _draft = State(initialValue: draft)
+        _original = State(initialValue: draft)
     }
 
     var body: some View {
@@ -102,11 +107,35 @@ struct NewSquabbleView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button(role: .cancel) { dismiss() }
+                Button(role: .cancel) {
+                    if hasChanges { isConfirmingDiscard = true } else { dismiss() }
+                }
+                .confirmationDialog(
+                    Text("Discard this squabble?", comment: "Create squabble: title of the prompt when cancelling with something entered."),
+                    isPresented: $isConfirmingDiscard,
+                    titleVisibility: .visible
+                ) {
+                    Button(role: .destructive) {
+                        dismiss()
+                    } label: {
+                        Text("Discard", comment: "Create squabble: button in the cancel prompt that throws the entries away.")
+                    }
+                    Button(role: .cancel) {} label: {
+                        Text("Keep editing", comment: "Create squabble: button in the cancel prompt that goes back to the sheet.")
+                    }
+                } message: {
+                    Text("Peace wins this round. Everything you entered goes.", comment: "Create squabble: message in the cancel prompt.")
+                }
             }
         }
         .safeAreaBar(edge: .bottom) { createButton }
-        .interactiveDismissDisabled(isCreating)
+        // Keyboard and scrolling make an accidental swipe-down easy, so once something's
+        // entered only the cancel button closes the sheet.
+        .interactiveDismissDisabled(isCreating || hasChanges)
+    }
+
+    private var hasChanges: Bool {
+        draft != original
     }
 
     /// A nod to the song; the same white capsule as onboarding's Continue.
