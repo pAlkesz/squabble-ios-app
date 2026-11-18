@@ -70,7 +70,8 @@ ObjC-based SDK, NoSQL modeling, `Sendable` friction under Swift 6.
   `firebase-admin`; `node_modules/` and the compiled `lib/` are gitignored). Deploy with
   `firebase deploy --only functions` — Claude deploys them itself, like the rules. So far
   one function: `deleteUserData`, a first-generation `auth.user().onDelete` trigger (the
-  newer API has no Auth delete trigger) with retries on, which wipes `users/{uid}` and its
+  newer API has no Auth delete trigger) with retries on, running as the Firebase Admin SDK
+  service account (the project has no default Compute Engine account), which wipes `users/{uid}` and its
   subcollections, the user's `handles/` lock and `avatars/{uid}/`. Admin SDK, so the
   security rules don't apply to it.
 - **Security rules** live in the repo: `firestore.rules`, `storage.rules`, wired up by
