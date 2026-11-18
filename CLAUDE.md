@@ -488,6 +488,18 @@ launch) over describing manual steps.
   joke — petty, a little passive-aggressive, self-aware. Kind, never mean.
 - **Code, commits, docs:** professional and clear.
 
+## Specs
+
+Product behaviour and business rules (sign-in, onboarding, profiles, payment details,
+balances, groups, people, bills and splitting) are specified in [`docs/specs/`](docs/specs/),
+indexed by [`docs/README.md`](docs/README.md). This file keeps project conventions; the
+specs say what the app does.
+
+- Read the relevant spec before changing a feature, and **update it in the same commit**
+  as the behaviour change.
+- A new feature starts as a *Draft* spec with its open questions; settle them with the
+  user before building, then mark it *Built*.
+
 ## Working Agreements for Claude
 
 - **Committing is pre-authorized** — commit changes as you go, at natural checkpoints,

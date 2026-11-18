@@ -47,7 +47,7 @@ service cloud.firestore {
       );
     }
 
-    // The app caps names at 40 characters; rules count differently for emoji, so
+    // The app caps names at 50 characters; rules count differently for emoji, so
     // leave headroom and only stop abuse here.
     function isValidProfile(data, uid) {
       return data.keys().hasOnly(['displayName', 'handle', 'avatar', 'createdAt', 'updatedAt'])

@@ -18,6 +18,10 @@ Squabble is here to help:
 - ✉️ Generate a friendly (or not-so-friendly) reminder message for whoever owes you
 - 📊 See who's the most expensive friend to hang out with
 
+## Docs
+
+How the app behaves — sign-in, profiles, balances, groups, splitting — is written up in [`docs/`](docs/README.md).
+
 ## Status
 
 Very early. Right now this is a fresh SwiftUI project that says "Hello, world!" — the squabbling has not yet been implemented.
