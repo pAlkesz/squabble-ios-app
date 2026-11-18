@@ -144,8 +144,8 @@ handles/{handle}                 { uid } — uniqueness lock, claimed in the sam
 avatars/{uid}/{random}.jpg       Storage: 512px square JPEG, < 1 MB
 ```
 
-Planned, not built yet — bills always belong to a group (a one-off dinner is a small
-group):
+Groups are partly built (create, list, own-entry sync); bills and the rest are planned.
+Bills always belong to a group (a one-off dinner is a small group):
 
 ```
 groups/{groupId}                 name, currency, createdBy, createdAt,
@@ -160,8 +160,8 @@ groups/{gid}/settlements/{id}    from, to, amountMinor, currency, createdAt
 groups/{gid}/reminders/{id}
 ```
 
-When groups land, profile edits must also update the user's entry in each group's
-`members` map (client-side fan-out; the rules allow a member to edit only their own).
+Profile and payment edits reach groups through `GroupsStore`, which rewrites the user's own
+entry in any group where it differs (the rules allow a member to edit only their own).
 
 ### Profiles, handles and payment details
 
@@ -447,9 +447,14 @@ stutters on a device even when the simulator looks smooth.
   snapped back, with or without typed text) — fixed by never animating the list's updates; and the drawer's glass
   only appears once the push finishes — a system bug (bar items set after the push lands
   late), left as is. A custom glass field avoided both but was dropped to stay native.
-- **Placeholder:** search and `+` on home have no destination.
-- **Not started:** groups and everything to do with bills — capture, AI parsing, the
-  split algorithm, reminders, invite links.
+- **Squabbles, in progress** (`Feature/Groups`, spec `docs/specs/groups.md`): `+` on home
+  opens a sheet to name one, pick its currency and add people by exact handle. Home lists
+  the user's squabbles (one `array-contains` listener in `GroupsStore`, sorted on the
+  device) and pushes `SquabbleView` (members only so far) through `HomeRoute`. Not yet:
+  invite links, leaving, archive/delete, editing.
+- **Placeholder:** search on home has no destination.
+- **Not started:** bills — capture, AI parsing, the split algorithm, settlements,
+  reminders.
 
 ### Screen conventions worth knowing
 

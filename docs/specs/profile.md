@@ -72,8 +72,9 @@ Edits go through `ProfileEditor`.
 | Home currency | See [Home](home.md#home-currency) |
 | Handle | Not editable |
 
-**Planned:** once groups exist, a profile edit must also update the user's entry in
-every group's `members` map (see [Groups](groups.md#denormalized-member-data)).
+Profile and payment edits also reach the user's entry in every squabble they're in. The
+app rewrites entries that differ the next time home's group list loads (see
+[Groups](groups.md#denormalized-member-data)).
 
 ## Membership card
 

@@ -5,6 +5,7 @@ rules_version = '2';
 //   users/{uid}/private/payment owner-only payment methods
 //   users/{uid}/private/preferences owner-only settings (home currency)
 //   handles/{handle}            { uid } — the lock that keeps handles unique
+//   groups/{groupId}            a squabble — readable by its current members (docs/specs/groups.md)
 //
 // Deploy: firebase deploy --only firestore:rules,storage
 service cloud.firestore {
@@ -82,6 +83,56 @@ service cloud.firestore {
                 && request.resource.data.homeCurrency.matches('[A-Z]{3}'))))
         );
       }
+    }
+
+    // A member's copy of their own profile and payment details. `joinedAt` is the server's
+    // clock at creation; `leftAt` and `deleted` are only ever written by the server.
+    function isValidMemberEntry(entry, uid) {
+      return entry is map
+        && entry.keys().hasOnly(['displayName', 'handle', 'avatar', 'payment', 'joinedAt'])
+        && entry.displayName is string
+        && entry.displayName.size() > 0
+        && entry.displayName.size() <= 100
+        && (!('handle' in entry) || (entry.handle is string && entry.handle.matches('[a-z0-9_]{3,32}')))
+        && isValidAvatar(entry.avatar, uid)
+        && (!('payment' in entry) || (entry.payment is list && entry.payment.size() <= 5));
+    }
+
+    // See docs/specs/groups.md. Only what the app does so far is allowed: creating a
+    // squabble and keeping your own entry current. Leaving, archiving and deleting come
+    // with their screens; joining by invite goes through a Cloud Function.
+    match /groups/{groupId} {
+      // The "my groups" query asks for memberIds array-contains the caller, which this
+      // rule can vouch for.
+      allow read: if signedIn() && request.auth.uid in resource.data.memberIds;
+
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['name', 'currency', 'createdBy', 'createdAt', 'updatedAt', 'memberIds', 'members'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 100
+        && request.resource.data.currency is string
+        && request.resource.data.currency.matches('[A-Z]{3}')
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.memberIds is list
+        && request.resource.data.memberIds.size() <= 50
+        && request.resource.data.memberIds[0] == request.auth.uid
+        && request.resource.data.members is map
+        && request.resource.data.members.keys().toSet() == request.resource.data.memberIds.toSet()
+        && request.resource.data.members.keys().size() == request.resource.data.memberIds.size()
+        && isValidMemberEntry(request.resource.data.members[request.auth.uid], request.auth.uid);
+
+      // A member rewrites their own entry only, and never in an archived squabble.
+      allow update: if signedIn()
+        && request.auth.uid in resource.data.memberIds
+        && !('archivedAt' in resource.data)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['members'])
+        && request.resource.data.members.diff(resource.data.members).affectedKeys().hasOnly([request.auth.uid])
+        && request.resource.data.members[request.auth.uid].get('joinedAt', null)
+          == resource.data.members[request.auth.uid].get('joinedAt', null)
+        && isValidMemberEntry(request.resource.data.members[request.auth.uid], request.auth.uid);
     }
 
     match /handles/{handle} {

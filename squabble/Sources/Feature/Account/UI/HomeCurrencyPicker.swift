@@ -32,7 +32,7 @@ struct HomeCurrencyPicker: View {
             }
             Section {
                 ForEach(Self.options.filter { $0.matches(query) }) { option in
-                    row(code: option.code, flag: option, title: Text(verbatim: option.name), detail: detail(for: option))
+                    row(code: option.code, flag: option, title: Text(verbatim: option.name), detail: CurrencyRow.detail(for: option))
                 }
             }
         }
@@ -74,36 +74,15 @@ struct HomeCurrencyPicker: View {
         CurrencyOption(code: UserPreferences.deviceCurrencyCode)
     }
 
-    /// "HUF · Hungary", or just the code when no single country goes with it.
-    private func detail(for option: CurrencyOption) -> String {
-        option.countryName.map { "\(option.code) · \($0)" } ?? option.code
-    }
-
     private func row(code: String?, flag: CurrencyOption, title: Text, detail: String) -> some View {
-        let isSelected = preferences.preferences.homeCurrencyCode == code
-        return Button {
+        CurrencyRow(
+            flag: flag,
+            title: title,
+            detail: detail,
+            isSelected: preferences.preferences.homeCurrencyCode == code
+        ) {
             choose(code)
-        } label: {
-            HStack(spacing: 14) {
-                CurrencyFlag(option: flag)
-                VStack(alignment: .leading, spacing: 2) {
-                    title
-                        .font(.body.weight(.semibold))
-                    Text(verbatim: detail)
-                        .font(.subheadline)
-                        .foregroundStyle(.white.opacity(0.6))
-                }
-                Spacer(minLength: 0)
-                Image(systemName: "checkmark")
-                    .font(.body.weight(.semibold))
-                    .foregroundStyle(Color.accent)
-                    .opacity(isSelected ? 1 : 0)
-            }
-            .contentShape(.rect)
         }
-        .buttonStyle(.plain)
-        .listRowBackground(Color.white.opacity(0.08))
-        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
     private func choose(_ code: String?) {

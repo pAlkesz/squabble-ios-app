@@ -9,6 +9,10 @@ extension Container {
         self { FirestoreProfileRepository() }.singleton
     }
 
+    var groupRepository: Factory<GroupRepository> {
+        self { FirestoreGroupRepository() }.singleton
+    }
+
     var avatarStore: Factory<AvatarStore> {
         self { FirebaseAvatarStore() }.singleton
     }

@@ -8,6 +8,10 @@ nonisolated protocol ProfileRepository: Sendable {
     /// Advisory only; `createProfile` is what actually claims the handle.
     func isHandleAvailable(_ handle: Handle, for uid: String) async throws -> Bool
 
+    /// The profile behind an exact handle, or `nil` if nobody holds it. Asks the server,
+    /// since a handle someone claimed a minute ago isn't in anyone's cache.
+    func profile(forHandle handle: Handle) async throws -> UserProfile?
+
     /// Claims the handle and writes the profile and payment methods atomically.
     /// Needs a connection: handle uniqueness can't be settled from the local cache.
     func createProfile(_ profile: UserProfile, paymentMethods: [PaymentMethod]) async throws

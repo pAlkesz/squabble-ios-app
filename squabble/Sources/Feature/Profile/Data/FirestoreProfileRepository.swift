@@ -69,6 +69,22 @@ nonisolated final class FirestoreProfileRepository: ProfileRepository {
         }
     }
 
+    func profile(forHandle handle: Handle) async throws -> UserProfile? {
+        guard let db else { throw ProfileError.unavailable }
+        do {
+            let claim = try await Self.handle(handle, in: db).getDocument(source: .server)
+            guard let uid = claim.data()?["uid"] as? String else { return nil }
+            let snapshot = try await Self.user(uid, in: db).getDocument()
+            guard var data = snapshot.data() else { return nil }
+            if let createdAt = data[UserProfile.Field.createdAt] as? Timestamp {
+                data[UserProfile.Field.createdAt] = createdAt.dateValue()
+            }
+            return try UserProfile(id: uid, firestoreData: data)
+        } catch {
+            throw Self.mapped(error)
+        }
+    }
+
     func createProfile(_ profile: UserProfile, paymentMethods: [PaymentMethod]) async throws {
         guard let db else { throw ProfileError.unavailable }
         let userReference = Self.user(profile.id, in: db)

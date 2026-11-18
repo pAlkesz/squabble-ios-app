@@ -14,7 +14,7 @@ Design, branding and code conventions stay in [`CLAUDE.md`](../CLAUDE.md).
 | [Payment details](specs/payment-details.md) | Built | Bank accounts (IBAN / Hungarian account number), payment links |
 | [Home & balance](specs/home.md) | Partly built | Total balance, balance mood, home currency |
 | [Data & sync](specs/data-and-sync.md) | Built | Firestore layout, security rules, offline behaviour, money storage, data deletion |
-| [Groups (squabbles)](specs/groups.md) | Draft | Creating squabbles, members, invites, archiving |
+| [Groups (squabbles)](specs/groups.md) | Partly built | Creating squabbles, members, invites, archiving |
 | [People](specs/people.md) | Draft | Finding people you've squabbled with before |
 | [Bills & splitting](specs/bills.md) | Draft | Bills, the split algorithm, settlements, reminders |
 

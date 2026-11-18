@@ -1,7 +1,7 @@
 # Data & sync
 
-**Status:** Built (the profile layer). Collections for groups and bills are in
-[Groups](groups.md) and [Bills](bills.md).
+**Status:** Built for the profile layer and the first part of groups. The rest of
+groups and bills are in [Groups](groups.md) and [Bills](bills.md).
 
 ## Principles
 
@@ -34,6 +34,7 @@ users/{uid}                      public profile; any signed-in user can read it
 users/{uid}/private/payment      owner-only: { methods: [...] } (max 5)
 users/{uid}/private/preferences  owner-only: { homeCurrency? }
 handles/{handle}                 { uid }: the uniqueness lock
+groups/{groupId}                 a squabble; current members can read it (see groups.md)
 avatars/{uid}/{random}.jpg       Storage: square JPEG, < 1 MB
 ```
 
@@ -47,6 +48,7 @@ the rules and this spec in the same commit.
 | `users/{uid}` | any signed-in user | owner only; shape-checked; must point at a handle the owner holds |
 | `users/{uid}/private/*` | owner | owner; `payment` = `methods` list ≤ 5, `preferences` = optional 3-letter code |
 | `handles/{h}` | any signed-in user | create: own uid, valid handle, profile names it. Delete: owner. **Never updated.** |
+| `groups/{id}` | current members (`memberIds`) | create: creator first, ≤ 50 members, valid own entry. Update: a member's own entry only, not while archived |
 | `avatars/{uid}/*` | any signed-in user | owner; `.jpg`, `image/jpeg`, < 1 MB |
 
 ## Offline behaviour
@@ -86,12 +88,15 @@ on, Admin SDK so the rules don't apply) deletes:
 Every step is safe to repeat. **Anything new stored per user must be added to this
 function.**
 
-**Planned, once groups exist:** the function also:
+For groups (built Nov 2026), it also, for every group the user is a current member of:
 
-- removes the uid from every group's `memberIds`
+- removes the uid from `memberIds`
 - replaces the user's entry in `members` with `{ deleted: true }`
-- hands `createdBy` on to the earliest-joined member
-- deletes every `people` document about the user from other users' lists
+- hands `createdBy` on to the earliest-joined member (ties go by `memberIds` order)
+- deletes the group if nobody is left
+
+**Planned:** it will also delete every `people` document about the user from other
+users' lists.
 
 See [Groups](groups.md#account-deletion) and [People](people.md).
 

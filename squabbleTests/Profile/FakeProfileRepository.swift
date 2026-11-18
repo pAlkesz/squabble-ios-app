@@ -44,6 +44,11 @@ nonisolated final class FakeProfileRepository: ProfileRepository, @unchecked Sen
         }
     }
 
+    func profile(forHandle handle: Handle) async throws -> UserProfile? {
+        if let availabilityError { throw availabilityError }
+        return claimedHandles[handle].flatMap { profiles[$0] }
+    }
+
     func createProfile(_ profile: UserProfile, paymentMethods: [PaymentMethod]) async throws {
         if let saveError { throw saveError }
         if let owner = claimedHandles[profile.handle], owner != profile.id { throw ProfileError.handleTaken }

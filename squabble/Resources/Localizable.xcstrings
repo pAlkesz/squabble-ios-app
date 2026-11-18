@@ -1,6 +1,17 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ is already in." : {
+      "comment" : "New squabble: the person is already a member. The argument is their name.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ már benne van."
+          }
+        }
+      }
+    },
     "%@ link" : {
       "comment" : "Payment method editor sheet: title when adding a payment link, with the service's name.",
       "localizations" : {
@@ -19,6 +30,58 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ felhasználónév vagy link"
+          }
+        }
+      }
+    },
+    "%lld members · %@" : {
+      "comment" : "Squabble row on home: member count and the squabble's currency code.",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld member · %@"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld members · %@"
+                }
+              }
+            }
+          }
+        },
+        "hu" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tag · %@"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tag · %@"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld people max. That's a crowd, not a squabble." : {
+      "comment" : "New squabble: the member limit is reached.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Legfeljebb %lld ember. Ez már tömeg, nem veszekedés."
           }
         }
       }
@@ -155,6 +218,17 @@
         }
       }
     },
+    "Add" : {
+      "comment" : "New squabble: add the person with the typed handle.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hozzáadás"
+          }
+        }
+      }
+    },
     "Add a photo" : {
       "comment" : "Avatar photo source sheet: title.",
       "localizations" : {
@@ -173,6 +247,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fizetési mód hozzáadása"
+          }
+        }
+      }
+    },
+    "Add people by their exact handle." : {
+      "comment" : "New squabble: footer under the members when nothing went wrong.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pontos felhasználónév alapján adhatsz hozzá embereket."
           }
         }
       }
@@ -341,6 +426,17 @@
         }
       }
     },
+    "Bills" : {
+      "comment" : "Squabble page: header above the bills.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Számlák"
+          }
+        }
+      }
+    },
     "Cancel" : {
       "comment" : "Generic cancel button.",
       "localizations" : {
@@ -403,6 +499,39 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nem sikerült ellenőrizni a felhasználónevet. Koppints a nyílra, és újrapróbáljuk."
+          }
+        }
+      }
+    },
+    "Couldn't look that up. Try again." : {
+      "comment" : "New squabble: handle lookup failed for another reason.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ezt most nem sikerült kikeresni. Próbáld újra."
+          }
+        }
+      }
+    },
+    "Create" : {
+      "comment" : "New squabble: confirm button.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Létrehozás"
+          }
+        }
+      }
+    },
+    "Currency" : {
+      "comment" : "New squabble: header above the currency row, and the currency picker's title.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pénznem"
           }
         }
       }
@@ -473,6 +602,17 @@
         }
       }
     },
+    "Everyone's balance shows up in this currency." : {
+      "comment" : "New squabble: footer under the currency row.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mindenki egyenlegét ebben a pénznemben mutatjuk."
+          }
+        }
+      }
+    },
     "Finish" : {
       "comment" : "Onboarding: final button once payment methods were added.",
       "localizations" : {
@@ -502,6 +642,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "INGYENES. A KÖVETKEZMÉNY NEM."
+          }
+        }
+      }
+    },
+    "Give the squabble a name, 50 characters at most." : {
+      "comment" : "Error when creating a squabble without a valid name.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adj nevet a veszekedésnek, legfeljebb 50 karakterben."
           }
         }
       }
@@ -638,6 +789,17 @@
         }
       }
     },
+    "Lake trip, flat 4B, Tuesday's pizza…" : {
+      "comment" : "New squabble: placeholder in the name field.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Balatoni hétvége, albérlet, keddi pizza…"
+          }
+        }
+      }
+    },
     "Last chance" : {
       "comment" : "Delete account sheet: title.",
       "localizations" : {
@@ -693,6 +855,17 @@
         }
       }
     },
+    "Members · %lld" : {
+      "comment" : "Header above a squabble's members, with how many there are.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagok · %lld"
+          }
+        }
+      }
+    },
     "Membership" : {
       "comment" : "Account screen: inline navigation title above the membership card.",
       "localizations" : {
@@ -711,6 +884,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A pénz nem számít"
+          }
+        }
+      }
+    },
+    "Name" : {
+      "comment" : "New squabble: header above the name field.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Név"
           }
         }
       }
@@ -759,6 +943,28 @@
         }
       }
     },
+    "No bills yet" : {
+      "comment" : "Squabble page: empty bills title.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Még nincs számla"
+          }
+        }
+      }
+    },
+    "No squabbles yet" : {
+      "comment" : "Home: title when the user has no squabbles.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Még nincs veszekedés"
+          }
+        }
+      }
+    },
     "Nobody can pay you yet. Very convenient for them." : {
       "comment" : "Payment slip: shown before any payment method is added.",
       "localizations" : {
@@ -766,6 +972,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Még senki sem tud fizetni neked. Nekik ez igazán kényelmes."
+          }
+        }
+      }
+    },
+    "Nobody goes by %@. Check the spelling?" : {
+      "comment" : "New squabble: no user holds the typed handle.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senki nem hallgat erre: %@. Elgépelted?"
+          }
+        }
+      }
+    },
+    "Nobody owes anybody anything. Enjoy it while it lasts." : {
+      "comment" : "Squabble page: empty bills message.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senki nem tartozik senkinek. Élvezd, amíg tart."
           }
         }
       }
@@ -935,6 +1163,17 @@
         }
       }
     },
+    "Remove %@" : {
+      "comment" : "New squabble: remove a member. The argument is their name.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ eltávolítása"
+          }
+        }
+      }
+    },
     "Remove photo" : {
       "comment" : "Account screen avatar menu: go back to a persona.",
       "localizations" : {
@@ -1045,6 +1284,17 @@
         }
       }
     },
+    "Someone deleted it, or you're no longer in it." : {
+      "comment" : "Squabble page: explanation when the squabble is gone.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Valaki törölte, vagy már nem vagy benne."
+          }
+        }
+      }
+    },
     "Something went wrong" : {
       "comment" : "Generic alert title on the account screen.",
       "localizations" : {
@@ -1100,6 +1350,39 @@
         }
       }
     },
+    "Squabbles" : {
+      "comment" : "Home: header above the list of squabbles.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Veszekedések"
+          }
+        }
+      }
+    },
+    "Squabbles aren't available in this build." : {
+      "comment" : "Error when Firebase isn't configured.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ebben a buildben nincsenek veszekedések."
+          }
+        }
+      }
+    },
+    "Started it" : {
+      "comment" : "Squabble page: tag on the row of whoever created (and runs) the squabble.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ő kezdte"
+          }
+        }
+      }
+    },
     "Step %lld of %lld" : {
       "comment" : "Onboarding progress accessibility label.",
       "localizations" : {
@@ -1107,6 +1390,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$lld. lépés / %2$lld"
+          }
+        }
+      }
+    },
+    "Suspiciously peaceful. Tap + to start one." : {
+      "comment" : "Home: message when the user has no squabbles.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gyanúsan nagy a béke. Koppints a +-ra, és kezdj egyet."
           }
         }
       }
@@ -1221,6 +1515,17 @@
         }
       }
     },
+    "That's you. You're in this one whether you like it or not." : {
+      "comment" : "New squabble: the user typed their own handle.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ez te vagy. Akár tetszik, akár nem, benne vagy."
+          }
+        }
+      }
+    },
     "This is the name on every bill — and on every reminder that you're owed money." : {
       "comment" : "Onboarding: name step subtitle.",
       "localizations" : {
@@ -1239,6 +1544,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ez áll majd a blokkokon és az emlékeztetőkön. A felhasználóneved marad, ami volt."
+          }
+        }
+      }
+    },
+    "This squabble is gone" : {
+      "comment" : "Squabble page: the squabble no longer exists or the user left it.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ez a veszekedés már nincs meg"
           }
         }
       }
@@ -1419,6 +1735,17 @@
         }
       }
     },
+    "You" : {
+      "comment" : "Tag on the user's own row in a squabble's member list.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Te"
+          }
+        }
+      }
+    },
     "You need a handle. It's how people find you." : {
       "comment" : "HandleError.missing",
       "localizations" : {
@@ -1448,6 +1775,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nincs net. Csatlakozz, hogy ellenőrizni tudjuk ezt a felhasználónevet."
+          }
+        }
+      }
+    },
+    "You're offline. Finding people needs the internet." : {
+      "comment" : "New squabble: handle lookup while offline.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nincs net. Emberek kereséséhez internet kell."
           }
         }
       }

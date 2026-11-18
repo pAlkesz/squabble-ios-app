@@ -1,7 +1,16 @@
 # Groups (squabbles)
 
-**Status:** Draft. Not built. All product questions settled (Nov 2026); ready to
-implement.
+**Status:** Partly built (Nov 2026).
+
+- **Built:** creating a squabble (name, currency, members added by exact handle), home's
+  list, the squabble page (members only), keeping your own entry current, the rules for
+  all of that, and the account-deletion cleanup.
+- **Not built yet:** invite links (`joinGroup`), adding members after creation,
+  leaving and removing, archive/delete, rename and currency change, and People in the
+  member picker.
+
+In code a squabble is `SquabbleGroup` (`Feature/Groups`), because `Group` is taken by
+SwiftUI.
 
 ## Summary
 
@@ -77,11 +86,18 @@ groups/{gid}/reminders/{id}              see bills.md
 
 - When users join, their current `displayName`, `handle`, `avatar` and payment methods
   are copied into `members[uid]`.
-- **Profile edits fan out on the client.** When users change their profile or payment
-  details, the app also updates their own entry in every group they belong to. The rules
-  let a member edit only their own entry.
-- A stale copy is acceptable: it's only a display name or avatar, and it heals on the
-  next edit.
+- **Whoever adds you can't copy your payment details**, because they're owner-only. Your
+  entry starts without them, and your own app fills them in.
+- **Each member keeps their own entry current** (`GroupsStore` + `OwnEntrySync`).
+  Whenever home's group list, the user's profile or their payment details change, the
+  app compares the user's entry in each group with their profile and rewrites only the
+  entries that differ. This one mechanism covers profile edits, payment edits and newly
+  added members. The rules let a member edit only their own entry, and never its
+  `joinedAt`.
+- Archived squabbles are skipped (read-only), and the sync doesn't bump `updatedAt`, so
+  a rename doesn't reshuffle anyone's home list.
+- A stale copy is acceptable: it's only a display name or avatar, and it heals the next
+  time that member opens the app.
 
 ## Creating a squabble
 
@@ -138,7 +154,14 @@ count.
   [Bills](bills.md#exchange-rates)).
 - Groups whose bills all share one currency need no conversion at all.
 
-## Rules (planned)
+## Rules
+
+**Deployed (Nov 2026):** read, create, and updating your own entry. Everything else
+below is planned and gets its rule along with its screen.
+
+- At creation, the rules check the shape of the creator's own entry only. Rules can't
+  loop over the other entries; those are copies of public profiles, written by the
+  creator, which the members then overwrite themselves.
 
 - **Read** the group and its subcollections: only uids in `memberIds`.
 - **Create:** `createdBy == auth.uid`, the creator is in `memberIds`, and there are at

@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// The hub of the app: the user's overall balance, with the account behind the avatar
-/// and search / new squabble in the toolbar. One navigation stack, no tab bar — every
+/// The hub of the app: the user's overall balance and their squabbles, with the account
+/// behind the avatar and search / new squabble in the toolbar. One navigation stack, no tab bar — every
 /// squabble is pushed from here, and so is the account. The backdrop takes its colour from
 /// the balance (`BalanceMood`), on home and on every page pushed from it.
 struct HomeView: View {
@@ -9,7 +9,9 @@ struct HomeView: View {
     @Environment(\.reportAvatarFrame) private var reportAvatarFrame
     @Environment(\.isMembershipWelcomeShowing) private var isWelcomeShowing
     @State private var preferences = PreferencesStore()
-    @State private var path: [AccountPage] = []
+    @State private var groups = GroupsStore()
+    @State private var path: [HomeRoute] = []
+    @State private var isCreatingSquabble = false
     #if DEBUG
     @State private var debugBalance: Double?
     #endif
@@ -18,7 +20,12 @@ struct HomeView: View {
         home
             .task(id: session.user?.id) {
                 guard let uid = session.user?.id else { return }
-                await preferences.observe(uid: uid)
+                async let preferences: Void = preferences.observe(uid: uid)
+                async let groups: Void = groups.observe(uid: uid)
+                _ = await (preferences, groups)
+            }
+            .onChange(of: session.profile, initial: true) { _, profile in
+                groups.profile = profile
             }
             // Signing out happens from the Membership page; the next sign-in should land on
             // home, not back where the last one left off.
@@ -41,6 +48,7 @@ struct HomeView: View {
                     #if DEBUG
                     debugBalanceSlider
                     #endif
+                    squabbleList
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 72)
@@ -49,16 +57,35 @@ struct HomeView: View {
             .containerBackground(.clear, for: .navigation)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { toolbar }
-            .navigationDestination(for: AccountPage.self) { page in
-                accountPage(page)
-                    .background { ProfileBackdrop() }
-                    .containerBackground(.clear, for: .navigation)
+            .navigationDestination(for: HomeRoute.self) { route in
+                switch route {
+                case .squabble(let id):
+                    SquabbleView(groupID: id)
+                        .background { SquabbleBackdrop(palette: BalanceMood(amount: 0, currencyCode: homeCurrencyCode).palette) }
+                        .containerBackground(.clear, for: .navigation)
+                case .account(let page):
+                    accountPage(page)
+                        .background { ProfileBackdrop() }
+                        .containerBackground(.clear, for: .navigation)
+                }
+            }
+            .sheet(isPresented: $isCreatingSquabble) {
+                if let profile = session.profile {
+                    NavigationStack {
+                        NewSquabbleView(creator: profile, currencyCode: homeCurrencyCode) { id in
+                            push(.squabble(id: id))
+                        }
+                    }
+                    .presentationBackground(Color.backdropDeep)
+                    .tint(.white)
+                }
             }
         }
         // The system back button follows the stack's tint.
         .tint(.white)
         .environment(preferences)
-        .environment(\.showAccountPage, ShowAccountPageAction(push: show))
+        .environment(groups)
+        .environment(\.showAccountPage, ShowAccountPageAction { push(.account($0)) })
     }
 
     @ToolbarContentBuilder
@@ -66,7 +93,7 @@ struct HomeView: View {
         // Borderless: the toolbar's glass hidden, so the avatar shows edge to edge.
         ToolbarItem(placement: .topBarLeading) {
             Button {
-                show(.account)
+                push(.account(.account))
             } label: {
                 avatar
             }
@@ -88,10 +115,13 @@ struct HomeView: View {
 
         ToolbarItem(placement: .topBarTrailing) {
             // A styled label: toolbar buttons take the accent colour and ignore `.tint`.
-            Button {} label: {
+            Button {
+                isCreatingSquabble = true
+            } label: {
                 Image(systemName: "plus")
                     .foregroundStyle(.white)
             }
+            .disabled(session.profile == nil)
             .accessibilityLabel("New squabble")
         }
     }
@@ -103,9 +133,56 @@ struct HomeView: View {
             .animation(.smooth(duration: 1.2), value: mood)
     }
 
-    private func show(_ page: AccountPage) {
-        guard path.last != page else { return }
-        path.append(page)
+    private func push(_ route: HomeRoute) {
+        guard path.last != route else { return }
+        path.append(route)
+    }
+
+    /// Hidden until the first answer, so a returning user never sees the empty state flash.
+    @ViewBuilder
+    private var squabbleList: some View {
+        if groups.hasLoaded {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Squabbles", comment: "Home: header above the list of squabbles.")
+                    .font(.footnote.weight(.semibold))
+                    .textCase(.uppercase)
+                    .foregroundStyle(.white.opacity(0.7))
+                    .padding(.horizontal, 4)
+                if groups.groups.isEmpty {
+                    emptySquabbles
+                } else {
+                    VStack(spacing: 0) {
+                        ForEach(groups.groups) { group in
+                            Button {
+                                push(.squabble(id: group.id))
+                            } label: {
+                                SquabbleRow(group: group)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    .background(.white.opacity(0.08), in: .rect(cornerRadius: 20))
+                }
+            }
+            .frame(maxWidth: 640)
+            .transition(.opacity)
+        }
+    }
+
+    private var emptySquabbles: some View {
+        VStack(spacing: 6) {
+            Text("No squabbles yet", comment: "Home: title when the user has no squabbles.")
+                .font(.headline)
+            Text("Suspiciously peaceful. Tap + to start one.", comment: "Home: message when the user has no squabbles.")
+                .font(.subheadline)
+                .foregroundStyle(.white.opacity(0.7))
+                .multilineTextAlignment(.center)
+        }
+        .foregroundStyle(.white)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 28)
+        .padding(.horizontal, 16)
+        .background(.white.opacity(0.08), in: .rect(cornerRadius: 20))
     }
 
     @ViewBuilder
@@ -136,7 +213,7 @@ struct HomeView: View {
         BalanceMood(amount: balance, currencyCode: homeCurrencyCode)
     }
 
-    // Nothing to total yet: groups and bills haven't landed.
+    // Nothing to total yet: bills haven't landed.
     private var balance: Decimal {
         #if DEBUG
         if let debugBalance {
