@@ -56,6 +56,7 @@ struct DeleteAccountSheet: View {
         .padding(.bottom, 8)
         .frame(maxWidth: 480)
         .interactiveDismissDisabled(isDeleting)
-        .fittedSheet()
+        // The system's glass: there are no glass buttons here to lose their look on it.
+        .fittedSheet(opaque: false)
     }
 }
