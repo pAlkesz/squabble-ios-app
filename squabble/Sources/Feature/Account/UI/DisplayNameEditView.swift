@@ -22,7 +22,7 @@ struct DisplayNameEditView: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 14)
-                .background(.white.opacity(0.08), in: .rect(cornerRadius: 16))
+                .background(.white.opacity(0.08), in: .rect(cornerRadius: SquabbleMetrics.cornerRadius))
             Text(
                 "This is what shows up on receipts and reminders. Your handle stays the same.",
                 comment: "Display name editor: footnote under the field."

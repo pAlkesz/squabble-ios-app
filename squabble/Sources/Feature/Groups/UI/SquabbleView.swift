@@ -83,7 +83,7 @@ struct SquabbleView: View {
                 .foregroundStyle(.white.opacity(0.7))
                 .padding(.horizontal, 4)
             content()
-                .background(.white.opacity(0.08), in: .rect(cornerRadius: 20))
+                .background(.white.opacity(0.08), in: .rect(cornerRadius: SquabbleMetrics.cornerRadius))
         }
     }
 

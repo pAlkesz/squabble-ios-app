@@ -140,7 +140,7 @@ struct AccountView: View {
                 Text(verbatim: preferences.homeCurrencyCode)
             }
         }
-        .background(.white.opacity(0.08), in: .rect(cornerRadius: 22))
+        .background(.white.opacity(0.08), in: .rect(cornerRadius: SquabbleMetrics.cornerRadius))
     }
 
     private var accountActions: some View {
@@ -159,7 +159,7 @@ struct AccountView: View {
                 Text("This wipes your account and everything in it. Your friends will still owe you money — that part's between you and them.")
             }
         }
-        .background(.white.opacity(0.08), in: .rect(cornerRadius: 22))
+        .background(.white.opacity(0.08), in: .rect(cornerRadius: SquabbleMetrics.cornerRadius))
     }
 
     private var divider: some View {

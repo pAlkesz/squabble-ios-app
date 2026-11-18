@@ -125,7 +125,7 @@ struct PaymentMethodEditor: View {
                 .padding(.horizontal, 16)
                 .padding(.vertical, 14)
                 .background(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    RoundedRectangle(cornerRadius: SquabbleMetrics.cornerRadius, style: .continuous)
                         .fill(Color.white.opacity(0.08))
                 )
             FieldMessageFooter(message: message)

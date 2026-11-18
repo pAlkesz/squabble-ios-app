@@ -36,7 +36,7 @@ struct PaymentMethodTiles: View {
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 14)
-            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 18))
+            .glassEffect(.regular.interactive(), in: .rect(cornerRadius: SquabbleMetrics.cornerRadius))
         }
         .buttonStyle(.plain)
     }

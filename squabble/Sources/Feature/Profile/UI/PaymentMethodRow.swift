@@ -28,7 +28,7 @@ struct PaymentMethodRow: View {
             }
         }
         .padding(14)
-        .background(.white.opacity(0.1), in: .rect(cornerRadius: 18))
+        .background(.white.opacity(0.1), in: .rect(cornerRadius: SquabbleMetrics.cornerRadius))
         .accessibilityElement(children: .combine)
     }
 

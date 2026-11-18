@@ -206,7 +206,7 @@ struct NewSquabbleView: View {
         }
         .padding(.horizontal, 16)
         .frame(minHeight: 54)
-        .background(.white.opacity(0.08), in: .rect(cornerRadius: 22))
+        .background(.white.opacity(0.08), in: .rect(cornerRadius: SquabbleMetrics.cornerRadius))
     }
 
     private var presets: some View {
@@ -261,7 +261,7 @@ struct NewSquabbleView: View {
                         .background(.white.opacity(0.12), in: .capsule)
                 }
                 .padding(16)
-                .background(.white.opacity(0.08), in: .rect(cornerRadius: 22))
+                .background(.white.opacity(0.08), in: .rect(cornerRadius: SquabbleMetrics.cornerRadius))
                 .contentShape(.rect)
             }
             .buttonStyle(.plain)

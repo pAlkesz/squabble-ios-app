@@ -167,7 +167,7 @@ struct HomeView: View {
                             .buttonStyle(.plain)
                         }
                     }
-                    .background(.white.opacity(0.08), in: .rect(cornerRadius: 20))
+                    .background(.white.opacity(0.08), in: .rect(cornerRadius: SquabbleMetrics.cornerRadius))
                 }
             }
             .frame(maxWidth: 640)
@@ -188,7 +188,7 @@ struct HomeView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 28)
         .padding(.horizontal, 16)
-        .background(.white.opacity(0.08), in: .rect(cornerRadius: 20))
+        .background(.white.opacity(0.08), in: .rect(cornerRadius: SquabbleMetrics.cornerRadius))
     }
 
     @ViewBuilder

@@ -265,6 +265,11 @@ entry in any group where it differs (the rules allow a member to edit only their
   fades a traffic-light colour into black — red, then amber, then green reaching further
   down each step — as a progress cue. Home tints its backdrop by the balance (below), so
   in the red the deep end is a maroon rather than green — still never black.
+- **One corner radius:** every row, card, list group and input field uses
+  `SquabbleMetrics.cornerRadius` (28 pt). That's what iOS 27's own grouped lists draw
+  (measured Nov 2026), and SwiftUI can't change theirs, so custom surfaces match it. Never
+  hardcode a radius for these; props (membership card, payment slip, stamp, ID photo)
+  keep their own.
 - **Primary buttons** are solid white capsules with dark text (`.squabblePrimary`),
   matching the Sign in with Apple button; sheet actions use `SquabbleGlassButton`.
 - **Accent color** (`AccentColor` asset, drives `.tint`): one universal value,
