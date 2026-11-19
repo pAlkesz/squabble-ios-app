@@ -458,8 +458,9 @@ stutters on a device even when the simulator looks smooth.
   zooms open the "Create squabble" sheet (`navigationTransition(.zoom)` from the toolbar
   item): a circular picture (photo, or an emoji on an avatar colour), a name with preset
   chips, and a currency. No people at creation (like Revolut), so they're added from the
-  squabble later. Home lists the user's squabbles (one `array-contains` listener in
-  `GroupsStore`, sorted on the device) and pushes `SquabbleView` (members only so far)
+  squabble later. Home lists the user's squabbles in a Revolut-style `HomeTile` (title inside the card, rows
+  without chevrons; the shape for future tiles), from one `array-contains` listener in
+  `GroupsStore`, sorted on the device, and pushes `SquabbleView` (members only so far)
   through `HomeRoute`. Not yet: adding people, invite links, leaving, archive/delete,
   editing.
 - Scrolling screens opt into `.scrollEdgeEffectStyle(.soft, for: .top)`: iOS 26's soft

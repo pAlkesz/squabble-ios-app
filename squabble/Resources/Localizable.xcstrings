@@ -1571,7 +1571,7 @@
       }
     },
     "Squabbles" : {
-      "comment" : "Home: header above the list of squabbles.",
+      "comment" : "Home: title of the tile listing the user's squabbles.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
@@ -1588,6 +1588,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ebben a buildben nincsenek veszekedések."
+          }
+        }
+      }
+    },
+    "Start a squabble" : {
+      "comment" : "Home: button in the empty squabbles tile that opens the create sheet.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Veszekedés indítása"
           }
         }
       }
@@ -1614,13 +1625,13 @@
         }
       }
     },
-    "Suspiciously peaceful. Tap + to start one." : {
+    "Suspiciously peaceful around here. Nobody owes anybody anything… yet." : {
       "comment" : "Home: message when the user has no squabbles.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gyanúsan nagy a béke. Koppints a +-ra, és kezdj egyet."
+            "value" : "Gyanúsan nagy itt a béke. Senki nem tartozik senkinek… egyelőre."
           }
         }
       }

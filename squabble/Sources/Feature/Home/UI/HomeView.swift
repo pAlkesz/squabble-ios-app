@@ -12,6 +12,8 @@ struct HomeView: View {
     @State private var groups = GroupsStore()
     @State private var path: [HomeRoute] = []
     @State private var isCreatingSquabble = false
+    /// Where the create sheet zooms from: the toolbar's `+`, or the empty state's button.
+    @State private var newSquabbleSource = NewSquabbleSource.toolbar
     @Namespace private var transitions
     #if DEBUG
     @State private var debugBalance: Double?
@@ -80,7 +82,7 @@ struct HomeView: View {
                     .presentationBackground(Color.backdropDeep)
                     .tint(.white)
                     // Grows out of the + button's glass and shrinks back into it.
-                    .navigationTransition(.zoom(sourceID: Self.newSquabbleTransition, in: transitions))
+                    .navigationTransition(.zoom(sourceID: newSquabbleSource, in: transitions))
                 }
             }
         }
@@ -119,7 +121,7 @@ struct HomeView: View {
         ToolbarItem(placement: .topBarTrailing) {
             // A styled label: toolbar buttons take the accent colour and ignore `.tint`.
             Button {
-                isCreatingSquabble = true
+                startSquabble(from: .toolbar)
             } label: {
                 Image(systemName: "plus")
                     .foregroundStyle(.white)
@@ -127,7 +129,7 @@ struct HomeView: View {
             .disabled(session.profile == nil)
             .accessibilityLabel("New squabble")
         }
-        .matchedTransitionSource(id: Self.newSquabbleTransition, in: transitions)
+        .matchedTransitionSource(id: NewSquabbleSource.toolbar, in: transitions)
     }
 
     /// Pushed pages carry their own backdrop, as onboarding's pages do: a shared one behind the
@@ -137,7 +139,15 @@ struct HomeView: View {
             .animation(.smooth(duration: 1.2), value: mood)
     }
 
-    private static let newSquabbleTransition = "newSquabble"
+    private enum NewSquabbleSource: Hashable {
+        case toolbar
+        case emptyState
+    }
+
+    private func startSquabble(from source: NewSquabbleSource) {
+        newSquabbleSource = source
+        isCreatingSquabble = true
+    }
 
     private func push(_ route: HomeRoute) {
         guard path.last != route else { return }
@@ -148,26 +158,18 @@ struct HomeView: View {
     @ViewBuilder
     private var squabbleList: some View {
         if groups.hasLoaded {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Squabbles", comment: "Home: header above the list of squabbles.")
-                    .font(.footnote.weight(.semibold))
-                    .textCase(.uppercase)
-                    .foregroundStyle(.white.opacity(0.7))
-                    .padding(.horizontal, 4)
+            HomeTile(title: Text("Squabbles", comment: "Home: title of the tile listing the user's squabbles.")) {
                 if groups.groups.isEmpty {
                     emptySquabbles
                 } else {
-                    VStack(spacing: 0) {
-                        ForEach(groups.groups) { group in
-                            Button {
-                                push(.squabble(id: group.id))
-                            } label: {
-                                SquabbleRow(group: group)
-                            }
-                            .buttonStyle(.plain)
+                    ForEach(groups.groups) { group in
+                        Button {
+                            push(.squabble(id: group.id))
+                        } label: {
+                            SquabbleRow(group: group)
                         }
+                        .buttonStyle(.plain)
                     }
-                    .background(.white.opacity(0.08), in: .rect(cornerRadius: SquabbleMetrics.cornerRadius))
                 }
             }
             .frame(maxWidth: 640)
@@ -176,19 +178,44 @@ struct HomeView: View {
     }
 
     private var emptySquabbles: some View {
-        VStack(spacing: 6) {
-            Text("No squabbles yet", comment: "Home: title when the user has no squabbles.")
-                .font(.headline)
-            Text("Suspiciously peaceful. Tap + to start one.", comment: "Home: message when the user has no squabbles.")
-                .font(.subheadline)
-                .foregroundStyle(.white.opacity(0.7))
-                .multilineTextAlignment(.center)
+        VStack(spacing: 14) {
+            Text(verbatim: "🕊️")
+                .font(.system(size: 34))
+                .frame(width: 64, height: 64)
+                .background(.white.opacity(0.12), in: .circle)
+                .accessibilityHidden(true)
+            VStack(spacing: 4) {
+                Text("No squabbles yet", comment: "Home: title when the user has no squabbles.")
+                    .font(.headline)
+                Text("Suspiciously peaceful around here. Nobody owes anybody anything… yet.", comment: "Home: message when the user has no squabbles.")
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.7))
+                    .multilineTextAlignment(.center)
+            }
+            Button {
+                startSquabble(from: .emptyState)
+            } label: {
+                Label {
+                    Text("Start a squabble", comment: "Home: button in the empty squabbles tile that opens the create sheet.")
+                } icon: {
+                    Image(systemName: "plus")
+                }
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(Color.backdropDeep)
+                .padding(.horizontal, 18)
+                .padding(.vertical, 10)
+                .background(.white, in: .capsule)
+            }
+            .buttonStyle(.plain)
+            .disabled(session.profile == nil)
+            .matchedTransitionSource(id: NewSquabbleSource.emptyState, in: transitions)
+            .padding(.top, 4)
         }
         .foregroundStyle(.white)
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 28)
+        .padding(.top, 12)
+        .padding(.bottom, 16)
         .padding(.horizontal, 16)
-        .background(.white.opacity(0.08), in: .rect(cornerRadius: SquabbleMetrics.cornerRadius))
     }
 
     @ViewBuilder
