@@ -70,8 +70,8 @@ struct HomeView: View {
                         .background { backdrop }
                         .containerBackground(.clear, for: .navigation)
                 case .squabble(let id):
+                    // Paints its own backdrop, tinted by the squabble's balance.
                     SquabbleView(groupID: id)
-                        .background { SquabbleBackdrop(palette: BalanceMood(amount: 0, currencyCode: homeCurrencyCode).palette) }
                         .containerBackground(.clear, for: .navigation)
                 case .squabbleInfo(let id):
                     SquabbleInfoView(groupID: id)

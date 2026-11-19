@@ -186,6 +186,17 @@ Adding people (planned, from the info page):
   We'll serve it from Firebase Hosting. (Firebase Dynamic Links is shut down, so it
   isn't an option.)
 
+**Sharing (planned):** the info page and the empty squabble page open an **invite sheet**:
+a card with a QR code of the link (the squabble's picture in its centre, so the code uses
+high error correction), the squabble's name, a line on what the link does, and a white
+**Share link** button (the system share sheet). The QR code is drawn on the device
+(Core Image), so it works offline once the squabble has a code. The creator also gets
+**Reset link** there.
+
+- `inviteCode` is created by the server (the first `joinGroup`-family call that needs it,
+  or a small `createInvite` callable), never by the app, so the rules never have to
+  vouch for it.
+
 **Flow:**
 
 1. The recipient opens the link. Without the app, they install it, sign in and finish
@@ -268,5 +279,9 @@ Before deletion, the app shows the user's open balances as a warning (see
 
 ## Open questions
 
-None at the product level. Details like copy and screen layout get settled while
-building.
+- **Invite domain:** universal links need a domain serving `apple-app-site-association`.
+  Firebase Hosting on the project's free `web.app` domain, or a domain of our own? (Hosting
+  is a new Firebase product for the project.) It would also serve a small "get the app"
+  page for people without it.
+- **Link lifetime:** decided as "until the creator resets it" (Nov 2026). Revolut's
+  links expire after 72 hours; keep ours, or expire too?

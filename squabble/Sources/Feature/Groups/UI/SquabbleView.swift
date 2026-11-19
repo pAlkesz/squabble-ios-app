@@ -18,6 +18,25 @@ struct SquabbleView: View {
         }
         .foregroundStyle(.white)
         .navigationBarTitleDisplayMode(.inline)
+        .background { backdrop }
+    }
+
+    /// Home's balance mood, for this squabble's balance instead of the total; neutral while
+    /// the squabble is loading or gone.
+    private var backdrop: some View {
+        let group = groups.group(id: groupID)
+        let mood = BalanceMood(
+            amount: group.map(balance(in:)) ?? 0,
+            currencyCode: group?.currencyCode ?? "EUR"
+        )
+        return SquabbleBackdrop(palette: mood.palette)
+            .animation(.smooth(duration: 1.2), value: mood)
+    }
+
+    /// The user's balance in this squabble: positive when they're owed. Nothing to add up
+    /// until bills land.
+    private func balance(in group: SquabbleGroup) -> Decimal {
+        0
     }
 
     private func content(_ group: SquabbleGroup) -> some View {
@@ -31,6 +50,7 @@ struct SquabbleView: View {
         }
         // iOS 26's soft fade under the bar; iOS 27 no longer defaults to it.
         .scrollEdgeEffectStyle(.soft, for: [.top, .bottom])
+
         .navigationTitle(Text(verbatim: group.name))
         .toolbar {
             ToolbarItem(placement: .principal) {
@@ -65,19 +85,19 @@ struct SquabbleView: View {
     }
 
     private func ready(_ group: SquabbleGroup) -> some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 16) {
             Image(systemName: "person.3.fill")
-                .font(.system(size: 44))
+                .font(.system(size: 30))
                 .accessibilityHidden(true)
-            VStack(spacing: 6) {
+            VStack(spacing: 4) {
                 Text("Your squabble is ready", comment: "Squabble page: title while there are no bills yet.")
-                    .font(.title3.weight(.semibold))
+                    .font(.headline)
                 Text(memberLine(group))
-                    .font(.subheadline)
+                    .font(.footnote)
                     .foregroundStyle(.white.opacity(0.75))
                     .multilineTextAlignment(.center)
             }
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 12) {
                 Label {
                     Text("Add bills, then settle up", comment: "Squabble page: first point in the 'ready' card.")
                 } icon: {
@@ -89,10 +109,10 @@ struct SquabbleView: View {
                     Image(systemName: "person.2.fill")
                 }
             }
-            .font(.body)
+            .font(.subheadline)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 18)
+            .padding(.horizontal, 18)
+            .padding(.vertical, 14)
             .background(.white.opacity(0.08), in: .rect(cornerRadius: SquabbleMetrics.cornerRadius))
         }
     }
