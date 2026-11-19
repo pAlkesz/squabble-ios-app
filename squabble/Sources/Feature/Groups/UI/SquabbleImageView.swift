@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// A squabble's picture as a circle, the same crop everywhere it appears: an emoji on its
-/// colour, a stored photo, or a picked photo that isn't uploaded yet.
+/// A squabble's picture as a circle, the same crop everywhere it appears: a drawing on its
+/// gradient, a stored photo, or a picked photo that isn't uploaded yet.
 struct SquabbleImageView: View {
     enum Content: Equatable {
         case image(SquabbleImage)
@@ -24,6 +24,10 @@ struct SquabbleImageView: View {
     var body: some View {
         Group {
             switch content {
+            case .image(.artwork(let artwork, let background)):
+                background.gradient.overlay {
+                    artwork.image.resizable().scaledToFill()
+                }
             case .image(.emoji(let emoji, let color)):
                 color.color.overlay {
                     Text(verbatim: emoji)

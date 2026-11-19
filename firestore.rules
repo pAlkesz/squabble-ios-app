@@ -98,16 +98,17 @@ service cloud.firestore {
         && (!('payment' in entry) || (entry.payment is list && entry.payment.size() <= 5));
     }
 
-    // An emoji on one of the avatar colours, or a photo the creator uploaded to their own
-    // groupImages/ folder.
+    // A drawing on one of the squabble backgrounds, or a photo the creator uploaded to their
+    // own groupImages/ folder. Drawings are checked by shape, not a list, so new ones ship
+    // without a rules deploy. (Emoji pictures from before drawings are still read, never
+    // written.)
     function isValidSquabbleImage(image, uid) {
       return image is map && (
-        (image.kind == 'emoji'
-          && image.keys().hasOnly(['kind', 'emoji', 'color'])
-          && image.emoji is string
-          && image.emoji.size() > 0
-          && image.emoji.size() <= 40
-          && image.color in ['meadow', 'lagoon', 'coral', 'mustard', 'plum', 'tangerine', 'rose', 'indigo', 'olive', 'slate', 'cocoa'])
+        (image.kind == 'artwork'
+          && image.keys().hasOnly(['kind', 'artwork', 'background'])
+          && image.artwork is string
+          && image.artwork.matches('[a-zA-Z0-9]{1,40}')
+          && image.background in ['mint', 'sky', 'peach', 'lilac', 'sunrise', 'bubblegum', 'teal', 'dusk', 'sand', 'storm'])
         || (image.kind == 'photo'
           && image.keys().hasOnly(['kind', 'path', 'url'])
           && image.path is string

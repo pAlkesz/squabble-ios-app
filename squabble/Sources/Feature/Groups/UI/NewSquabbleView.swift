@@ -30,7 +30,7 @@ struct NewSquabbleView: View {
 
     private enum Page: Hashable {
         case currency
-        case emoji
+        case drawing
     }
 
     init(creator: UserProfile, currencyCode: String, onCreate: @escaping (String) -> Void) {
@@ -49,9 +49,9 @@ struct NewSquabbleView: View {
                         switch page {
                         case .currency:
                             SquabbleCurrencyPicker(selection: $draft.currencyCode)
-                        case .emoji:
-                            SquabbleEmojiPicker(emoji: draft.emoji, color: $draft.color) { emoji in
-                                draft.setEmoji(emoji)
+                        case .drawing:
+                            SquabbleDrawingPicker(artwork: draft.artwork, background: $draft.background) { artwork in
+                                draft.setArtwork(artwork)
                                 photoPreview = nil
                             }
                         }
@@ -178,8 +178,8 @@ struct NewSquabbleView: View {
                     isShowingCamera = true
                 }
             }
-            Button(String(localized: "Pick an emoji", comment: "Create squabble: picture menu item that opens the emoji picker."), systemImage: "face.smiling") {
-                push(.emoji)
+            Button(String(localized: "Pick a drawing", comment: "Create squabble: picture menu item that opens the drawing and background picker."), systemImage: "person.3") {
+                push(.drawing)
             }
             if draft.photoJPEG != nil {
                 Button("Remove photo", systemImage: "trash", role: .destructive) {
@@ -214,7 +214,7 @@ struct NewSquabbleView: View {
 
     private var previewContent: SquabbleImageView.Content {
         if let photoPreview { return .local(photoPreview) }
-        return .image(draft.emojiImage)
+        return .image(draft.drawing)
     }
 
     // MARK: - Name

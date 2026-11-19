@@ -99,6 +99,12 @@ nonisolated extension GroupMember {
 nonisolated extension SquabbleImage {
     init?(firestoreData data: [String: Any]) {
         switch data["kind"] as? String {
+        case "artwork":
+            guard let background = (data["background"] as? String).flatMap(SquabbleBackground.init(rawValue:))
+            else { return nil }
+            // A drawing this app doesn't know yet shows as the first one.
+            let artwork = (data["artwork"] as? String).flatMap(SquabbleArtwork.init(rawValue:)) ?? .trio
+            self = .artwork(artwork, background)
         case "emoji":
             guard let emoji = data["emoji"] as? String, !emoji.isEmpty,
                   let color = (data["color"] as? String).flatMap(AvatarColor.init(rawValue:))
@@ -116,6 +122,8 @@ nonisolated extension SquabbleImage {
 
     var firestoreData: [String: Any] {
         switch self {
+        case .artwork(let artwork, let background):
+            ["kind": "artwork", "artwork": artwork.rawValue, "background": background.rawValue]
         case .emoji(let emoji, let color):
             ["kind": "emoji", "emoji": emoji, "color": color.rawValue]
         case .photo(let path, let url):

@@ -4,7 +4,8 @@ import Testing
 
 struct GroupMappingTests {
     @Test(arguments: [
-        SquabbleImage.emoji("👨‍👩‍👧", .coral),
+        SquabbleImage.artwork(.trio, .sunrise),
+        .emoji("👨‍👩‍👧", .coral),
         .photo(path: "groupImages/pal/a.jpg", url: URL(string: "https://example.com/a.jpg")!),
     ])
     func groupRoundTripsWithoutTimestamps(image: SquabbleImage) throws {
@@ -23,6 +24,19 @@ struct GroupMappingTests {
         unreadable["image"] = ["kind": "hologram"]
         #expect(try SquabbleGroup(id: "g1", firestoreData: base).image == .default(for: "g1"))
         #expect(try SquabbleGroup(id: "g1", firestoreData: unreadable).image == .default(for: "g1"))
+    }
+
+    @Test func anUnknownDrawingShowsAsTheFirstOneOnItsBackground() throws {
+        let data: [String: Any] = [
+            "name": "Trip", "currency": "EUR", "createdBy": "pal", "memberIds": ["pal"],
+            "image": ["kind": "artwork", "artwork": "fromTheFuture", "background": "dusk"],
+        ]
+        #expect(try SquabbleGroup(id: "g1", firestoreData: data).image == .artwork(.trio, .dusk))
+    }
+
+    @Test func defaultImageIsTheFirstDrawingOnAStableBackground() {
+        #expect(SquabbleImage.default(for: "g1") == .artwork(.trio, .default(for: "g1")))
+        #expect(SquabbleBackground.default(for: "g1") == SquabbleBackground.default(for: "g1"))
     }
 
     @Test func readsTimestampsAndDeletedMembers() throws {

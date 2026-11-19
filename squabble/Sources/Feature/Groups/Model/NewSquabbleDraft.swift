@@ -8,20 +8,20 @@ nonisolated struct NewSquabbleDraft: Equatable {
     var currencyCode: String
     /// Shown whenever there's no photo, and kept while there is one, so removing the photo
     /// goes back to it.
-    private(set) var emoji: String
-    var color: AvatarColor
+    private(set) var artwork: SquabbleArtwork
+    var background: SquabbleBackground
     /// A prepared square JPEG, uploaded only when the squabble is created.
     private(set) var photoJPEG: Data?
 
-    init(creator: UserProfile, currencyCode: String, emoji: SquabbleImage = .random()) {
+    init(creator: UserProfile, currencyCode: String, drawing: SquabbleImage = .random()) {
         self.creator = creator
         self.currencyCode = currencyCode
-        if case .emoji(let symbol, let color) = emoji {
-            self.emoji = symbol
-            self.color = color
+        if case .artwork(let artwork, let background) = drawing {
+            self.artwork = artwork
+            self.background = background
         } else {
-            self.emoji = SquabbleImage.emojis[0]
-            self.color = .meadow
+            self.artwork = .trio
+            self.background = .mint
         }
     }
 
@@ -42,15 +42,14 @@ nonisolated struct NewSquabbleDraft: Equatable {
         name = String(input.prefix(SquabbleGroup.maxNameLength))
     }
 
-    /// Fills in the preset's name and emoji; a chosen photo stays.
+    /// Fills in the preset's name; the picture stays as it is.
     mutating func choose(_ preset: SquabblePreset) {
         name = preset.name
-        emoji = preset.emoji
     }
 
-    /// Picking an emoji means not wanting the photo any more.
-    mutating func setEmoji(_ symbol: String) {
-        emoji = symbol
+    /// Picking a drawing means not wanting the photo any more.
+    mutating func setArtwork(_ artwork: SquabbleArtwork) {
+        self.artwork = artwork
         photoJPEG = nil
     }
 
@@ -62,12 +61,12 @@ nonisolated struct NewSquabbleDraft: Equatable {
         photoJPEG = nil
     }
 
-    var emojiImage: SquabbleImage {
-        .emoji(emoji, color)
+    var drawing: SquabbleImage {
+        .artwork(artwork, background)
     }
 
     /// The squabble to save, with its creator as the only member. `photo` is the uploaded
-    /// photo when there is one; otherwise it gets the emoji.
+    /// photo when there is one; otherwise it gets the drawing.
     func makeGroup(id: String, photo: SquabbleImage? = nil, creatorPaymentMethods: [PaymentMethod]) -> SquabbleGroup? {
         guard let name = validName else { return nil }
         let creatorEntry = GroupMember(profile: creator, paymentMethods: creatorPaymentMethods)
@@ -75,7 +74,7 @@ nonisolated struct NewSquabbleDraft: Equatable {
             id: id,
             name: name,
             currencyCode: currencyCode,
-            image: photo ?? emojiImage,
+            image: photo ?? drawing,
             createdBy: creator.id,
             memberIds: [creator.id],
             members: [creator.id: creatorEntry]

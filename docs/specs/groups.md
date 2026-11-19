@@ -108,12 +108,13 @@ are added afterwards from the squabble.
 1. Tap `+` on home. The "Create squabble" sheet zooms out of the button.
 2. **Picture** (optional; a big circle at the top, the same crop as everywhere else):
    - a photo from the library or camera (prepared on the device as a 512 px square JPEG)
-   - or an emoji on one of the avatar colours, from a fixed set of 24
-     (`SquabbleImage.emojis`). A random one is preselected.
+   - or a **drawing** (`SquabbleArtwork`, playful takes on the `person.3` symbol; one so
+     far, more coming) on a **gradient background** (`SquabbleBackground`, ten of them).
+     A random one is preselected.
 3. **Name**, 1–50 characters, **not unique**. Preset chips under the field fill in a name
-   and that preset's emoji: Trip 🏝️, Flat 🛋️, Dinner 🍝, Party 🎉, Family 👨‍👩‍👧,
+   (the emoji only decorates the chip): Trip 🏝️, Flat 🛋️, Dinner 🍝, Party 🎉, Family 👨‍👩‍👧,
    Us two 💑 (`SquabblePreset`). A chip shows as selected while the field holds its
-   name. A chosen photo stays when a preset is tapped.
+   name. Tapping one leaves the picture alone.
 4. **Squabble currency**, defaulting to the home currency.
 5. Tap **Squabble Up** (the white button at the bottom; a nod to the song).
    - Without a photo, it's a single document write, so it works offline.
@@ -133,13 +134,21 @@ Adding people (planned, from the squabble page):
 
 ## Picture
 
-- Stored on the group as `image`: `{kind: emoji, emoji, color}` or
-  `{kind: photo, path, url}`.
+- Stored on the group as `image`: `{kind: artwork, artwork, background}` or
+  `{kind: photo, path, url}`. Squabbles made before drawings (Nov 2026) have
+  `{kind: emoji, emoji, color}`, which is still shown but no longer offered or allowed by
+  the rules.
+- **Drawings replaced emojis** (Nov 2026). The backgrounds are a palette of their own,
+  gradients rather than the avatar colours, so a squabble never looks like a person.
+  Drawings ship as transparent PNGs in `Assets.xcassets/SquabbleArt`, framed to fill the
+  disc with the figures running off its bottom, and only the id is stored. Ids are
+  shape-checked by the rules, and an app that doesn't know one shows the first drawing on
+  the stored background, so new drawings need no rules deploy. Never rename an id.
 - **Always shown as a circle** (`SquabbleImageView`): on home's row, on the squabble
   page, and on the create sheet. What you see when choosing is exactly what everyone
   gets.
-- Groups saved without an `image`, or with one this app can't read, show 🧾 on
-  `AvatarColor.default(for: groupID)`.
+- Groups saved without an `image`, or with one this app can't read, show the first
+  drawing on `SquabbleBackground.default(for: groupID)`.
 - **Photos live at `groupImages/{uploader uid}/{random}.jpg`.** They're filed by
   uploader, not by squabble, so the Storage rules can check ownership without reading
   Firestore, and the upload can happen before the squabble exists.
@@ -195,7 +204,8 @@ count.
 **Deployed (Nov 2026):** read, create, and updating your own entry. Everything else
 below is planned and gets its rule along with its screen.
 
-- At creation, the picture is shape-checked: the emoji is short and on a known colour,
+- At creation, the picture is shape-checked: a drawing id of the right shape on a known
+  background,
   and a photo's path must be in the creator's own `groupImages/` folder.
 - At creation, the rules check the shape of the creator's own entry only. Rules can't
   loop over the other entries; those are copies of public profiles, written by the

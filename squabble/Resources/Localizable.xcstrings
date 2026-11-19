@@ -349,6 +349,17 @@
         }
       }
     },
+    "Backgrounds" : {
+      "comment" : "Squabble drawing picker: header above the backgrounds.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hátterek"
+          }
+        }
+      }
+    },
     "Bank" : {
       "comment" : "Payment quick-add tile: bank account.",
       "localizations" : {
@@ -415,6 +426,17 @@
         }
       }
     },
+    "Bubblegum" : {
+      "comment" : "Squabble background name, read by VoiceOver.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rágógumi"
+          }
+        }
+      }
+    },
     "Cancel" : {
       "comment" : "Generic cancel button.",
       "localizations" : {
@@ -466,17 +488,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Név törlése"
-          }
-        }
-      }
-    },
-    "Colour" : {
-      "comment" : "Squabble emoji picker: header above the colours.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Szín"
           }
         }
       }
@@ -635,13 +646,35 @@
         }
       }
     },
-    "Emoji" : {
-      "comment" : "Squabble emoji picker: header above the emojis.",
+    "Drawing" : {
+      "comment" : "Squabble drawing picker: page title.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Emoji"
+            "value" : "Rajz"
+          }
+        }
+      }
+    },
+    "Drawings" : {
+      "comment" : "Squabble drawing picker: header above the drawings.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rajzok"
+          }
+        }
+      }
+    },
+    "Dusk" : {
+      "comment" : "Squabble background name, read by VoiceOver.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alkonyat"
           }
         }
       }
@@ -921,6 +954,17 @@
         }
       }
     },
+    "Lilac" : {
+      "comment" : "Squabble background name, read by VoiceOver.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Orgona"
+          }
+        }
+      }
+    },
     "Loading…" : {
       "comment" : "VoiceOver: the launch splash is waiting for the app to load.",
       "localizations" : {
@@ -972,6 +1016,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tagság"
+          }
+        }
+      }
+    },
+    "Mint" : {
+      "comment" : "Squabble background name, read by VoiceOver.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Menta"
           }
         }
       }
@@ -1262,6 +1317,17 @@
         }
       }
     },
+    "Peach" : {
+      "comment" : "Squabble background name, read by VoiceOver.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Barack"
+          }
+        }
+      }
+    },
     "Petty reminders" : {
       "comment" : "Receipt line item — an app feature, priced at zero.",
       "localizations" : {
@@ -1273,13 +1339,13 @@
         }
       }
     },
-    "Pick an emoji" : {
-      "comment" : "Create squabble: picture menu item that opens the emoji picker.",
+    "Pick a drawing" : {
+      "comment" : "Create squabble: picture menu item that opens the drawing and background picker.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Emoji választása"
+            "value" : "Válassz rajzot"
           }
         }
       }
@@ -1357,6 +1423,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fotó törlése"
+          }
+        }
+      }
+    },
+    "Sand" : {
+      "comment" : "Squabble background name, read by VoiceOver.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Homok"
           }
         }
       }
@@ -1445,6 +1522,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Intró kihagyása"
+          }
+        }
+      }
+    },
+    "Sky" : {
+      "comment" : "Squabble background name, read by VoiceOver.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Égkék"
           }
         }
       }
@@ -1625,6 +1713,28 @@
         }
       }
     },
+    "Storm" : {
+      "comment" : "Squabble background name, read by VoiceOver.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vihar"
+          }
+        }
+      }
+    },
+    "Sunrise" : {
+      "comment" : "Squabble background name, read by VoiceOver.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Napfelkelte"
+          }
+        }
+      }
+    },
     "Suspiciously peaceful around here. Nobody owes anybody anything… yet." : {
       "comment" : "Home: message when the user has no squabbles.",
       "localizations" : {
@@ -1654,6 +1764,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Foglalt. Valaki gyorsabb volt."
+          }
+        }
+      }
+    },
+    "Teal" : {
+      "comment" : "Squabble background name, read by VoiceOver.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kékeszöld"
           }
         }
       }
@@ -1742,6 +1863,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ilyen hosszú IBAN nem létezik."
+          }
+        }
+      }
+    },
+    "The trio" : {
+      "comment" : "Name of a squabble drawing (three friends), read by VoiceOver.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A hármas fogat"
           }
         }
       }

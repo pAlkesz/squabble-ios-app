@@ -1,7 +1,7 @@
 import Foundation
 
 /// One-tap names under the name field. Names don't have to be unique, so "Trip" five
-/// times over is fine; each preset also brings its own emoji.
+/// times over is fine. The emoji only decorates the chip.
 nonisolated enum SquabblePreset: CaseIterable, Sendable {
     case trip
     case flat

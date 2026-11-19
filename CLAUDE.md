@@ -292,6 +292,9 @@ entry in any group where it differs (the rules allow a member to edit only their
     `#1A6670` at zero, pale green, amber `#C25E14`, red `#B3261E` (the `High` values).
     The brand `Backdrop*` set is the fully-owed end.
   - `ReceiptPaper` `#F4F0E4`, `ReceiptInk` `#271814` — prop-receipt paper and its ink.
+  - `Squabble<Name>Top` / `Squabble<Name>Bottom` (in `SquabbleArt/`) — the two stops of each
+    squabble picture gradient (`SquabbleBackground`: mint, sky, peach, lilac, sunrise,
+    bubblegum, teal, dusk, sand, storm). Their own palette, not the avatar colours.
   - `ButtonDisabledFill` `#4D4C4F`, `ButtonDisabledLabel` `#000000` — the primary button's
     disabled capsule: an opaque grey with black text, sampled from Revolut's.
   - `OnboardingRed` `#E4502E`, `OnboardingAmber` `#F5BC2F` — the first two onboarding
@@ -456,7 +459,8 @@ stutters on a device even when the simulator looks smooth.
   late), left as is. A custom glass field avoided both but was dropped to stay native.
 - **Squabbles, in progress** (`Feature/Groups`, spec `docs/specs/groups.md`): `+` on home
   zooms open the "Create squabble" sheet (`navigationTransition(.zoom)` from the toolbar
-  item): a circular picture (photo, or an emoji on an avatar colour), a name with preset
+  item): a circular picture (photo, or a drawing — `SquabbleArtwork`, transparent PNGs in
+  `Assets.xcassets/SquabbleArt` framed like personas — on a `SquabbleBackground` gradient), a name with preset
   chips, and a currency. No people at creation (like Revolut), so they're added from the
   squabble later. Home lists the user's squabbles in a Revolut-style `HomeTile` (title inside the card, rows
   without chevrons; the shape for future tiles), from one `array-contains` listener in

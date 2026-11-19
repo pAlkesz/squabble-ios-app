@@ -6,7 +6,7 @@ struct NewSquabbleDraftTests {
     private let creator = GroupTestData.profile("pal")
 
     private func draft() -> NewSquabbleDraft {
-        NewSquabbleDraft(creator: creator, currencyCode: "HUF", emoji: .emoji("🧾", .plum))
+        NewSquabbleDraft(creator: creator, currencyCode: "HUF", drawing: .artwork(.trio, .peach))
     }
 
     @Test(arguments: ["", "   ", String(repeating: "x", count: 51)])
@@ -23,11 +23,11 @@ struct NewSquabbleDraftTests {
         #expect(draft.name.count == SquabbleGroup.maxNameLength)
     }
 
-    @Test func presetFillsInItsNameAndEmojiAndShowsAsSelected() {
+    @Test func presetFillsInItsNameAndShowsAsSelected() {
         var draft = draft()
         draft.choose(.trip)
         #expect(draft.name == SquabblePreset.trip.name)
-        #expect(draft.emojiImage == .emoji(SquabblePreset.trip.emoji, .plum))
+        #expect(draft.drawing == .artwork(.trio, .peach))
         #expect(draft.selectedPreset == .trip)
 
         draft.setName(draft.name + " to Rome")
@@ -41,12 +41,20 @@ struct NewSquabbleDraftTests {
         #expect(draft.photoJPEG == Data([1]))
     }
 
-    @Test func pickingAnEmojiDropsThePhoto() {
+    @Test func pickingADrawingDropsThePhoto() {
         var draft = draft()
         draft.setPhoto(Data([1]))
-        draft.setEmoji("🍕")
+        draft.setArtwork(.trio)
         #expect(draft.photoJPEG == nil)
-        #expect(draft.emojiImage == .emoji("🍕", .plum))
+        #expect(draft.drawing == .artwork(.trio, .peach))
+    }
+
+    @Test func changingTheBackgroundKeepsAChosenPhoto() {
+        var draft = draft()
+        draft.setPhoto(Data([1]))
+        draft.background = .dusk
+        #expect(draft.photoJPEG == Data([1]))
+        #expect(draft.drawing == .artwork(.trio, .dusk))
     }
 
     @Test func makesAGroupWithOnlyTheCreatorAndTheirPaymentDetails() throws {
@@ -58,13 +66,13 @@ struct NewSquabbleDraftTests {
 
         #expect(group.name == "Lake trip")
         #expect(group.currencyCode == "HUF")
-        #expect(group.image == .emoji("🧾", .plum))
+        #expect(group.image == .artwork(.trio, .peach))
         #expect(group.createdBy == "pal")
         #expect(group.memberIds == ["pal"])
         #expect(group.members["pal"]?.paymentMethods == payment)
     }
 
-    @Test func anUploadedPhotoWinsOverTheEmoji() throws {
+    @Test func anUploadedPhotoWinsOverTheDrawing() throws {
         var draft = draft()
         draft.setName("Flat 4B")
         let photo = SquabbleImage.photo(path: "groupImages/pal/a.jpg", url: URL(string: "https://example.com/a.jpg")!)
