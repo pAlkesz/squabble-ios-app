@@ -50,13 +50,14 @@ money flows; the saturation shows how much.
 
 Below the balance, home is a column of **tiles** (`HomeTile`), laid out like Revolut's
 home (Nov 2026): a card with its title inside at the top left in a quiet colour, then its
-rows. Rows have a 48 pt picture, a title and a grey subtitle, and no chevron; the trailing
-slot is for an amount.
+rows. Rows have a 48 pt picture, a title and a grey subtitle, and no chevron.
 
-- **Squabbles** (built): every squabble the user is in, newest activity first. Each row
-  shows the picture, the name and "N members · CODE"; tapping it pushes the squabble.
-  Planned: the user's balance in it on the right, and capping the tile at a few rows with
-  the title leading to the full list.
+- **Squabbles** (built): the squabbles the user is in, newest activity first. Each row
+  shows the picture, the name, "N members · CODE" and the last activity date; tapping it
+  pushes the squabble.
+  Only the **3 most recently active** show. The title has a chevron, and a **See all** row
+  closes the card; both push the full list (see [Groups](groups.md#squabble-pages)).
+  Planned: the user's balance in each squabble on the right.
 - **Empty:** a dove, "No squabbles yet", a joke about the peace, and a white **Start a
   squabble** button that zooms the create sheet out of itself (as `+` does).
 - The tile stays hidden until the first answer from Firestore, so a returning user never

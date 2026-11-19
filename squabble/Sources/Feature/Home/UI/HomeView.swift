@@ -64,9 +64,17 @@ struct HomeView: View {
             .toolbar { toolbar }
             .navigationDestination(for: HomeRoute.self) { route in
                 switch route {
+                case .squabbles:
+                    SquabbleListView()
+                        .background { backdrop }
+                        .containerBackground(.clear, for: .navigation)
                 case .squabble(let id):
                     SquabbleView(groupID: id)
                         .background { SquabbleBackdrop(palette: BalanceMood(amount: 0, currencyCode: homeCurrencyCode).palette) }
+                        .containerBackground(.clear, for: .navigation)
+                case .squabbleInfo(let id):
+                    SquabbleInfoView(groupID: id)
+                        .background { ProfileBackdrop() }
                         .containerBackground(.clear, for: .navigation)
                 case .account(let page):
                     accountPage(page)
@@ -158,15 +166,17 @@ struct HomeView: View {
     @ViewBuilder
     private var squabbleList: some View {
         if groups.hasLoaded {
-            HomeTile(title: Text("Squabbles", comment: "Home: title of the tile listing the user's squabbles.")) {
+            HomeTile(
+                title: Text("Squabbles", comment: "Home: title of the tile listing the user's squabbles."),
+                destination: groups.groups.isEmpty ? nil : .squabbles
+            ) {
                 if groups.groups.isEmpty {
                     emptySquabbles
                 } else {
-                    ForEach(groups.groups) { group in
-                        Button {
-                            push(.squabble(id: group.id))
-                        } label: {
-                            SquabbleRow(group: group)
+                    // The most recently active few; the rest are behind "See all".
+                    ForEach(groups.groups.prefix(Self.tileSquabbleCount)) { group in
+                        NavigationLink(value: HomeRoute.squabble(id: group.id)) {
+                            SquabbleRow(group: group, pictureSize: 48)
                         }
                         .buttonStyle(.plain)
                     }
@@ -176,6 +186,8 @@ struct HomeView: View {
             .transition(.opacity)
         }
     }
+
+    private static let tileSquabbleCount = 3
 
     private var emptySquabbles: some View {
         VStack(spacing: 14) {

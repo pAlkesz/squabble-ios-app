@@ -463,9 +463,11 @@ stutters on a device even when the simulator looks smooth.
   `Assets.xcassets/SquabbleArt` framed like personas — on a `SquabbleBackground` gradient), a name with preset
   chips, and a currency. No people at creation (like Revolut), so they're added from the
   squabble later. Home lists the user's squabbles in a Revolut-style `HomeTile` (title inside the card, rows
-  without chevrons; the shape for future tiles), from one `array-contains` listener in
-  `GroupsStore`, sorted on the device, and pushes `SquabbleView` (members only so far)
-  through `HomeRoute`. Not yet: adding people, invite links, leaving, archive/delete,
+  without chevrons; a title chevron and "See all" push the full list), showing the 3 most
+  recently active, from one `array-contains` listener in `GroupsStore`, sorted on the
+  device. Rows push `SquabbleView` (Revolut-style: name and subtitle in the bar, picture on
+  the right opening `SquabbleInfoView` with the members, "Add a bill" at the bottom) through
+  `HomeRoute`; pushed views navigate with `NavigationLink(value: HomeRoute)`. Not yet: adding people, invite links, leaving, archive/delete,
   editing.
 - Scrolling screens opt into `.scrollEdgeEffectStyle(.soft, for: .top)`: iOS 26's soft
   fade under the bar, which iOS 27 no longer applies by default. Add it to every new

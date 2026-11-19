@@ -2,8 +2,9 @@
 
 **Status:** Partly built (Nov 2026).
 
-- **Built:** creating a squabble (picture, name with presets, currency), home's list,
-  the squabble page (members only), keeping your own entry current, the rules for all of
+- **Built:** creating a squabble (picture, name with presets, currency), home's tile and
+  the full list, the squabble page (an empty "ready" state) and its info page (members),
+  keeping your own entry current, the rules for all of
   that, and the account-deletion cleanup.
 - **Not built yet:** adding people (by handle, from People, by invite link /
   `joinGroup`), leaving and removing, archive/delete, rename, and changing the picture
@@ -125,7 +126,23 @@ are added afterwards from the squabble.
    anything is entered, swiping no longer closes it (too easy to do by accident while
    typing or scrolling) and ✕ asks before discarding.
 
-Adding people (planned, from the squabble page):
+## Squabble pages
+
+Laid out like Revolut's group pages (Nov 2026):
+
+- **List** (`SquabbleListView`, from home's tile title or "See all"): every squabble in
+  one card, most recently active first. Each row has a 56 pt picture, the name, "N members
+  · CODE" and, on the right, when it was last active (`ActivityDate`: the time today, the
+  weekday within the last week, then the date, with the year only for earlier years).
+- **Squabble** (`SquabbleView`): the name in the bar with a subtitle ("No bills yet"), the
+  picture on the right of the bar, and **Add a bill** pinned at the bottom (disabled until
+  bills exist). With no bills, the middle says "Your squabble is ready", with a joke line
+  about being alone or about the member count and a card of what to do next.
+- **Info** (`SquabbleInfoView`, from the picture in the bar): the picture, name and
+  currency, and the members with "You" and "Started it" tags. Editing, inviting and
+  leaving will go here.
+
+Adding people (planned, from the info page):
 
 - **People you've squabbled with before** (see [People](people.md))
 - **Exact handle lookup** (`handles/{handle}` → `users/{uid}`;

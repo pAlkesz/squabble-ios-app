@@ -24,7 +24,7 @@
       }
     },
     "%lld members · %@" : {
-      "comment" : "Squabble row on home: member count and the squabble's currency code.",
+      "comment" : "Squabble row: member count and the squabble's currency code.",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -60,6 +60,17 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "%lld members, zero bills. For now." : {
+      "comment" : "Squabble page: under the 'ready' title when there are other members.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld tag, nulla számla. Egyelőre."
           }
         }
       }
@@ -196,6 +207,17 @@
         }
       }
     },
+    "Add a bill" : {
+      "comment" : "Squabble page: button at the bottom that adds a bill (not built yet).",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Számla hozzáadása"
+          }
+        }
+      }
+    },
     "Add a photo" : {
       "comment" : "Avatar photo source sheet: title.",
       "localizations" : {
@@ -214,6 +236,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fizetési mód hozzáadása"
+          }
+        }
+      }
+    },
+    "Add bills, then settle up" : {
+      "comment" : "Squabble page: first point in the 'ready' card.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vigyél fel számlákat, aztán számoljatok el"
           }
         }
       }
@@ -393,17 +426,6 @@
         }
       }
     },
-    "Bills" : {
-      "comment" : "Squabble page: header above the bills.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Számlák"
-          }
-        }
-      }
-    },
     "Blue" : {
       "comment" : "Colour name, read by VoiceOver in colour pickers.",
       "localizations" : {
@@ -411,6 +433,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kék"
+          }
+        }
+      }
+    },
+    "Bring people in. They'll need the app too, no freeloaders." : {
+      "comment" : "Squabble page: second point in the 'ready' card. Members must have an account.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hívd meg a többieket. Nekik is kell az app, potyautasok nincsenek."
           }
         }
       }
@@ -910,6 +943,17 @@
         }
       }
     },
+    "Just you so far. Squabbling alone is called thinking." : {
+      "comment" : "Squabble page: under the 'ready' title when the user is the only member.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Egyelőre csak te vagy itt. Egyedül veszekedni gondolkodásnak hívják."
+          }
+        }
+      }
+    },
     "Keep editing" : {
       "comment" : "Create squabble: button in the cancel prompt that goes back to the sheet.",
       "localizations" : {
@@ -1120,7 +1164,7 @@
       }
     },
     "No bills yet" : {
-      "comment" : "Squabble page: empty bills title.",
+      "comment" : "Squabble page: subtitle under the name in the bar while there are no bills.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
@@ -1148,17 +1192,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Még senki sem tud fizetni neked. Nekik ez igazán kényelmes."
-          }
-        }
-      }
-    },
-    "Nobody owes anybody anything. Enjoy it while it lasts." : {
-      "comment" : "Squabble page: empty bills message.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Senki nem tartozik senkinek. Élvezd, amíg tart."
           }
         }
       }
@@ -1460,6 +1493,17 @@
         }
       }
     },
+    "See all" : {
+      "comment" : "Home: button at the bottom of a tile that opens the full list.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Az összes"
+          }
+        }
+      }
+    },
     "Send money to" : {
       "comment" : "Membership card: field label above the user's first payment method.",
       "localizations" : {
@@ -1632,6 +1676,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A veszekedés pénzneme"
+          }
+        }
+      }
+    },
+    "Squabble info" : {
+      "comment" : "Squabble page: VoiceOver label for the picture in the bar, which opens the squabble's info page.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Veszekedés adatai"
           }
         }
       }
@@ -2215,6 +2270,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nem töltődik be a profilod. Többnyire a net a ludas, néha mi. Nézd meg a kapcsolatot, és próbáld újra."
+          }
+        }
+      }
+    },
+    "Your squabble is ready" : {
+      "comment" : "Squabble page: title while there are no bills yet.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kész a veszekedésed"
           }
         }
       }
