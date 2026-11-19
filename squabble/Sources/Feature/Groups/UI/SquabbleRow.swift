@@ -7,25 +7,26 @@ struct SquabbleRow: View {
     var pictureSize: CGFloat = 56
 
     var body: some View {
-        HStack(alignment: .top, spacing: 14) {
+        HStack(spacing: 14) {
             SquabbleImageView(group.image, size: pictureSize)
             VStack(alignment: .leading, spacing: 2) {
-                Text(verbatim: group.name)
-                    .font(.body.weight(.semibold))
-                    .lineLimit(1)
+                // The date sits on the name's baseline, as in Revolut's lists.
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Text(verbatim: group.name)
+                        .font(.body.weight(.semibold))
+                        .lineLimit(1)
+                    Spacer(minLength: 0)
+                    // Not there yet while the creation is still a pending write.
+                    if let updatedAt = group.updatedAt {
+                        Text(verbatim: ActivityDate.text(for: updatedAt))
+                            .font(.footnote)
+                            .foregroundStyle(.white.opacity(0.6))
+                    }
+                }
                 Text(summary)
                     .font(.subheadline)
                     .foregroundStyle(.white.opacity(0.6))
                     .lineLimit(1)
-            }
-            .frame(minHeight: pictureSize)
-            Spacer(minLength: 8)
-            // Not there yet while the creation is still a pending write.
-            if let updatedAt = group.updatedAt {
-                Text(verbatim: ActivityDate.text(for: updatedAt))
-                    .font(.subheadline)
-                    .foregroundStyle(.white.opacity(0.6))
-                    .padding(.top, 2)
             }
         }
         .foregroundStyle(.white)

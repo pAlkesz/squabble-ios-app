@@ -12,8 +12,7 @@ struct HomeView: View {
     @State private var groups = GroupsStore()
     @State private var path: [HomeRoute] = []
     @State private var isCreatingSquabble = false
-    /// Where the create sheet zooms from: the toolbar's `+`, or the empty state's button.
-    @State private var newSquabbleSource = NewSquabbleSource.toolbar
+    @State private var newSquabbleSource = NewSquabbleSource.homeToolbar
     @Namespace private var transitions
     #if DEBUG
     @State private var debugBalance: Double?
@@ -65,7 +64,9 @@ struct HomeView: View {
             .navigationDestination(for: HomeRoute.self) { route in
                 switch route {
                 case .squabbles:
-                    SquabbleListView()
+                    SquabbleListView(transitions: transitions) {
+                        startSquabble(from: .listToolbar)
+                    }
                         .background { backdrop }
                         .containerBackground(.clear, for: .navigation)
                 case .squabble(let id):
@@ -129,7 +130,7 @@ struct HomeView: View {
         ToolbarItem(placement: .topBarTrailing) {
             // A styled label: toolbar buttons take the accent colour and ignore `.tint`.
             Button {
-                startSquabble(from: .toolbar)
+                startSquabble(from: .homeToolbar)
             } label: {
                 Image(systemName: "plus")
                     .foregroundStyle(.white)
@@ -137,7 +138,7 @@ struct HomeView: View {
             .disabled(session.profile == nil)
             .accessibilityLabel("New squabble")
         }
-        .matchedTransitionSource(id: NewSquabbleSource.toolbar, in: transitions)
+        .matchedTransitionSource(id: NewSquabbleSource.homeToolbar, in: transitions)
     }
 
     /// Pushed pages carry their own backdrop, as onboarding's pages do: a shared one behind the
@@ -145,11 +146,6 @@ struct HomeView: View {
     private var backdrop: some View {
         SquabbleBackdrop(palette: mood.palette)
             .animation(.smooth(duration: 1.2), value: mood)
-    }
-
-    private enum NewSquabbleSource: Hashable {
-        case toolbar
-        case emptyState
     }
 
     private func startSquabble(from source: NewSquabbleSource) {
@@ -205,7 +201,7 @@ struct HomeView: View {
                     .multilineTextAlignment(.center)
             }
             Button {
-                startSquabble(from: .emptyState)
+                startSquabble(from: .homeEmptyState)
             } label: {
                 Label {
                     Text("Start a squabble", comment: "Home: button in the empty squabbles tile that opens the create sheet.")
@@ -220,7 +216,7 @@ struct HomeView: View {
             }
             .buttonStyle(.plain)
             .disabled(session.profile == nil)
-            .matchedTransitionSource(id: NewSquabbleSource.emptyState, in: transitions)
+            .matchedTransitionSource(id: NewSquabbleSource.homeEmptyState, in: transitions)
             .padding(.top, 4)
         }
         .foregroundStyle(.white)

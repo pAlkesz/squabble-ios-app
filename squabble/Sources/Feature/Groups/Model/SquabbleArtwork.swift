@@ -5,4 +5,5 @@ import Foundation
 /// id shows the first drawing, so new ones ship without a rules deploy.
 nonisolated enum SquabbleArtwork: String, CaseIterable, Sendable {
     case trio
+    case suits
 }

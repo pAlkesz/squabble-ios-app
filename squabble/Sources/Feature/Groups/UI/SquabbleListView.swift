@@ -3,7 +3,12 @@ import SwiftUI
 /// Every squabble the user is in, most recently active first, laid out like Revolut's
 /// conversation list: one card, big pictures, the date on the right. Pushed from home's tile.
 struct SquabbleListView: View {
+    /// Home's, so the create sheet it presents can zoom out of this page's `+`.
+    let transitions: Namespace.ID
+    let onNewSquabble: () -> Void
+
     @Environment(GroupsStore.self) private var groups
+    @Environment(AuthSession.self) private var session
 
     var body: some View {
         ScrollView {
@@ -25,5 +30,17 @@ struct SquabbleListView: View {
         .scrollEdgeEffectStyle(.soft, for: .top)
         .navigationTitle(Text("Squabbles", comment: "Home: title of the tile listing the user's squabbles."))
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                // A styled label: toolbar buttons take the accent colour and ignore `.tint`.
+                Button(action: onNewSquabble) {
+                    Image(systemName: "plus")
+                        .foregroundStyle(.white)
+                }
+                .disabled(session.profile == nil)
+                .accessibilityLabel("New squabble")
+            }
+            .matchedTransitionSource(id: NewSquabbleSource.listToolbar, in: transitions)
+        }
     }
 }

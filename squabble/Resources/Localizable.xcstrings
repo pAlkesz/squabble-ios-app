@@ -1922,6 +1922,17 @@
         }
       }
     },
+    "The suits" : {
+      "comment" : "Name of a squabble drawing (three men in business suits), read by VoiceOver.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Az öltönyösök"
+          }
+        }
+      }
+    },
     "The trio" : {
       "comment" : "Name of a squabble drawing (three friends), read by VoiceOver.",
       "localizations" : {

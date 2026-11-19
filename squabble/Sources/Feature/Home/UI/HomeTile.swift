@@ -33,8 +33,9 @@ struct HomeTile<Content: View>: View {
         let label = HStack(spacing: 4) {
             title
             if destination != nil {
+                // Smaller than the title, as Revolut's.
                 Image(systemName: "chevron.right")
-                    .font(.footnote.weight(.semibold))
+                    .font(.caption2.weight(.bold))
             }
         }
         .font(.subheadline.weight(.medium))

@@ -5,6 +5,7 @@ extension SquabbleArtwork {
     var image: Image {
         switch self {
         case .trio: Image(.artTrio)
+        case .suits: Image(.artSuits)
         }
     }
 
@@ -12,6 +13,7 @@ extension SquabbleArtwork {
     var name: String {
         switch self {
         case .trio: String(localized: "The trio", comment: "Name of a squabble drawing (three friends), read by VoiceOver.")
+        case .suits: String(localized: "The suits", comment: "Name of a squabble drawing (three men in business suits), read by VoiceOver.")
         }
     }
 }

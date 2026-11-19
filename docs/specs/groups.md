@@ -109,8 +109,8 @@ are added afterwards from the squabble.
 1. Tap `+` on home. The "Create squabble" sheet zooms out of the button.
 2. **Picture** (optional; a big circle at the top, the same crop as everywhere else):
    - a photo from the library or camera (prepared on the device as a 512 px square JPEG)
-   - or a **drawing** (`SquabbleArtwork`, playful takes on the `person.3` symbol; one so
-     far, more coming) on a **gradient background** (`SquabbleBackground`, ten of them).
+   - or a **drawing** (`SquabbleArtwork`, playful takes on the `person.3` symbol: the trio
+     and the suits so far, more coming) on a **gradient background** (`SquabbleBackground`, ten of them).
      A random one is preselected.
 3. **Name**, 1–50 characters, **not unique**. Preset chips under the field fill in a name
    (the emoji only decorates the chip): Trip 🏝️, Flat 🛋️, Dinner 🍝, Party 🎉, Family 👨‍👩‍👧,
@@ -130,9 +130,9 @@ are added afterwards from the squabble.
 
 Laid out like Revolut's group pages (Nov 2026):
 
-- **List** (`SquabbleListView`, from home's tile title or "See all"): every squabble in
-  one card, most recently active first. Each row has a 56 pt picture, the name, "N members
-  · CODE" and, on the right, when it was last active (`ActivityDate`: the time today, the
+- **List** (`SquabbleListView`, from home's tile title or "See all"): a `+` in the bar
+  that zooms the create sheet out of itself, and every squabble in one card, most recently active first. Each row has a 56 pt picture, the name, "N members
+  · CODE" and, on the right on the name's line, when it was last active (`ActivityDate`: the time today, the
   weekday within the last week, then the date, with the year only for earlier years).
 - **Squabble** (`SquabbleView`): the name in the bar with a subtitle ("No bills yet"), the
   picture on the right of the bar, and **Add a bill** pinned at the bottom (disabled until
@@ -157,8 +157,11 @@ Adding people (planned, from the info page):
   the rules.
 - **Drawings replaced emojis** (Nov 2026). The backgrounds are a palette of their own,
   gradients rather than the avatar colours, so a squabble never looks like a person.
-  Drawings ship as transparent PNGs in `Assets.xcassets/SquabbleArt`, framed to fill the
-  disc with the figures running off its bottom, and only the id is stored. Ids are
+  Drawings ship as transparent 600 px PNGs in `Assets.xcassets/SquabbleArt`, framed to
+  fill the disc with the figures running off its bottom, and only the id is stored.
+  Framing: the figures are cropped from whatever space the source has around them and
+  scaled to about 1.15–1.3× the disc's width (whichever puts the heads at a similar size
+  to the others), with their base 4% below the disc so it never shows as a line. Ids are
   shape-checked by the rules, and an app that doesn't know one shows the first drawing on
   the stored background, so new drawings need no rules deploy. Never rename an id.
 - **Always shown as a circle** (`SquabbleImageView`): on home's row, on the squabble
