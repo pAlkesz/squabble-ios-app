@@ -22,7 +22,7 @@ groups and bills are in [Groups](groups.md) and [Bills](bills.md).
 | Function | Kind | Status |
 | --- | --- | --- |
 | `deleteUserData` | Auth `onDelete` trigger | Built |
-| `joinGroup` | Callable | Planned ([Groups](groups.md#joining-with-an-invite-link)) |
+| `createInvite`, `resetInvite`, `previewInvite`, `joinGroup` | Callables | Built ([Groups](groups.md#joining-with-an-invite-link)) |
 | People sync | Firestore triggers on groups and users | Planned ([People](people.md#keeping-it-up-to-date-cloud-functions)) |
 | Exchange rates | Scheduled, daily | Planned ([Bills](bills.md#exchange-rates)) |
 
@@ -35,6 +35,8 @@ users/{uid}/private/payment      owner-only: { methods: [...] } (max 5)
 users/{uid}/private/preferences  owner-only: { homeCurrency? }
 handles/{handle}                 { uid }: the uniqueness lock
 groups/{groupId}                 a squabble; current members can read it (see groups.md)
+  inviteCode?                    written only by the invite functions
+invites/{code}                   { groupId, createdAt }: only the invite functions touch it
 avatars/{uid}/{random}.jpg       Storage: square JPEG, < 1 MB
 groupImages/{uid}/{random}.jpg   Storage: squabble photos, filed by uploader, < 1 MB
 ```
@@ -50,6 +52,7 @@ the rules and this spec in the same commit.
 | `users/{uid}/private/*` | owner | owner; `payment` = `methods` list ≤ 5, `preferences` = optional 3-letter code |
 | `handles/{h}` | any signed-in user | create: own uid, valid handle, profile names it. Delete: owner. **Never updated.** |
 | `groups/{id}` | current members (`memberIds`) | create: creator first, ≤ 50 members, valid own entry. Update: a member's own entry only, not while archived |
+| `invites/{code}` | nobody | nobody (functions only) |
 | `avatars/{uid}/*` | any signed-in user | owner; `.jpg`, `image/jpeg`, < 1 MB |
 | `groupImages/{uid}/*` | any signed-in user | uploader; `.jpg`, `image/jpeg`, < 1 MB |
 

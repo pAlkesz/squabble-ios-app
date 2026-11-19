@@ -4,10 +4,10 @@
 
 - **Built:** creating a squabble (picture, name with presets, currency), home's tile and
   the full list, the squabble page (an empty "ready" state) and its info page (members),
-  keeping your own entry current, the rules for all of
+  joining by invite link or QR code (sharing, reset, the join sheet), keeping your own entry
+  current, the rules for all of
   that, and the account-deletion cleanup.
-- **Not built yet:** adding people (by handle, from People, by invite link /
-  `joinGroup`), leaving and removing, archive/delete, rename, and changing the picture
+- **Not built yet:** adding people by handle or from People, leaving and removing, archive/delete, rename, and changing the picture
   or currency. Until adding people lands, a new squabble holds only its creator.
 
 In code a squabble is `SquabbleGroup` (`Feature/Groups`), because `Group` is taken by
@@ -182,35 +182,39 @@ Adding people (planned, from the info page):
   share it (share sheet or QR code). It keeps working until the creator **resets** it,
   which generates a new code and kills the old link.
 - `inviteCode` is a random, unguessable string (at least 128 bits).
-- **Universal links** need an `apple-app-site-association` file on a domain we control.
-  We'll serve it from Firebase Hosting. (Firebase Dynamic Links is shut down, so it
-  isn't an option.)
+- **Universal links** use **Firebase Hosting on the project's `squabble-9c1df.web.app`**
+  (Nov 2026: free, no domain to buy; Firebase Dynamic Links is shut down). Hosting serves
+  `apple-app-site-association` for `/join/*` and a small "get the app" page for people
+  without it. Moving to a custom domain later means keeping a redirect for old links.
 
-**Sharing (planned):** the info page and the empty squabble page open an **invite sheet**:
+**Sharing:** the info page and the empty squabble page open an **invite sheet**:
 a card with a QR code of the link (the squabble's picture in its centre, so the code uses
 high error correction), the squabble's name, a line on what the link does, and a white
 **Share link** button (the system share sheet). The QR code is drawn on the device
 (Core Image), so it works offline once the squabble has a code. The creator also gets
-**Reset link** there.
+**Reset link** there (confirmed first; people already in stay in).
 
-- `inviteCode` is created by the server (the first `joinGroup`-family call that needs it,
-  or a small `createInvite` callable), never by the app, so the rules never have to
-  vouch for it.
+- `inviteCode` is minted by the server (`createInvite`, the first time any member opens
+  the sheet), never by the app, so the rules never have to vouch for it. It's stored on
+  the group (members see it offline from then on) and in `invites/{code}` → `groupId`,
+  which only the functions read. `resetInvite` (creator only) replaces both.
 
 **Flow:**
 
-1. The recipient opens the link. Without the app, they install it, sign in and finish
-   onboarding, and the link is then picked up again. If the code can't survive the
-   install, they can open the link once more.
-2. The app shows the squabble's name and member count, and the user confirms to join.
+1. The recipient opens the link. Without the app they land on the "get the app" page;
+   once installed they open the link again. Opened before signing in, the code waits
+   (`InviteInbox`) through sign-in and onboarding, and shows once home is up (after the
+   membership welcome).
+2. The app shows the squabble's picture, name and member count (`previewInvite`), and the
+   user taps **Join the squabble**. Someone already in gets **Open squabble**.
 3. The app calls the **`joinGroup` callable function** with the code. It:
    - finds the group by `inviteCode`
    - refuses if the code is unknown/reset, the group is archived, or it already has
      50 members
    - otherwise adds the caller to `memberIds` and copies their profile and payment
-     details into `members[uid]`
+     details into `members[uid]`, with the server's `joinedAt`, and bumps `updatedAt`
    - does nothing if the caller is already a member
-4. Joining needs a connection.
+4. Joining needs a connection. The app opens the squabble once home's listener has it.
 
 Showing the name before joining also needs the server, since a non-member can't read
 the group. The same function can answer a "preview" call with only the name and member
@@ -279,9 +283,5 @@ Before deletion, the app shows the user's open balances as a warning (see
 
 ## Open questions
 
-- **Invite domain:** universal links need a domain serving `apple-app-site-association`.
-  Firebase Hosting on the project's free `web.app` domain, or a domain of our own? (Hosting
-  is a new Firebase product for the project.) It would also serve a small "get the app"
-  page for people without it.
-- **Link lifetime:** decided as "until the creator resets it" (Nov 2026). Revolut's
-  links expire after 72 hours; keep ours, or expire too?
+None at the product level. Links last until the creator resets them (Nov 2026), unlike
+Revolut's 72 hours: a squabble's link is shared in a group chat once and reused.

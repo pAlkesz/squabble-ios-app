@@ -24,6 +24,8 @@ nonisolated struct SquabbleGroup: Identifiable, Equatable, Sendable {
     var memberIds: [String]
     /// Current, former and deleted members, by uid.
     var members: [String: GroupMember]
+    /// Minted by the server the first time a member shares the squabble; see `InviteLink`.
+    var inviteCode: String?
 
     var isArchived: Bool { archivedAt != nil }
 

@@ -7,6 +7,7 @@ struct SquabbleView: View {
     let groupID: String
 
     @Environment(GroupsStore.self) private var groups
+    @State private var isInviting = false
 
     var body: some View {
         Group {
@@ -114,6 +115,27 @@ struct SquabbleView: View {
             .padding(.horizontal, 18)
             .padding(.vertical, 14)
             .background(.white.opacity(0.08), in: .rect(cornerRadius: SquabbleMetrics.cornerRadius))
+            if !group.isArchived {
+                Button {
+                    isInviting = true
+                } label: {
+                    Label {
+                        Text("Invite people", comment: "Squabble info: button that opens the invite link and QR code.")
+                    } icon: {
+                        Image(systemName: "qrcode")
+                    }
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Color.backdropDeep)
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 10)
+                    .background(.white, in: .capsule)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .sheet(isPresented: $isInviting) {
+            SquabbleInviteSheet(groupID: group.id)
+                .presentationBackground { ProfileBackdrop() }
         }
     }
 

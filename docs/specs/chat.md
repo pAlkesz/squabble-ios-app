@@ -40,10 +40,21 @@ newest at the bottom. The composer sits at the bottom.
 - **Replies** quote the original (author and a one-line preview); tapping the quote
   scrolls to it.
 
+## Decisions
+
+- **Add a bill lives in the composer** (Nov 2026): a button at the left of the message
+  field, like iMessage's `+`. Revolut stacks a full-width button above the field, which
+  doubles the bottom bar; the bar at the top is the hardest place to reach for the app's
+  main action.
+- **No GIFs in v1** (Nov 2026). Emoji come with the system keyboard. GIFs (GIPHY's API,
+  no SDK) can come later.
+- **No push notifications in v1** (Nov 2026). They need Firebase Cloud Messaging and an
+  APNs key; they'll come once, for messages and reminders together.
+
 ## Composer
 
-- A text field ("Type a message…") with the system keyboard, emoji included.
-- A GIF button opens a GIF picker (see open questions).
+- A text field ("Type a message…") with the system keyboard, emoji included, and the
+  **Add a bill** button at its left.
 - Messages are capped at 2,000 characters.
 - Sending is a fire-and-forget write: the message shows straight away, marked "not sent
   yet" while `hasPendingWrites` (offline).
@@ -55,7 +66,7 @@ groups/{gid}/messages/{messageId}
   authorId, createdAt,
   kind: text | gif,
   text?,                                   ← kind text
-  gif?: { provider, id, url, width, height } ← kind gif; only the id and display URL
+  gif?: { provider, id, url, width, height } ← kind gif, later; only the id and display URL
   replyTo?: { id, authorId, preview }       ← denormalized, so a reply never needs a read
   reactions: { uid: emoji }
   deletedAt?                               ← soft delete: shown as "Message deleted"
@@ -80,9 +91,4 @@ content and to keep away from abusive users. Planned: "Report" in the long-press
 
 ## Open questions
 
-- Where does **Add a bill** go: a button in the composer row, the bar, or above the
-  composer as in Revolut?
-- **GIFs:** which provider (GIPHY needs an API key and on-screen attribution), or none
-  for v1?
-- **Push notifications** for new messages need Firebase Cloud Messaging and an APNs key.
-  In v1, or later with reminders?
+None at the product level.

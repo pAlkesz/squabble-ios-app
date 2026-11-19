@@ -17,6 +17,10 @@ extension Container {
         self { FirebaseGroupImageStore() }.singleton
     }
 
+    var inviteRepository: Factory<InviteRepository> {
+        self { FirebaseInviteRepository() }.singleton
+    }
+
     var avatarStore: Factory<AvatarStore> {
         self { FirebaseAvatarStore() }.singleton
     }

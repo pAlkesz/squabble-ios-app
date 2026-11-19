@@ -17,6 +17,7 @@ struct ContentView: View {
     }
 
     @State private var session = AuthSession()
+    @State private var inviteInbox = InviteInbox()
     /// Nil until the splash says the bird is standing still; see `launchSplash`.
     @State private var route: Route?
     @State private var canMountRoute = false
@@ -57,6 +58,8 @@ struct ContentView: View {
             ProfileSyncFailedSheet()
         }
         .task { await session.observe() }
+        // Universal links arrive here too; an invite waits in the inbox until home shows it.
+        .onOpenURL { inviteInbox.receive($0) }
         .onChange(of: session.state, initial: true) { previous, state in
             // Set before the route changes, so the welcome covers the swap to home.
             if case .needsOnboarding = previous, case .signedIn(_, let profile) = state {
@@ -65,6 +68,7 @@ struct ContentView: View {
             updateRoute()
         }
         .environment(session)
+        .environment(inviteInbox)
     }
 
     private func updateRoute() {

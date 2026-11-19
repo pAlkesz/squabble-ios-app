@@ -48,7 +48,7 @@ well-structured, and easy for the next agent session to pick up.
 
 (Dependencies are aspirational until actually added via SPM — add them when the first
 real use lands, not before, and note why in the PR. Added so far: `firebase-ios-sdk`
-(products Analytics, Auth, Crashlytics, Firestore, Storage), `Factory` (product `FactoryKit`).)
+(products Analytics, Auth, Crashlytics, Firestore, Functions, Storage), `Factory` (product `FactoryKit`).)
 
 ## Backend — Firebase
 
@@ -56,8 +56,12 @@ Chosen over Supabase (Sept 2026) for offline-out-of-the-box Firestore, free
 Crashlytics, and a free tier that never auto-pauses. Trade-offs accepted: heavy
 ObjC-based SDK, NoSQL modeling, `Sendable` friction under Swift 6.
 
-- **Products in use:** Firestore, Auth, Storage, Crashlytics, Analytics, and Cloud Functions
-  (server-side only, approved Nov 2026). Don't pull in other Firebase products (Remote
+- **Products in use:** Firestore, Auth, Storage, Crashlytics, Analytics, Cloud Functions
+  (server-side only, approved Nov 2026; the app calls the invite callables through the
+  `FirebaseFunctions` SDK), and Hosting (approved Nov 2026: `hosting/` serves the
+  universal-link `apple-app-site-association` and the "get the app" page for invite links on
+  `squabble-9c1df.web.app`; deploy with `firebase deploy --only hosting`; the app's
+  Associated Domains entitlement names it). Don't pull in other Firebase products (Remote
   Config, Messaging, Phone Auth…) without checking first — each one is an SPM product and a config decision. Linking a new
   product means adding it to the target in `project.pbxproj` (a sanctioned hand-edit).
 - **No REST layer.** The app talks to Firestore directly through the SDK, with security
@@ -69,8 +73,9 @@ ObjC-based SDK, NoSQL modeling, `Sendable` friction under Swift 6.
   rarely-changing fields and embed what's always read together.
 - **Cloud Functions** live in `functions/` (TypeScript, Node 22, `firebase-functions` +
   `firebase-admin`; `node_modules/` and the compiled `lib/` are gitignored). Deploy with
-  `firebase deploy --only functions` — Claude deploys them itself, like the rules. So far
-  one function: `deleteUserData`, a first-generation `auth.user().onDelete` trigger (the
+  `firebase deploy --only functions` — Claude deploys them itself, like the rules. Functions:
+  the invite callables (`createInvite`, `resetInvite`, `previewInvite`, `joinGroup`, also
+  first-generation, as the same service account) and `deleteUserData`, a first-generation `auth.user().onDelete` trigger (the
   newer API has no Auth delete trigger) with retries on, running as the Firebase Admin SDK
   service account (the project has no default Compute Engine account), which wipes `users/{uid}` and its
   subcollections, the user's `handles/` lock and `avatars/{uid}/`. Admin SDK, so the
@@ -467,7 +472,10 @@ stutters on a device even when the simulator looks smooth.
   recently active, from one `array-contains` listener in `GroupsStore`, sorted on the
   device. Rows push `SquabbleView` (Revolut-style: name and subtitle in the bar, picture on
   the right opening `SquabbleInfoView` with the members, "Add a bill" at the bottom) through
-  `HomeRoute`; pushed views navigate with `NavigationLink(value: HomeRoute)`. Not yet: adding people, invite links, leaving, archive/delete,
+  `HomeRoute`; pushed views navigate with `NavigationLink(value: HomeRoute)`. Invites: a QR code and share link (`SquabbleInviteSheet`,
+  from the info page and the empty squabble), universal links on `squabble-9c1df.web.app` caught
+  by `ContentView.onOpenURL` into `InviteInbox`, joined through `JoinSquabbleSheet`. Not yet:
+  adding people by handle, chat (`docs/specs/chat.md`), leaving, archive/delete,
   editing.
 - Scrolling screens opt into `.scrollEdgeEffectStyle(.soft, for: .top)`: iOS 26's soft
   fade under the bar, which iOS 27 no longer applies by default. Add it to every new

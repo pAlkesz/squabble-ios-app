@@ -14,6 +14,7 @@ nonisolated extension SquabbleGroup {
         static let archivedAt = "archivedAt"
         static let memberIds = "memberIds"
         static let members = "members"
+        static let inviteCode = "inviteCode"
     }
 
     init(id: String, firestoreData data: [String: Any]) throws(FirestoreMappingError) {
@@ -39,11 +40,13 @@ nonisolated extension SquabbleGroup {
             updatedAt: data[Field.updatedAt] as? Date,
             archivedAt: data[Field.archivedAt] as? Date,
             memberIds: memberIds,
-            members: members
+            members: members,
+            inviteCode: data[Field.inviteCode] as? String
         )
     }
 
-    /// Timestamps (the group's and each member's `joinedAt`) are left to the caller.
+    /// Timestamps (the group's and each member's `joinedAt`) are left to the caller, and the
+    /// invite code is only ever written by the server.
     var firestoreData: [String: Any] {
         [
             Field.name: name,

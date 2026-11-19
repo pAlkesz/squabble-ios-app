@@ -108,6 +108,17 @@
         }
       }
     },
+    "^[%lld members](inflect: true) already squabbling" : {
+      "comment" : "Join sheet: how many people are in the squabble.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld tag már veszekszik"
+          }
+        }
+      }
+    },
     "A Hungarian account number has 16 or 24 digits." : {
       "comment" : "Bank account validation error.",
       "localizations" : {
@@ -291,6 +302,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Felbosszantja a madarat."
+          }
+        }
+      }
+    },
+    "Anyone with this link or QR code can join. They'll need the app, no freeloaders." : {
+      "comment" : "Invite sheet: explanation shown to other members.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bárki csatlakozhat, akinél ott a link vagy a QR-kód. Kell nekik az app, potyautasok nincsenek."
+          }
+        }
+      }
+    },
+    "Anyone with this link or QR code can join. They'll need the app, no freeloaders. It works until you reset it." : {
+      "comment" : "Invite sheet: explanation shown to the creator.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bárki csatlakozhat, akinél ott a link vagy a QR-kód. Kell nekik az app, potyautasok nincsenek. Addig működik, amíg vissza nem állítod."
           }
         }
       }
@@ -565,6 +598,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nem sikerült ellenőrizni a felhasználónevet. Koppints a nyílra, és újrapróbáljuk."
+          }
+        }
+      }
+    },
+    "Couldn't reach Squabble. Try again in a moment." : {
+      "comment" : "Invite error: the server call failed.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nem értük el a Squabble-t. Próbáld újra egy kicsit később."
           }
         }
       }
@@ -921,6 +965,28 @@
         }
       }
     },
+    "Invite people" : {
+      "comment" : "Squabble info: button that opens the invite link and QR code.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Emberek meghívása"
+          }
+        }
+      }
+    },
+    "Invites need an internet connection." : {
+      "comment" : "Invite error: offline.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A meghívókhoz internetkapcsolat kell."
+          }
+        }
+      }
+    },
     "Jesus was an actor" : {
       "comment" : "Avatar persona slogan: a quotable actor. Hungarian original: 'Jézus színész volt'.",
       "localizations" : {
@@ -928,6 +994,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Jézus színész volt"
+          }
+        }
+      }
+    },
+    "Join the squabble" : {
+      "comment" : "Join sheet: button that joins.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beszállok"
           }
         }
       }
@@ -1273,6 +1350,17 @@
         }
       }
     },
+    "Open squabble" : {
+      "comment" : "Join sheet: button when the user is already a member.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Veszekedés megnyitása"
+          }
+        }
+      }
+    },
     "OPEN TAB · 3 GUESTS" : {
       "comment" : "Prop receipt subheader.",
       "localizations" : {
@@ -1438,6 +1526,17 @@
         }
       }
     },
+    "QR code for the invite link" : {
+      "comment" : "Invite sheet: VoiceOver label for the QR code.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "QR-kód a meghívó linkhez"
+          }
+        }
+      }
+    },
     "Remove" : {
       "comment" : "Payment method row: delete button accessibility label.",
       "localizations" : {
@@ -1456,6 +1555,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fotó törlése"
+          }
+        }
+      }
+    },
+    "Reset link" : {
+      "comment" : "Invite sheet: creator-only button that replaces the invite link.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Link visszaállítása"
+          }
+        }
+      }
+    },
+    "Reset the invite link?" : {
+      "comment" : "Invite sheet: title of the reset confirmation.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visszaállítod a meghívó linket?"
           }
         }
       }
@@ -1511,6 +1632,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ide utalj"
+          }
+        }
+      }
+    },
+    "Share a link or show the QR code" : {
+      "comment" : "Squabble info: subtitle of the invite button.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Küldj linket, vagy mutasd a QR-kódot"
+          }
+        }
+      }
+    },
+    "Share link" : {
+      "comment" : "Invite sheet: button that opens the share sheet with the invite link.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Link megosztása"
           }
         }
       }
@@ -1922,6 +2065,17 @@
         }
       }
     },
+    "The old link and QR code stop working. People already in stay in." : {
+      "comment" : "Invite sheet: message of the reset confirmation.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A régi link és QR-kód nem működik tovább. Aki már bent van, bent marad."
+          }
+        }
+      }
+    },
     "The suits" : {
       "comment" : "Name of a squabble drawing (three men in business suits), read by VoiceOver.",
       "localizations" : {
@@ -1962,6 +2116,39 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ez áll majd a blokkokon és az emlékeztetőkön. A felhasználóneved marad, ami volt."
+          }
+        }
+      }
+    },
+    "This link doesn't work any more. Ask for a fresh one." : {
+      "comment" : "Invite error: the link is unknown or was reset.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ez a link már nem működik. Kérj egy frisset."
+          }
+        }
+      }
+    },
+    "This squabble is archived, so nobody new can join." : {
+      "comment" : "Invite error: the squabble is archived.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ez a veszekedés archiválva van, úgyhogy új ember már nem csatlakozhat."
+          }
+        }
+      }
+    },
+    "This squabble is full. 50 people is plenty of drama." : {
+      "comment" : "Invite error: the squabble has 50 members.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ez a veszekedés megtelt. 50 ember bőven elég dráma."
           }
         }
       }
@@ -2193,6 +2380,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kell egy felhasználónév. Ezzel találnak meg."
+          }
+        }
+      }
+    },
+    "You're invited to" : {
+      "comment" : "Join sheet: line above the squabble's name.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meghívtak ide:"
           }
         }
       }

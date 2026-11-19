@@ -1,0 +1,10 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["429ZM3SX3W.com.palkesz.squabble"],
+        "components": [{ "/": "/join/*", "comment": "Squabble invite links" }]
+      }
+    ]
+  }
+}

@@ -6,6 +6,7 @@ import SwiftUI
 /// the balance (`BalanceMood`), on home and on every page pushed from it.
 struct HomeView: View {
     @Environment(AuthSession.self) private var session
+    @Environment(InviteInbox.self) private var inviteInbox
     @Environment(\.reportAvatarFrame) private var reportAvatarFrame
     @Environment(\.isMembershipWelcomeShowing) private var isWelcomeShowing
     @State private var preferences = PreferencesStore()
@@ -94,6 +95,16 @@ struct HomeView: View {
                     .navigationTransition(.zoom(sourceID: newSquabbleSource, in: transitions))
                 }
             }
+        }
+        // Held back while the membership welcome is up, so a link opened before signing up
+        // shows once the new member is home.
+        .sheet(item: Binding(
+            get: { isWelcomeShowing ? nil : inviteInbox.pending },
+            set: { inviteInbox.pending = $0 }
+        )) { invite in
+            JoinSquabbleSheet(invite: invite) { push(.squabble(id: $0)) }
+                .presentationBackground { ProfileBackdrop() }
+                .presentationDetents([.medium, .large])
         }
         // The system back button follows the stack's tint.
         .tint(.white)
