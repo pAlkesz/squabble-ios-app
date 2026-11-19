@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase-admin/app";
-import { FieldValue, getFirestore, Timestamp } from "firebase-admin/firestore";
+import { FieldPath, FieldValue, getFirestore, Timestamp } from "firebase-admin/firestore";
 import { randomBytes } from "node:crypto";
 import { getStorage } from "firebase-admin/storage";
 import * as functions from "firebase-functions/v1";
@@ -15,7 +15,8 @@ initializeApp();
  * Auth's onDelete trigger only exists in the first-generation API.
  *
  * Covers (see docs/specs/data-and-sync.md): users/{uid} and its private documents, the
- * user's handles/{handle} lock, avatars/{uid}/ in Storage, and their place in every group.
+ * user's handles/{handle} lock, avatars/{uid}/ in Storage, their place in every group, and
+ * their chat messages' texts and reactions.
  * Anything new stored per user belongs here too.
  */
 export const deleteUserData = functions
@@ -38,6 +39,7 @@ export const deleteUserData = functions
 
     const groups = await db.collection("groups").where("memberIds", "array-contains", uid).get();
     for (const group of groups.docs) {
+      await scrubMessages(group.ref, uid);
       await leaveAsDeletedMember(group.ref, uid);
     }
 
@@ -76,6 +78,36 @@ async function leaveAsDeletedMember(group: FirebaseFirestore.DocumentReference, 
     return false;
   });
   if (isEmpty) await deleteGroup(group);
+}
+
+/**
+ * Blanks the user's messages in a group and drops their reactions. The messages stay, shown
+ * from "Deleted member", so replies to them still make sense (docs/specs/chat.md).
+ */
+async function scrubMessages(group: FirebaseFirestore.DocumentReference, uid: string): Promise<void> {
+  const messages = group.collection("messages");
+  const [authored, reacted] = await Promise.all([
+    messages.where("authorId", "==", uid).get(),
+    messages.where(new FieldPath("reactions", uid), "!=", null).get(),
+  ]);
+  // One write per message, as a message can be both the user's and reacted to by them.
+  const updates = new Map<string, { ref: FirebaseFirestore.DocumentReference; fields: Record<string, unknown> }>();
+  const fieldsFor = (message: FirebaseFirestore.QueryDocumentSnapshot) => {
+    const entry = updates.get(message.id) ?? { ref: message.ref, fields: {} };
+    updates.set(message.id, entry);
+    return entry.fields;
+  };
+  for (const message of authored.docs) {
+    const fields = fieldsFor(message);
+    fields.text = FieldValue.delete();
+    if (!message.get("deletedAt")) fields.deletedAt = FieldValue.serverTimestamp();
+  }
+  for (const message of reacted.docs) {
+    fieldsFor(message)[`reactions.${uid}`] = FieldValue.delete();
+  }
+  const writer = getFirestore().bulkWriter();
+  for (const { ref, fields } of updates.values()) writer.update(ref, fields);
+  await writer.close();
 }
 
 /** Deletes a group with everything under it, its photo if it has one, and its invite. */

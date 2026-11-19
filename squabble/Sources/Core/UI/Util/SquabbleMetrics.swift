@@ -7,4 +7,7 @@ enum SquabbleMetrics {
     /// surfaces match it instead. Props (the membership card, the payment slip, the stamp)
     /// keep their own.
     static let cornerRadius: CGFloat = 28
+    /// Chat bubbles: tighter than a card, so a one-line message reads as a bubble rather
+    /// than a capsule.
+    static let bubbleCornerRadius: CGFloat = 20
 }

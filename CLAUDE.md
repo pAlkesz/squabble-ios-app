@@ -472,10 +472,13 @@ stutters on a device even when the simulator looks smooth.
   recently active, from one `array-contains` listener in `GroupsStore`, sorted on the
   device. Rows push `SquabbleView` (Revolut-style: name and subtitle in the bar, picture on
   the right opening `SquabbleInfoView` with the members, "Add a bill" at the bottom) through
-  `HomeRoute`; pushed views navigate with `NavigationLink(value: HomeRoute)`. Invites: a QR code and share link (`SquabbleInviteSheet`,
+  `HomeRoute`; pushed views navigate with `NavigationLink(value: HomeRoute)`. The squabble page is a
+  chat (`Feature/Chat`, spec `docs/specs/chat.md`): `ChatStore` per page (latest 50 live, older
+  pages on scroll), bubbles with `SquabbleMetrics.bubbleCornerRadius`, long-press menu with a
+  reaction palette, and `ChatComposer` with Add a bill at its left (disabled until bills). Invites: a QR code and share link (`SquabbleInviteSheet`,
   from the info page and the empty squabble), universal links on `squabble-9c1df.web.app` caught
   by `ContentView.onOpenURL` into `InviteInbox`, joined through `JoinSquabbleSheet`. Not yet:
-  adding people by handle, chat (`docs/specs/chat.md`), leaving, archive/delete,
+  adding people by handle, leaving, archive/delete,
   editing.
 - Scrolling screens opt into `.scrollEdgeEffectStyle(.soft, for: .top)`: iOS 26's soft
   fade under the bar, which iOS 27 no longer applies by default. Add it to every new

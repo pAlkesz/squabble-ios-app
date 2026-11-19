@@ -514,6 +514,17 @@
         }
       }
     },
+    "Cancel reply" : {
+      "comment" : "Chat: VoiceOver label for the button that stops replying.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Válasz elvetése"
+          }
+        }
+      }
+    },
     "Change" : {
       "comment" : "Create squabble: button on the currency row that opens the currency list.",
       "localizations" : {
@@ -576,6 +587,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Folytatás"
+          }
+        }
+      }
+    },
+    "Copy" : {
+      "comment" : "Chat: long-press action that copies a message's text.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Másolás"
           }
         }
       }
@@ -646,6 +668,17 @@
         }
       }
     },
+    "Delete" : {
+      "comment" : "Chat: long-press action that deletes your own message.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Törlés"
+          }
+        }
+      }
+    },
     "Delete account" : {
       "comment" : "Account screen destructive button.",
       "localizations" : {
@@ -657,6 +690,28 @@
         }
       }
     },
+    "Delete for everyone" : {
+      "comment" : "Chat: confirms deleting a message.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Törlés mindenkinél"
+          }
+        }
+      }
+    },
+    "Delete this message?" : {
+      "comment" : "Chat: title of the delete confirmation.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Törlöd ezt az üzenetet?"
+          }
+        }
+      }
+    },
     "Delete your account?" : {
       "comment" : "Confirmation dialog title.",
       "localizations" : {
@@ -664,6 +719,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Törlöd a fiókod?"
+          }
+        }
+      }
+    },
+    "Deleted member" : {
+      "comment" : "Chat and squabble pages: name shown for someone who deleted their account.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Törölt tag"
           }
         }
       }
@@ -763,6 +829,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Amíg mindenki nem fizet"
+          }
+        }
+      }
+    },
+    "Everyone will see that a message was deleted, just not what it said." : {
+      "comment" : "Chat: explanation in the delete confirmation.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mindenki látni fogja, hogy töröltél egy üzenetet, csak azt nem, mi állt benne."
           }
         }
       }
@@ -1141,6 +1218,28 @@
         }
       }
     },
+    "Message" : {
+      "comment" : "Chat: VoiceOver label of the message field.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Üzenet"
+          }
+        }
+      }
+    },
+    "Message deleted" : {
+      "comment" : "Chat: shown in place of a deleted message.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Törölt üzenet"
+          }
+        }
+      }
+    },
     "Mint" : {
       "comment" : "Squabble background name, read by VoiceOver.",
       "localizations" : {
@@ -1269,6 +1368,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Még senki sem tud fizetni neked. Nekik ez igazán kényelmes."
+          }
+        }
+      }
+    },
+    "Not sent yet" : {
+      "comment" : "Chat: VoiceOver label for a message still waiting for a connection.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Még nincs elküldve"
           }
         }
       }
@@ -1559,6 +1669,50 @@
         }
       }
     },
+    "Reply" : {
+      "comment" : "Chat: long-press action that replies to a message.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Válasz"
+          }
+        }
+      }
+    },
+    "Replying to %@" : {
+      "comment" : "Chat: above the message field while writing a reply; the argument is the author's name.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Válasz neki: %@"
+          }
+        }
+      }
+    },
+    "Report" : {
+      "comment" : "Chat: long-press action that reports someone else's message.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jelentés"
+          }
+        }
+      }
+    },
+    "Report this message?" : {
+      "comment" : "Chat: title of the report confirmation.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jelented ezt az üzenetet?"
+          }
+        }
+      }
+    },
     "Reset link" : {
       "comment" : "Invite sheet: creator-only button that replaces the invite link.",
       "localizations" : {
@@ -1621,6 +1775,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Az összes"
+          }
+        }
+      }
+    },
+    "Send" : {
+      "comment" : "Chat: VoiceOver label for the send button.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Küldés"
           }
         }
       }
@@ -2065,6 +2230,17 @@
         }
       }
     },
+    "The chat isn't loading. Try again in a moment." : {
+      "comment" : "Chat error: the messages couldn't be loaded.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nem töltődik be a csevegés. Próbáld újra egy kicsit később."
+          }
+        }
+      }
+    },
     "The old link and QR code stop working. People already in stay in." : {
       "comment" : "Invite sheet: message of the reset confirmation.",
       "localizations" : {
@@ -2175,6 +2351,17 @@
         }
       }
     },
+    "Today" : {
+      "comment" : "Chat: day header for today's messages.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ma"
+          }
+        }
+      }
+    },
     "TOTAL" : {
       "comment" : "Prop receipt total row label.",
       "localizations" : {
@@ -2215,6 +2402,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Újrapróbálom"
+          }
+        }
+      }
+    },
+    "Type a message…" : {
+      "comment" : "Chat: placeholder in the message field.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Írj üzenetet…"
           }
         }
       }
@@ -2296,6 +2494,17 @@
         }
       }
     },
+    "We'll take a look. The author won't know it was you." : {
+      "comment" : "Chat: explanation in the report confirmation.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Megnézzük. A szerzője nem tudja meg, hogy te voltál."
+          }
+        }
+      }
+    },
     "Welcome to the club" : {
       "comment" : "Welcome animation: heading above the new membership card.",
       "localizations" : {
@@ -2358,6 +2567,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kinek a számlája?"
+          }
+        }
+      }
+    },
+    "Yesterday" : {
+      "comment" : "Chat: day header for yesterday's messages.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tegnap"
           }
         }
       }

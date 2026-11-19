@@ -6,6 +6,9 @@ rules_version = '2';
 //   users/{uid}/private/preferences owner-only settings (home currency)
 //   handles/{handle}            { uid } — the lock that keeps handles unique
 //   groups/{groupId}            a squabble — readable by its current members (docs/specs/groups.md)
+//   groups/{groupId}/messages   its chat (docs/specs/chat.md)
+//   reports/{id}                reported messages — write-only, read by the developer
+//   invites/{code}              Cloud Functions only (no rule, so no access)
 //
 // Deploy: firebase deploy --only firestore:rules,storage
 service cloud.firestore {
@@ -154,6 +157,58 @@ service cloud.firestore {
         && request.resource.data.members[request.auth.uid].get('joinedAt', null)
           == resource.data.members[request.auth.uid].get('joinedAt', null)
         && isValidMemberEntry(request.resource.data.members[request.auth.uid], request.auth.uid);
+
+      // One get() of the group per request, shared by every message in a query.
+      function group() {
+        return get(/databases/$(database)/documents/groups/$(groupId)).data;
+      }
+
+      function isOpenToMe() {
+        return signedIn() && request.auth.uid in group().memberIds && !('archivedAt' in group());
+      }
+
+      match /messages/{messageId} {
+        allow read: if signedIn() && request.auth.uid in group().memberIds;
+
+        // The app caps texts at 2,000 characters; rules count differently for emoji.
+        allow create: if isOpenToMe()
+          && request.resource.data.keys().hasOnly(['authorId', 'createdAt', 'kind', 'text', 'replyTo', 'reactions'])
+          && request.resource.data.authorId == request.auth.uid
+          && request.resource.data.createdAt == request.time
+          && request.resource.data.kind == 'text'
+          && request.resource.data.text is string
+          && request.resource.data.text.size() > 0
+          && request.resource.data.text.size() <= 4000
+          && request.resource.data.reactions == {}
+          && (!('replyTo' in request.resource.data)
+            || (request.resource.data.replyTo is map
+              && request.resource.data.replyTo.keys().hasOnly(['id', 'authorId', 'preview'])
+              && request.resource.data.replyTo.preview is string
+              && request.resource.data.replyTo.preview.size() <= 400));
+
+        allow update: if isOpenToMe() && (
+          // Your own reaction: one short emoji, or none.
+          (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reactions'])
+            && request.resource.data.reactions.diff(resource.data.reactions).affectedKeys().hasOnly([request.auth.uid])
+            && (!(request.auth.uid in request.resource.data.reactions)
+              || (request.resource.data.reactions[request.auth.uid] is string
+                && request.resource.data.reactions[request.auth.uid].size() <= 16)))
+          // The author deletes: the text goes, the time of deletion stays.
+          || (resource.data.authorId == request.auth.uid
+            && !('deletedAt' in resource.data)
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['text', 'deletedAt'])
+            && !('text' in request.resource.data)
+            && request.resource.data.deletedAt == request.time)
+        );
+      }
+    }
+
+    match /reports/{reportId} {
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['groupId', 'messageId', 'authorId', 'text', 'reportedBy', 'createdAt'])
+        && request.resource.data.reportedBy == request.auth.uid
+        && request.resource.data.createdAt == request.time
+        && request.auth.uid in get(/databases/$(database)/documents/groups/$(request.resource.data.groupId)).data.memberIds;
     }
 
     match /handles/{handle} {

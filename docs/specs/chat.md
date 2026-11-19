@@ -1,7 +1,9 @@
 # Squabble chat
 
-**Status:** Draft (Nov 2026). Not built. Depends on [Groups](groups.md); bill entries
-depend on [Bills](bills.md).
+**Status:** Partly built (Nov 2026). Built: text messages, day headers, runs, replies,
+reactions, copy, delete, report, the composer, paging, rules and account-deletion cleanup.
+Not built: bill and settlement entries and their detail sheet (they need [Bills](bills.md)),
+system lines, Add a bill (shown, disabled), and the standing in the bar.
 
 ## Summary
 
@@ -29,16 +31,17 @@ newest at the bottom. The composer sits at the bottom.
 
 ## Interactions
 
-- **Long press on any entry:** a reaction row (quick emojis plus "more" for the full
-  emoji keyboard) and actions: **Reply**, **Copy** (text messages only), **Delete** (own
-  messages only).
+- **Long press on any entry:** a reaction row (❤️ 😂 😮 😢 🙄 👍, the system menu's
+  palette; a full emoji picker can come later) and actions: **Reply**, **Copy** (text
+  messages only), **Delete** (own messages, confirmed: "Message deleted" stays in place) or
+  **Report** (others' messages, confirmed).
 - **Tap a bill or settlement:** a sheet with its details (items, who owes what, edits
   history), **Edit** and **Delete** (any member, per [Bills](bills.md)).
 - **Tap a message:** nothing.
 - **Reactions:** one emoji per person per entry; tapping your own again removes it.
   Shown as small chips under the entry, with counts.
-- **Replies** quote the original (author and a one-line preview); tapping the quote
-  scrolls to it.
+- **Replies** quote the original (author and up to 120 characters); tapping the quote
+  scrolls to it if it's loaded. A reply being written shows above the field with a ✕.
 
 ## Decisions
 
@@ -55,7 +58,8 @@ newest at the bottom. The composer sits at the bottom.
 
 - A text field ("Type a message…") with the system keyboard, emoji included, and the
   **Add a bill** button at its left.
-- Messages are capped at 2,000 characters.
+- Messages are trimmed and capped at 2,000 characters; the field grows to five lines and
+  the send button appears once there's text.
 - Sending is a fire-and-forget write: the message shows straight away, marked "not sent
   yet" while `hasPendingWrites` (offline).
 
@@ -76,7 +80,9 @@ groups/{gid}/messages/{messageId}
   timeline merges them on the device by `createdAt`. Their reactions live on the bill or
   settlement document in the same `reactions` map.
 - **Reads cost money:** one listener per collection on the **latest 50** entries;
-  older ones load in pages with `getDocuments` as the user scrolls up.
+  older ones load in pages of 50 with `getDocuments` as the user scrolls up (`ChatStore`).
+- `reports/{id}`: `{ groupId, messageId, authorId, text, reportedBy, createdAt }`,
+  create-only for members of that squabble; nobody reads it from the app.
 - **Rules:** members read; a member creates messages as themselves; only the author
   soft-deletes; any member edits only their own key in `reactions`; nothing while the
   squabble is archived.
