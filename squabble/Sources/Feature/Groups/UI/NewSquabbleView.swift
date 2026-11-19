@@ -26,6 +26,8 @@ struct NewSquabbleView: View {
     @State private var failure: String?
     @FocusState private var isNameFocused: Bool
 
+    private static var pageBackground: some View { Color.backdropDeep.ignoresSafeArea() }
+
     private enum Page: Hashable {
         case currency
         case emoji
@@ -41,16 +43,22 @@ struct NewSquabbleView: View {
     var body: some View {
         NavigationStack(path: $path) {
             form
+                .background { Self.pageBackground }
                 .navigationDestination(for: Page.self) { page in
-                    switch page {
-                    case .currency:
-                        SquabbleCurrencyPicker(selection: $draft.currencyCode)
-                    case .emoji:
-                        SquabbleEmojiPicker(emoji: draft.emoji, color: $draft.color) { emoji in
-                            draft.setEmoji(emoji)
-                            photoPreview = nil
+                    Group {
+                        switch page {
+                        case .currency:
+                            SquabbleCurrencyPicker(selection: $draft.currencyCode)
+                        case .emoji:
+                            SquabbleEmojiPicker(emoji: draft.emoji, color: $draft.color) { emoji in
+                                draft.setEmoji(emoji)
+                                photoPreview = nil
+                            }
                         }
                     }
+                    // Pushed pages don't show the sheet's presentation background through, so
+                    // every page paints the same one itself.
+                    .background { Self.pageBackground }
                 }
         }
         .photosPicker(isPresented: $isShowingLibrary, selection: $pickerItem, matching: .images)
@@ -171,7 +179,7 @@ struct NewSquabbleView: View {
                 }
             }
             Button(String(localized: "Pick an emoji", comment: "Create squabble: picture menu item that opens the emoji picker."), systemImage: "face.smiling") {
-                path.append(.emoji)
+                push(.emoji)
             }
             if draft.photoJPEG != nil {
                 Button("Remove photo", systemImage: "trash", role: .destructive) {
@@ -270,7 +278,7 @@ struct NewSquabbleView: View {
         let option = CurrencyOption(code: draft.currencyCode)
         return VStack(alignment: .leading, spacing: 8) {
             Button {
-                path.append(.currency)
+                push(.currency)
             } label: {
                 HStack(spacing: 14) {
                     CurrencyFlag(option: option, size: 44)
@@ -307,6 +315,13 @@ struct NewSquabbleView: View {
     }
 
     // MARK: - Actions
+
+    /// Drops the keyboard first: left up across a push, it comes back over the create
+    /// button instead of under it.
+    private func push(_ page: Page) {
+        isNameFocused = false
+        path.append(page)
+    }
 
     private func loadPicked(_ item: PhotosPickerItem) async {
         defer { pickerItem = nil }
