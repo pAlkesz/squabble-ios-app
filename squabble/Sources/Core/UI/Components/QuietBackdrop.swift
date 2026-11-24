@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// For pages about money that have no balance of their own: a dark cocoa in slow, uneven
-/// waves, without a bright end. A bright fade always stands for a balance. Reduce Motion
+/// For pages about money that have no balance of their own: plum and slate in slow, uneven
+/// waves, hues no balance mood uses. A bright fade always stands for a balance. Reduce Motion
 /// pins the waves.
 struct QuietBackdrop: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -12,7 +12,7 @@ struct QuietBackdrop: View {
                 width: Self.columns,
                 height: Self.rows.count,
                 points: Self.points(phase: reduceMotion ? 0 : Self.phase(at: context.date)),
-                colors: [Color.quietTop, .quietMid, .quietTop, .quietMid, .quietDeep, .quietDeep]
+                colors: [Color.quietTop, .quietHigh, .quietMid, .quietLow, .quietDeep, .quietDeep]
                     .flatMap { Array(repeating: $0, count: Self.columns) }
             )
         }

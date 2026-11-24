@@ -5,6 +5,8 @@ import SwiftUI
 struct SquabbleRow: View {
     let group: SquabbleGroup
     var pictureSize: CGFloat = 56
+    /// How strong the date and summary are; a lighter backdrop needs more.
+    var secondaryOpacity = 0.6
 
     var body: some View {
         HStack(spacing: 14) {
@@ -20,12 +22,12 @@ struct SquabbleRow: View {
                     if let updatedAt = group.updatedAt {
                         Text(verbatim: ActivityDate.text(for: updatedAt))
                             .font(.footnote)
-                            .foregroundStyle(.white.opacity(0.6))
+                            .foregroundStyle(.white.opacity(secondaryOpacity))
                     }
                 }
                 Text(summary)
                     .font(.subheadline)
-                    .foregroundStyle(.white.opacity(0.6))
+                    .foregroundStyle(.white.opacity(secondaryOpacity))
                     .lineLimit(1)
             }
         }

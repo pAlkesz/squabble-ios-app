@@ -53,7 +53,7 @@ A bright fade always stands for a balance; pages without one stay quiet (Nov 202
 | Page | Backdrop |
 | --- | --- |
 | Home | Bright band from the top: the total balance |
-| Squabbles list | Dark cocoa in slow waves (`QuietBackdrop`), with no bright end; dark petrol looked too much like the other pages. Planned with bills: each row's picture carries its squabble's mood |
+| Squabbles list | Plum and slate in slow waves (`QuietBackdrop`), hues no mood uses; dark petrol looked too much like the other pages. Planned with bills: each row's picture carries its squabble's mood |
 | Squabble page | Wavy glow from the top-right corner (a clean diagonal felt too rigid), by the picture: the balance in that squabble |
 | Squabble info | The same glow, dimmed |
 | Account pages and sheets | Dark brand green (`ProfileBackdrop`) |
