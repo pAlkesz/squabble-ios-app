@@ -416,7 +416,10 @@ stutters on a device even when the simulator looks smooth.
   terms via a small per-currency table, to be replaced by real rates when totals convert.
   The sheet's blurred background uses the same palette. `SquabbleBackdrop`'s drift is
   driven by a `TimelineView` clock, not a repeating animation, so an animated palette
-  change can't cancel it. Debug builds: long-press the total to get a balance slider.
+  change can't cancel it. A bright fade always stands for a balance: a squabble's pages use
+  `SquabbleMoodBackdrop` (`CornerGlowBackdrop`, its own balance), the squabbles list, which has
+  none, `QuietBackdrop` (table in `docs/specs/home.md`). Debug builds: long-press the total, or
+  a squabble's name in its bar, to get a balance slider.
 - **Account page:** the borderless 40 pt avatar (toolbar glass hidden) **pushes**
   `AccountView` onto home's stack (decided Oct 2026; it was a sheet, but the photo picker
   and payment editor then stacked a sheet on a sheet). Home registers every `AccountPage`

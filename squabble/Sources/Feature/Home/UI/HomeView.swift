@@ -3,7 +3,8 @@ import SwiftUI
 /// The hub of the app: the user's overall balance and their squabbles, with the account
 /// behind the avatar and search / new squabble in the toolbar. One navigation stack, no tab bar — every
 /// squabble is pushed from here, and so is the account. The backdrop takes its colour from
-/// the balance (`BalanceMood`), on home and on every page pushed from it.
+/// the total (`BalanceMood`); a squabble's pages take theirs from its own balance, and pages
+/// without a balance stay quiet.
 struct HomeView: View {
     @Environment(AuthSession.self) private var session
     @Environment(InviteInbox.self) private var inviteInbox
@@ -17,6 +18,7 @@ struct HomeView: View {
     @Namespace private var transitions
     #if DEBUG
     @State private var debugBalance: Double?
+    @State private var debugBalances = DebugBalances()
     #endif
 
     var body: some View {
@@ -68,7 +70,7 @@ struct HomeView: View {
                     SquabbleListView(transitions: transitions) {
                         startSquabble(from: .listToolbar)
                     }
-                        .background { backdrop }
+                        .background { QuietBackdrop() }
                         .containerBackground(.clear, for: .navigation)
                 case .squabble(let id):
                     // Paints its own backdrop, tinted by the squabble's balance.
@@ -76,7 +78,7 @@ struct HomeView: View {
                         .containerBackground(.clear, for: .navigation)
                 case .squabbleInfo(let id):
                     SquabbleInfoView(groupID: id)
-                        .background { ProfileBackdrop() }
+                        .background { SquabbleMoodBackdrop(groupID: id, isDimmed: true) }
                         .containerBackground(.clear, for: .navigation)
                 case .account(let page):
                     accountPage(page)
@@ -110,6 +112,9 @@ struct HomeView: View {
         .tint(.white)
         .environment(preferences)
         .environment(groups)
+        #if DEBUG
+        .environment(debugBalances)
+        #endif
         .environment(\.showAccountPage, ShowAccountPageAction { push(.account($0)) })
     }
 

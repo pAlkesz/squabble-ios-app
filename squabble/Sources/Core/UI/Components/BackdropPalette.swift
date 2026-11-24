@@ -15,6 +15,12 @@ struct BackdropPalette: Equatable {
         deep: .backdropDeep
     )
 
+    /// The same colours a step darker, without the brightest one: for pages behind another
+    /// that shows the mood in full.
+    var dimmed: BackdropPalette {
+        BackdropPalette(top: high, high: high.mix(with: mid, by: 0.5, in: .perceptual), mid: mid, deep: deep)
+    }
+
     /// Blends row by row in a perceptual space, so a mix of amber and red stays warm
     /// instead of going muddy brown halfway.
     func mixed(with other: BackdropPalette, by fraction: Double) -> BackdropPalette {

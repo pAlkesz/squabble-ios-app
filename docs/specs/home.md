@@ -46,6 +46,21 @@ money flows; the saturation shows how much.
 - This is the one place `Double` is allowed near money: it only picks a colour and never
   changes an amount.
 
+### Where the mood shows
+
+A bright fade always stands for a balance; pages without one stay quiet (Nov 2026).
+
+| Page | Backdrop |
+| --- | --- |
+| Home | Bright band from the top: the total balance |
+| Squabbles list | Dark petrol (`QuietBackdrop`). Planned with bills: each row's picture carries its squabble's mood |
+| Squabble page | Glow from the top-right corner, by the picture: the balance in that squabble |
+| Squabble info | The same glow, dimmed |
+| Account pages and sheets | Dark brand green (`ProfileBackdrop`) |
+
+The squabble glow doesn't run bottom to top: the newest messages and the composer would
+sit on the brightest part, and the keyboard would cover it.
+
 ## Tiles
 
 Below the balance, home is a column of **tiles** (`HomeTile`), laid out like Revolut's

@@ -16,6 +16,9 @@ struct SquabbleView: View {
     @State private var reporting: ChatMessage?
     @State private var isInviting = false
     @FocusState private var isComposing: Bool
+    #if DEBUG
+    @Environment(DebugBalances.self) private var debugBalances: DebugBalances?
+    #endif
 
     init(groupID: String) {
         self.groupID = groupID
@@ -32,26 +35,8 @@ struct SquabbleView: View {
         }
         .foregroundStyle(.white)
         .navigationBarTitleDisplayMode(.inline)
-        .background { backdrop }
+        .background { SquabbleMoodBackdrop(groupID: groupID) }
         .task { await chat.observe() }
-    }
-
-    /// Home's balance mood, for this squabble's balance instead of the total; neutral while
-    /// the squabble is loading or gone.
-    private var backdrop: some View {
-        let group = groups.group(id: groupID)
-        let mood = BalanceMood(
-            amount: group.map(balance(in:)) ?? 0,
-            currencyCode: group?.currencyCode ?? "EUR"
-        )
-        return SquabbleBackdrop(palette: mood.palette)
-            .animation(.smooth(duration: 1.2), value: mood)
-    }
-
-    /// The user's balance in this squabble: positive when they're owed. Nothing to add up
-    /// until bills land.
-    private func balance(in group: SquabbleGroup) -> Decimal {
-        0
     }
 
     private func content(_ group: SquabbleGroup) -> some View {
@@ -95,6 +80,11 @@ struct SquabbleView: View {
         }
         .navigationTitle(Text(verbatim: group.name))
         .toolbar { toolbar(group) }
+        #if DEBUG
+        .safeAreaBar(edge: .top) {
+            DebugBalanceSlider(groupID: group.id, currencyCode: group.currencyCode)
+        }
+        #endif
         .safeAreaBar(edge: .bottom) {
             if !group.isArchived {
                 ChatComposer(
@@ -151,9 +141,12 @@ struct SquabbleView: View {
                     .lineLimit(1)
                 Text("No bills yet", comment: "Squabble page: subtitle under the name in the bar while there are no bills.")
                     .font(.subheadline)
-                    .foregroundStyle(.white.opacity(0.8))
             }
             .foregroundStyle(.white)
+            #if DEBUG
+            .contentShape(.rect)
+            .onLongPressGesture { debugBalances?.toggle(group.id) }
+            #endif
         }
         ToolbarItem(placement: .topBarTrailing) {
             NavigationLink(value: HomeRoute.squabbleInfo(id: group.id)) {
