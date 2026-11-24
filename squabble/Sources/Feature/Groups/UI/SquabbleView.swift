@@ -126,10 +126,7 @@ struct SquabbleView: View {
         } message: { _ in
             Text("We'll take a look. The author won't know it was you.", comment: "Chat: explanation in the report confirmation.")
         }
-        .sheet(isPresented: $isInviting) {
-            SquabbleInviteSheet(groupID: group.id)
-                .presentationBackground { ProfileBackdrop() }
-        }
+        .squabbleInvite(groupID: group.id, isPresented: $isInviting)
     }
 
     @ToolbarContentBuilder
@@ -210,6 +207,9 @@ struct SquabbleView: View {
         }
     }
 
+    /// The symbols differ in width; a shared column lines the texts up.
+    private static let readyIconWidth: CGFloat = 28
+
     private func ready(_ group: SquabbleGroup) -> some View {
         VStack(spacing: 16) {
             Image(systemName: "person.3.fill")
@@ -228,11 +228,13 @@ struct SquabbleView: View {
                     Text("Add bills, then settle up", comment: "Squabble page: first point in the 'ready' card.")
                 } icon: {
                     Image(systemName: "checkmark")
+                        .frame(width: Self.readyIconWidth)
                 }
                 Label {
                     Text("Bring people in. They'll need the app too, no freeloaders.", comment: "Squabble page: second point in the 'ready' card. Members must have an account.")
                 } icon: {
                     Image(systemName: "person.2.fill")
+                        .frame(width: Self.readyIconWidth)
                 }
             }
             .font(.subheadline)
@@ -241,23 +243,16 @@ struct SquabbleView: View {
             .padding(.vertical, 14)
             .background(.white.opacity(0.08), in: .rect(cornerRadius: SquabbleMetrics.cornerRadius))
             if !group.isArchived {
-                Button {
-                    isInviting = true
-                } label: {
-                    Label {
-                        Text("Invite people", comment: "Squabble info: button that opens the invite link and QR code.")
-                    } icon: {
-                        Image(systemName: "qrcode")
-                    }
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(Color.backdropDeep)
-                    .padding(.horizontal, 18)
-                    .padding(.vertical, 10)
-                    .background(.white, in: .capsule)
-                }
-                .buttonStyle(.plain)
+                SquabbleInviteRow(group: group, onShowQRCode: showInvite)
             }
         }
+    }
+
+    /// Unanimated: the overlay fades itself in.
+    private func showInvite() {
+        var transaction = Transaction()
+        transaction.disablesAnimations = true
+        withTransaction(transaction) { isInviting = true }
     }
 
     private func memberLine(_ group: SquabbleGroup) -> String {

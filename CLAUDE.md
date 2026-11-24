@@ -480,7 +480,8 @@ stutters on a device even when the simulator looks smooth.
   `HomeRoute`; pushed views navigate with `NavigationLink(value: HomeRoute)`. The squabble page is a
   chat (`Feature/Chat`, spec `docs/specs/chat.md`): `ChatStore` per page (latest 50 live, older
   pages on scroll), bubbles with `SquabbleMetrics.bubbleCornerRadius`, long-press menu with a
-  reaction palette, and `ChatComposer` with Add a bill at its left (disabled until bills). Invites: a QR code and share link (`SquabbleInviteSheet`,
+  reaction palette, and `ChatComposer` with Add a bill at its left (disabled until bills). Invites: the link with a QR button (`SquabbleInviteRow`,
+  opening the blurred `SquabbleInviteOverlay`,
   from the info page and the empty squabble), universal links on `squabble-9c1df.web.app` caught
   by `ContentView.onOpenURL` into `InviteInbox`, joined through `JoinSquabbleSheet`. Not yet:
   adding people by handle, leaving, archive/delete,

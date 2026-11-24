@@ -187,15 +187,19 @@ Adding people (planned, from the info page):
   `apple-app-site-association` for `/join/*` and a small "get the app" page for people
   without it. Moving to a custom domain later means keeping a redirect for old links.
 
-**Sharing:** the info page and the empty squabble page open an **invite sheet**:
-a card with a QR code of the link (the squabble's picture in its centre, so the code uses
-high error correction), the squabble's name, a line on what the link does, and a white
-**Share link** button (the system share sheet). The QR code is drawn on the device
-(Core Image), so it works offline once the squabble has a code. The creator also gets
-**Reset link** there (confirmed first; people already in stay in).
+**Sharing** (Nov 2026, like Revolut's): the info page and the empty squabble page show the
+**link itself with a QR button** beside it, cut off at the end. Tapping the link opens the
+system share sheet; the QR button fades in an **overlay** over the blurred page: a card with
+a QR code of the link (the squabble's picture in its centre, so the code uses high error
+correction), the squabble's name, a line on what the link does, and a white **Share link**
+button. The QR code is drawn on the device (Core Image), so it works offline once the
+squabble has a code. Without a code (offline before one exists) the row says **Invite
+people** and opens the overlay, which can retry. The creator also gets **Reset link** in the
+overlay (confirmed first; people already in stay in): the way to shut out a link that got
+to the wrong people.
 
 - `inviteCode` is minted by the server (`createInvite`, the first time any member opens
-  the sheet), never by the app, so the rules never have to vouch for it. It's stored on
+  a page showing the link), never by the app, so the rules never have to vouch for it. It's stored on
   the group (members see it offline from then on) and in `invites/{code}` → `groupId`,
   which only the functions read. `resetInvite` (creator only) replaces both.
 

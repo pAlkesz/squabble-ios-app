@@ -11,6 +11,11 @@ nonisolated enum InviteLink {
         return URL(string: "https://\(host)/join/\(code)")
     }
 
+    /// The link as shown to people: without the scheme.
+    static func displayText(for url: URL) -> String {
+        (url.host() ?? "") + url.path()
+    }
+
     /// The code in a link the app was opened with, or nil for anything else.
     static func code(from url: URL) -> String? {
         guard url.scheme == "https", url.host() == host else { return nil }

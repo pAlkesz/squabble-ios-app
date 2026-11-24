@@ -86,6 +86,17 @@
         }
       }
     },
+    "^[%lld members](inflect: true) already squabbling" : {
+      "comment" : "Join sheet: how many people are in the squabble.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld tag már veszekszik"
+          }
+        }
+      }
+    },
     "32 characters max. Nobody's typing all that." : {
       "comment" : "HandleError.tooLong",
       "localizations" : {
@@ -104,17 +115,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Legfeljebb 50 karakter. Rá kell férnie a blokkra."
-          }
-        }
-      }
-    },
-    "^[%lld members](inflect: true) already squabbling" : {
-      "comment" : "Join sheet: how many people are in the squabble.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld tag már veszekszik"
           }
         }
       }
@@ -313,17 +313,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bárki csatlakozhat, akinél ott a link vagy a QR-kód. Kell nekik az app, potyautasok nincsenek."
-          }
-        }
-      }
-    },
-    "Anyone with this link or QR code can join. They'll need the app, no freeloaders. It works until you reset it." : {
-      "comment" : "Invite sheet: explanation shown to the creator.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bárki csatlakozhat, akinél ott a link vagy a QR-kód. Kell nekik az app, potyautasok nincsenek. Addig működik, amíg vissza nem állítod."
           }
         }
       }
@@ -565,6 +554,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Név törlése"
+          }
+        }
+      }
+    },
+    "Close" : {
+      "comment" : "Closes an overlay.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bezárás"
           }
         }
       }
@@ -1801,13 +1801,13 @@
         }
       }
     },
-    "Share a link or show the QR code" : {
-      "comment" : "Squabble info: subtitle of the invite button.",
+    "Share invite link" : {
+      "comment" : "Squabble page: VoiceOver label for the invite link, which opens the share sheet.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Küldj linket, vagy mutasd a QR-kódot"
+            "value" : "Meghívólink megosztása"
           }
         }
       }
@@ -1819,6 +1819,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Link megosztása"
+          }
+        }
+      }
+    },
+    "Show QR code" : {
+      "comment" : "Squabble page: VoiceOver label for the button beside the invite link that shows its QR code.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "QR-kód mutatása"
           }
         }
       }
@@ -2396,7 +2407,7 @@
       }
     },
     "Try again" : {
-      "comment" : "Retry button — profile failed to load, or a handle check failed.",
+      "comment" : "Invite sheet: retry after the link couldn't be made.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {

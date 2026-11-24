@@ -25,7 +25,9 @@ struct SquabbleInfoView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 header(group)
-                inviteButton(group)
+                if !group.isArchived {
+                    SquabbleInviteRow(group: group, onShowQRCode: showInvite)
+                }
                 card(title: Text("Members · \(group.currentMembers.count)", comment: "Squabble page: header above the members, with how many there are.")) {
                     VStack(spacing: 0) {
                         ForEach(group.currentMembers) { member in
@@ -40,39 +42,14 @@ struct SquabbleInfoView: View {
         }
         // iOS 26's soft fade under the bar; iOS 27 no longer defaults to it.
         .scrollEdgeEffectStyle(.soft, for: .top)
-        .sheet(isPresented: $isInviting) {
-            SquabbleInviteSheet(groupID: group.id)
-                .presentationBackground { ProfileBackdrop() }
-        }
+        .squabbleInvite(groupID: group.id, isPresented: $isInviting)
     }
 
-    @ViewBuilder
-    private func inviteButton(_ group: SquabbleGroup) -> some View {
-        if !group.isArchived {
-            Button {
-                isInviting = true
-            } label: {
-                HStack(spacing: 14) {
-                    Image(systemName: "qrcode")
-                        .font(.title3)
-                        .frame(width: 40, height: 40)
-                        .background(.white.opacity(0.12), in: .circle)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Invite people", comment: "Squabble info: button that opens the invite link and QR code.")
-                            .font(.body.weight(.semibold))
-                        Text("Share a link or show the QR code", comment: "Squabble info: subtitle of the invite button.")
-                            .font(.subheadline)
-                            .foregroundStyle(.white.opacity(0.6))
-                    }
-                    Spacer(minLength: 0)
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-                .background(.white.opacity(0.08), in: .rect(cornerRadius: SquabbleMetrics.cornerRadius))
-                .contentShape(.rect)
-            }
-            .buttonStyle(.plain)
-        }
+    /// Unanimated: the overlay fades itself in.
+    private func showInvite() {
+        var transaction = Transaction()
+        transaction.disablesAnimations = true
+        withTransaction(transaction) { isInviting = true }
     }
 
     private func header(_ group: SquabbleGroup) -> some View {

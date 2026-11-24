@@ -45,7 +45,8 @@ newest at the bottom. The composer sits at the bottom.
 
 ## Decisions
 
-- **Add a bill lives in the composer** (Nov 2026): a button at the left of the message
+- **Add a bill lives in the composer** (Nov 2026; on the left, leaving the right free for a
+  future Settle up shortcut): a button at the left of the message
   field, like iMessage's `+`. Revolut stacks a full-width button above the field, which
   doubles the bottom bar; the bar at the top is the hardest place to reach for the app's
   main action.

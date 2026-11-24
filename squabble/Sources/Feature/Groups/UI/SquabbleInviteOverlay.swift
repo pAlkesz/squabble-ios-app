@@ -1,40 +1,76 @@
 import FactoryKit
 import SwiftUI
 
-/// The squabble's invite link as a QR code with a share button, like Revolut's. The code is
-/// minted by the server the first time; after that it's on the group, so the sheet works
-/// offline. The creator can reset it.
-struct SquabbleInviteSheet: View {
+/// The squabble's invite link as a QR code with a share button, fading in over a blurred
+/// page like Revolut's. The code is minted by the server the first time; after that it's on
+/// the group, so this works offline. The creator can reset it.
+struct SquabbleInviteOverlay: View {
     let groupID: String
+    @Binding var isPresented: Bool
 
     @Injected(\.inviteRepository) private var invites
     @Environment(GroupsStore.self) private var groups
     @Environment(AuthSession.self) private var session
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var isShown = false
     @State private var fetchedCode: String?
     @State private var failure: InviteError?
     @State private var isConfirmingReset = false
     @State private var isResetting = false
 
     var body: some View {
-        NavigationStack {
+        ZStack {
+            Rectangle()
+                .fill(.ultraThinMaterial)
+                .overlay(Color.backdropDeep.opacity(0.35))
+                .ignoresSafeArea()
+                .accessibilityHidden(true)
             ScrollView {
                 if let group = groups.group(id: groupID) {
                     card(group)
+                        // Swallows taps, so only those outside the card close it.
+                        .contentShape(.rect)
+                        .onTapGesture {}
                         .padding(16)
                         .frame(maxWidth: 480)
                         .frame(maxWidth: .infinity)
                 }
             }
-            .scrollEdgeEffectStyle(.soft, for: .top)
-            .foregroundStyle(.white)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(role: .close) { dismiss() }
-                }
-            }
+            .contentShape(.rect)
+            .onTapGesture { close() }
+            .scrollBounceBehavior(.basedOnSize)
+            .defaultScrollAnchor(.center, for: .alignment)
+            .scaleEffect(isShown || reduceMotion ? 1 : 0.94)
         }
+        .overlay(alignment: .topTrailing) {
+            Button(action: close) {
+                Image(systemName: "xmark")
+                    .font(.body.weight(.semibold))
+                    .frame(width: 44, height: 44)
+            }
+            .buttonStyle(.plain)
+            .glassEffect(.regular.interactive(), in: .circle)
+            .padding(.horizontal, 16)
+            .accessibilityLabel(Text("Close"))
+        }
+        .foregroundStyle(.white)
+        .opacity(isShown ? 1 : 0)
+        .onAppear {
+            withAnimation(.smooth(duration: 0.3)) { isShown = true }
+        }
+        .accessibilityAction(.escape) { close() }
         .task { await loadCode() }
+    }
+
+    /// Fades out first, then removes the cover without its own slide.
+    private func close() {
+        withAnimation(.smooth(duration: 0.22)) {
+            isShown = false
+        } completion: {
+            var transaction = Transaction()
+            transaction.disablesAnimations = true
+            withTransaction(transaction) { isPresented = false }
+        }
     }
 
     private var code: String? {
@@ -50,7 +86,7 @@ struct SquabbleInviteSheet: View {
                 Text(verbatim: group.name)
                     .font(.title.bold())
                     .multilineTextAlignment(.center)
-                Text(explanation(group))
+                Text("Anyone with this link or QR code can join. They'll need the app, no freeloaders.", comment: "Invite overlay: what the link does.")
                     .font(.subheadline)
                     .foregroundStyle(.white.opacity(0.7))
                     .multilineTextAlignment(.center)
@@ -127,13 +163,6 @@ struct SquabbleInviteSheet: View {
         }
     }
 
-    private func explanation(_ group: SquabbleGroup) -> String {
-        if group.createdBy == session.user?.id {
-            return String(localized: "Anyone with this link or QR code can join. They'll need the app, no freeloaders. It works until you reset it.", comment: "Invite sheet: explanation shown to the creator.")
-        }
-        return String(localized: "Anyone with this link or QR code can join. They'll need the app, no freeloaders.", comment: "Invite sheet: explanation shown to other members.")
-    }
-
     private func loadCode() async {
         guard code == nil else { return }
         failure = nil
@@ -151,6 +180,16 @@ struct SquabbleInviteSheet: View {
             fetchedCode = try await invites.resetInvite(for: groupID)
         } catch {
             failure = error
+        }
+    }
+}
+
+extension View {
+    /// Shows the invite overlay over everything, including the bars.
+    func squabbleInvite(groupID: String, isPresented: Binding<Bool>) -> some View {
+        fullScreenCover(isPresented: isPresented) {
+            SquabbleInviteOverlay(groupID: groupID, isPresented: isPresented)
+                .presentationBackground(.clear)
         }
     }
 }
