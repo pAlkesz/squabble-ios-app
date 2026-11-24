@@ -1,11 +1,11 @@
 import SwiftUI
 
-/// For pages about money that have no balance of their own: the dark half of the neutral
-/// petrol, without a bright end. A bright fade always stands for a balance.
+/// For pages about money that have no balance of their own: a dark aubergine, a hue
+/// no balance mood uses. A bright fade always stands for a balance.
 struct QuietBackdrop: View {
     var body: some View {
         LinearGradient(
-            colors: [.balanceNeutralMid, .balanceNeutralDeep],
+            colors: [.quietTop, .quietDeep],
             startPoint: .top,
             endPoint: .bottom
         )

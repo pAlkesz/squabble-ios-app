@@ -296,6 +296,8 @@ entry in any group where it differs (the rules allow a member to edit only their
     `Mid`/`Deep`, mirroring the four `Backdrop*` rows) — home's balance moods: petrol
     `#1A6670` at zero, pale green, amber `#C25E14`, red `#B3261E` (the `High` values).
     The brand `Backdrop*` set is the fully-owed end.
+  - `QuietTop` `#45234F`, `QuietDeep` `#150A1B` — `QuietBackdrop`, the aubergine behind money
+    pages without a balance (the squabbles list).
   - `ReceiptPaper` `#F4F0E4`, `ReceiptInk` `#271814` — prop-receipt paper and its ink.
   - `Squabble<Name>Top` / `Squabble<Name>Bottom` (in `SquabbleArt/`) — the two stops of each
     squabble picture gradient (`SquabbleBackground`: mint, sky, peach, lilac, sunrise,
