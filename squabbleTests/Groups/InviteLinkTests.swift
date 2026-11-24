@@ -5,17 +5,27 @@ import Testing
 struct InviteLinkTests {
     @Test func roundTripsACode() throws {
         let url = try #require(InviteLink.url(code: "Ab3_-xYz12345678"))
-        #expect(url.absoluteString == "https://squabble-9c1df.web.app/join/Ab3_-xYz12345678")
+        #expect(url.absoluteString == "https://squabble-club.web.app/join/Ab3_-xYz12345678")
         #expect(InviteLink.code(from: url) == "Ab3_-xYz12345678")
     }
 
+    @Test func stillOpensLinksWithTheFormerAddress() throws {
+        let url = try #require(URL(string: "https://squabble-9c1df.web.app/join/Ab3_-xYz12345678"))
+        #expect(InviteLink.code(from: url) == "Ab3_-xYz12345678")
+    }
+
+    @Test func showsTheAddressAndTheEndOfTheCode() {
+        #expect(InviteLink.displayText(code: "Ab3_-xYz12345678") == "https://squabble-club.web.app/…5678")
+        #expect(InviteLink.displayText(code: "short") == nil)
+    }
+
     @Test(arguments: [
-        "http://squabble-9c1df.web.app/join/Ab3_xYz12345678",
+        "http://squabble-club.web.app/join/Ab3_xYz12345678",
         "https://example.com/join/Ab3_xYz12345678",
-        "https://squabble-9c1df.web.app/joins/Ab3_xYz12345678",
-        "https://squabble-9c1df.web.app/join/short",
-        "https://squabble-9c1df.web.app/join/Ab3_xYz12345678/extra",
-        "https://squabble-9c1df.web.app/join/bad%20code%20here",
+        "https://squabble-club.web.app/joins/Ab3_xYz12345678",
+        "https://squabble-club.web.app/join/short",
+        "https://squabble-club.web.app/join/Ab3_xYz12345678/extra",
+        "https://squabble-club.web.app/join/bad%20code%20here",
     ])
     func ignoresAnythingElse(_ link: String) throws {
         #expect(InviteLink.code(from: try #require(URL(string: link))) == nil)
@@ -25,12 +35,12 @@ struct InviteLinkTests {
         let inbox = InviteInbox()
         #expect(!inbox.receive(try #require(URL(string: "https://example.com/x"))))
         #expect(inbox.pending == nil)
-        #expect(inbox.receive(try #require(URL(string: "https://squabble-9c1df.web.app/join/Ab3_xYz12345678"))))
+        #expect(inbox.receive(try #require(URL(string: "https://squabble-club.web.app/join/Ab3_xYz12345678"))))
         #expect(inbox.pending?.code == "Ab3_xYz12345678")
     }
 
     @Test func qrMatrixHasFindersInThreeCorners() throws {
-        let matrix = try #require(QRMatrix("https://squabble-9c1df.web.app/join/Ab3_xYz12345678"))
+        let matrix = try #require(QRMatrix("https://squabble-club.web.app/join/Ab3_xYz12345678"))
         #expect(matrix.size >= 21 && matrix.size % 2 == 1)
         for (x, y) in [(0, 0), (matrix.size - 1, 0), (0, matrix.size - 1)] {
             #expect(matrix.isDark(x: x, y: y))

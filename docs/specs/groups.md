@@ -4,7 +4,7 @@
 
 - **Built:** creating a squabble (picture, name with presets, currency), home's tile and
   the full list, the squabble page (an empty "ready" state) and its info page (members),
-  joining by invite link or QR code (sharing, reset, the join sheet), keeping your own entry
+  joining by invite link or QR code (sharing, the join sheet), keeping your own entry
   current, the rules for all of
   that, and the account-deletion cleanup.
 - **Not built yet:** adding people by handle or from People, leaving and removing, archive/delete, rename, and changing the picture
@@ -182,21 +182,24 @@ Adding people (planned, from the info page):
   share it (share sheet or QR code). It keeps working until the creator **resets** it,
   which generates a new code and kills the old link.
 - `inviteCode` is a random, unguessable string (at least 128 bits).
-- **Universal links** use **Firebase Hosting on the project's `squabble-9c1df.web.app`**
-  (Nov 2026: free, no domain to buy; Firebase Dynamic Links is shut down). Hosting serves
+- **Universal links** use **Firebase Hosting on `squabble-club.web.app`**
+  (Nov 2026: a second free site in the project, nicer than the default
+  `squabble-9c1df.web.app`, which is still served so early links keep working; Firebase Dynamic Links is shut down). Hosting serves
   `apple-app-site-association` for `/join/*` and a small "get the app" page for people
   without it. Moving to a custom domain later means keeping a redirect for old links.
 
-**Sharing** (Nov 2026, like Revolut's): the info page and the empty squabble page show the
-**link itself with a QR button** beside it, cut off at the end. Tapping the link opens the
-system share sheet; the QR button fades in an **overlay** over the blurred page: a card with
-a QR code of the link (the squabble's picture in its centre, so the code uses high error
-correction), the squabble's name, a line on what the link does, and a white **Share link**
-button. The QR code is drawn on the device (Core Image), so it works offline once the
-squabble has a code. Without a code (offline before one exists) the row says **Invite
-people** and opens the overlay, which can retry. The creator also gets **Reset link** in the
-overlay (confirmed first; people already in stay in): the way to shut out a link that got
-to the wrong people.
+**Sharing** (Nov 2026, like Revolut's): under the name on the info page, and under the title
+on the empty squabble page, sits the **shortened link with a QR symbol**
+(`https://squabble-club.web.app/…kPIR`). Tapping either opens the **invite sheet**: a QR code
+of the link (the squabble's picture in its centre, so the code uses high error correction),
+the squabble's name, a line on what the link does, and a white **Share link** button. The QR
+code is drawn on the device (Core Image), so it works offline once the squabble has a code.
+Without a code (offline before one exists) it says **Invite people** and the sheet can
+retry. A blurred overlay was tried instead of the sheet and dropped.
+
+**Resetting** (the creator's way to shut out a link that got to the wrong people; people
+already in stay in) works on the server but has no button yet: it moves to the squabble's
+settings.
 
 - `inviteCode` is minted by the server (`createInvite`, the first time any member opens
   a page showing the link), never by the app, so the rules never have to vouch for it. It's stored on

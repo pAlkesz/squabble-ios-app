@@ -60,8 +60,8 @@ ObjC-based SDK, NoSQL modeling, `Sendable` friction under Swift 6.
   (server-side only, approved Nov 2026; the app calls the invite callables through the
   `FirebaseFunctions` SDK), and Hosting (approved Nov 2026: `hosting/` serves the
   universal-link `apple-app-site-association` and the "get the app" page for invite links on
-  `squabble-9c1df.web.app`; deploy with `firebase deploy --only hosting`; the app's
-  Associated Domains entitlement names it). Don't pull in other Firebase products (Remote
+  `squabble-club.web.app`, plus `squabble-9c1df.web.app` for older links; deploy with `firebase deploy --only hosting`; the app's
+  Associated Domains entitlement names both). Don't pull in other Firebase products (Remote
   Config, Messaging, Phone Auth…) without checking first — each one is an SPM product and a config decision. Linking a new
   product means adding it to the target in `project.pbxproj` (a sanctioned hand-edit).
 - **No REST layer.** The app talks to Firestore directly through the SDK, with security
@@ -480,9 +480,9 @@ stutters on a device even when the simulator looks smooth.
   `HomeRoute`; pushed views navigate with `NavigationLink(value: HomeRoute)`. The squabble page is a
   chat (`Feature/Chat`, spec `docs/specs/chat.md`): `ChatStore` per page (latest 50 live, older
   pages on scroll), bubbles with `SquabbleMetrics.bubbleCornerRadius`, long-press menu with a
-  reaction palette, and `ChatComposer` with Add a bill at its left (disabled until bills). Invites: the link with a QR button (`SquabbleInviteRow`,
-  opening the blurred `SquabbleInviteOverlay`,
-  from the info page and the empty squabble), universal links on `squabble-9c1df.web.app` caught
+  reaction palette, and `ChatComposer` with Add a bill at its left (disabled until bills). Invites: the shortened link with a QR symbol (`SquabbleInviteLink`,
+  opening `SquabbleInviteSheet`,
+  from the info page and the empty squabble), universal links on `squabble-club.web.app` caught
   by `ContentView.onOpenURL` into `InviteInbox`, joined through `JoinSquabbleSheet`. Not yet:
   adding people by handle, leaving, archive/delete,
   editing.

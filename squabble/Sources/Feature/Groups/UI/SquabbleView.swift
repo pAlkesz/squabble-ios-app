@@ -14,7 +14,6 @@ struct SquabbleView: View {
     @State private var replyingTo: ChatMessage?
     @State private var deleting: ChatMessage?
     @State private var reporting: ChatMessage?
-    @State private var isInviting = false
     @FocusState private var isComposing: Bool
     #if DEBUG
     @Environment(DebugBalances.self) private var debugBalances: DebugBalances?
@@ -126,7 +125,6 @@ struct SquabbleView: View {
         } message: { _ in
             Text("We'll take a look. The author won't know it was you.", comment: "Chat: explanation in the report confirmation.")
         }
-        .squabbleInvite(groupID: group.id, isPresented: $isInviting)
     }
 
     @ToolbarContentBuilder
@@ -218,10 +216,9 @@ struct SquabbleView: View {
             VStack(spacing: 4) {
                 Text("Your squabble is ready", comment: "Squabble page: title while there are no bills yet.")
                     .font(.headline)
-                Text(memberLine(group))
-                    .font(.footnote)
-                    .foregroundStyle(.white.opacity(0.75))
-                    .multilineTextAlignment(.center)
+                if !group.isArchived {
+                    SquabbleInviteLink(group: group)
+                }
             }
             VStack(alignment: .leading, spacing: 12) {
                 Label {
@@ -242,24 +239,6 @@ struct SquabbleView: View {
             .padding(.horizontal, 18)
             .padding(.vertical, 14)
             .background(.white.opacity(0.08), in: .rect(cornerRadius: SquabbleMetrics.cornerRadius))
-            if !group.isArchived {
-                SquabbleInviteRow(group: group, onShowQRCode: showInvite)
-            }
         }
-    }
-
-    /// Unanimated: the overlay fades itself in.
-    private func showInvite() {
-        var transaction = Transaction()
-        transaction.disablesAnimations = true
-        withTransaction(transaction) { isInviting = true }
-    }
-
-    private func memberLine(_ group: SquabbleGroup) -> String {
-        let count = group.currentMembers.count
-        if count <= 1 {
-            return String(localized: "Just you so far. Squabbling alone is called thinking.", comment: "Squabble page: under the 'ready' title when the user is the only member.")
-        }
-        return String(localized: "\(count) members, zero bills. For now.", comment: "Squabble page: under the 'ready' title when there are other members.")
     }
 }

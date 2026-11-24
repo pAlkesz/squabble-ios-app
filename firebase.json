@@ -19,28 +19,56 @@
       ]
     }
   ],
-  "hosting": {
-    "public": "hosting",
-    "ignore": [
-      "firebase.json",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "/join/**",
-        "destination": "/join.html"
-      }
-    ],
-    "headers": [
-      {
-        "source": "/.well-known/apple-app-site-association",
-        "headers": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ]
-      }
-    ]
-  }
+  "hosting": [
+    {
+      "site": "squabble-club",
+      "public": "hosting",
+      "ignore": [
+        "firebase.json",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "/join/**",
+          "destination": "/join.html"
+        }
+      ],
+      "headers": [
+        {
+          "source": "/.well-known/apple-app-site-association",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "site": "squabble-9c1df",
+      "public": "hosting",
+      "ignore": [
+        "firebase.json",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "/join/**",
+          "destination": "/join.html"
+        }
+      ],
+      "headers": [
+        {
+          "source": "/.well-known/apple-app-site-association",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

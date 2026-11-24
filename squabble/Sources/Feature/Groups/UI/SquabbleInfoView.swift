@@ -7,7 +7,6 @@ struct SquabbleInfoView: View {
 
     @Environment(GroupsStore.self) private var groups
     @Environment(AuthSession.self) private var session
-    @State private var isInviting = false
 
     var body: some View {
         Group {
@@ -25,9 +24,6 @@ struct SquabbleInfoView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 header(group)
-                if !group.isArchived {
-                    SquabbleInviteRow(group: group, onShowQRCode: showInvite)
-                }
                 card(title: Text("Members · \(group.currentMembers.count)", comment: "Squabble page: header above the members, with how many there are.")) {
                     VStack(spacing: 0) {
                         ForEach(group.currentMembers) { member in
@@ -42,14 +38,6 @@ struct SquabbleInfoView: View {
         }
         // iOS 26's soft fade under the bar; iOS 27 no longer defaults to it.
         .scrollEdgeEffectStyle(.soft, for: .top)
-        .squabbleInvite(groupID: group.id, isPresented: $isInviting)
-    }
-
-    /// Unanimated: the overlay fades itself in.
-    private func showInvite() {
-        var transaction = Transaction()
-        transaction.disablesAnimations = true
-        withTransaction(transaction) { isInviting = true }
     }
 
     private func header(_ group: SquabbleGroup) -> some View {
@@ -61,6 +49,9 @@ struct SquabbleInfoView: View {
             Text(verbatim: CurrencyRow.detail(for: CurrencyOption(code: group.currencyCode)))
                 .font(.subheadline)
                 .foregroundStyle(.white.opacity(0.7))
+            if !group.isArchived {
+                SquabbleInviteLink(group: group)
+            }
         }
         .frame(maxWidth: .infinity)
         .padding(.top, 8)

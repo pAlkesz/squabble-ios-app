@@ -64,17 +64,6 @@
         }
       }
     },
-    "%lld members, zero bills. For now." : {
-      "comment" : "Squabble page: under the 'ready' title when there are other members.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld tag, nulla számla. Egyelőre."
-          }
-        }
-      }
-    },
     "%lld/%lld" : {
       "comment" : "Character counter under the handle field: characters used / limit.",
       "localizations" : {
@@ -558,17 +547,6 @@
         }
       }
     },
-    "Close" : {
-      "comment" : "Closes an overlay.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bezárás"
-          }
-        }
-      }
-    },
     "Confirm with Apple and your profile, payment details and photos are gone for good. No undo — not even we can bring them back." : {
       "comment" : "Delete account sheet: description above the Apple button.",
       "localizations" : {
@@ -1042,6 +1020,17 @@
         }
       }
     },
+    "Invite link and QR code" : {
+      "comment" : "Squabble page: VoiceOver label for the invite link, which opens the sheet with the QR code.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meghívó link és QR-kód"
+          }
+        }
+      }
+    },
     "Invite people" : {
       "comment" : "Squabble info: button that opens the invite link and QR code.",
       "localizations" : {
@@ -1093,17 +1082,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Épp most"
-          }
-        }
-      }
-    },
-    "Just you so far. Squabbling alone is called thinking." : {
-      "comment" : "Squabble page: under the 'ready' title when the user is the only member.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Egyelőre csak te vagy itt. Egyedül veszekedni gondolkodásnak hívják."
           }
         }
       }
@@ -1713,28 +1691,6 @@
         }
       }
     },
-    "Reset link" : {
-      "comment" : "Invite sheet: creator-only button that replaces the invite link.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Link visszaállítása"
-          }
-        }
-      }
-    },
-    "Reset the invite link?" : {
-      "comment" : "Invite sheet: title of the reset confirmation.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Visszaállítod a meghívó linket?"
-          }
-        }
-      }
-    },
     "Sand" : {
       "comment" : "Squabble background name, read by VoiceOver.",
       "localizations" : {
@@ -1801,17 +1757,6 @@
         }
       }
     },
-    "Share invite link" : {
-      "comment" : "Squabble page: VoiceOver label for the invite link, which opens the share sheet.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Meghívólink megosztása"
-          }
-        }
-      }
-    },
     "Share link" : {
       "comment" : "Invite sheet: button that opens the share sheet with the invite link.",
       "localizations" : {
@@ -1819,17 +1764,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Link megosztása"
-          }
-        }
-      }
-    },
-    "Show QR code" : {
-      "comment" : "Squabble page: VoiceOver label for the button beside the invite link that shows its QR code.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "QR-kód mutatása"
           }
         }
       }
@@ -2248,17 +2182,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nem töltődik be a csevegés. Próbáld újra egy kicsit később."
-          }
-        }
-      }
-    },
-    "The old link and QR code stop working. People already in stay in." : {
-      "comment" : "Invite sheet: message of the reset confirmation.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A régi link és QR-kód nem működik tovább. Aki már bent van, bent marad."
           }
         }
       }
