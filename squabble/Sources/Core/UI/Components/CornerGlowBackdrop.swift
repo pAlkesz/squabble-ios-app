@@ -9,48 +9,65 @@ struct CornerGlowBackdrop: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
+        let colors = colors
         // Driven by the clock so an animated palette change can't cancel the drift.
         TimelineView(.animation(paused: reduceMotion)) { context in
             MeshGradient(
-                width: 3,
-                height: 4,
-                points: reduceMotion ? Self.resting : Self.points(at: context.date),
-                colors: [
-                    palette.mid, palette.high, palette.top,
-                    palette.mid, palette.mid, palette.high,
-                    palette.deep, palette.mid, palette.mid,
-                    palette.deep, palette.deep, palette.deep,
-                ]
+                width: Self.columns,
+                height: Self.bands.count,
+                points: Self.points(phase: reduceMotion ? 0 : Self.phase(at: context.date)),
+                colors: colors
             )
         }
         .ignoresSafeArea()
     }
 
-    private static func points(at date: Date) -> [SIMD2<Float>] {
-        let cycle = date.timeIntervalSinceReferenceDate / driftPeriod
-        let progress = Float((1 - cos(2 * .pi * cycle)) / 2)
-        return zip(resting, drifted).map { rest, drift in
-            rest + (drift - rest) * progress
+    /// Bands that fade towards the left, so the light still comes from the right corner.
+    private var colors: [Color] {
+        Self.bands.flatMap { band in
+            (0..<Self.columns).map { column in
+                let fromRight = 1 - Double(column) / Double(Self.columns - 1)
+                return color(at: band.shade + fromRight * Self.leftwardFade)
+            }
+        }
+    }
+
+    /// 0 is the palette's brightest shade, 1 its deepest.
+    private func color(at shade: Double) -> Color {
+        switch shade {
+        case ..<0.2: palette.top.mix(with: palette.high, by: shade / 0.2, in: .perceptual)
+        case ..<0.5: palette.high.mix(with: palette.mid, by: (shade - 0.2) / 0.3, in: .perceptual)
+        case ..<1: palette.mid.mix(with: palette.deep, by: (shade - 0.5) / 0.5, in: .perceptual)
+        default: palette.deep
+        }
+    }
+
+    private static let columns = 5
+    private static let leftwardFade = 0.5
+
+    /// Each band's height on the page, its shade at the right edge and how far it rolls. A
+    /// lit band between darker ones is what makes the waves show; the edges stay put.
+    private static let bands: [(y: Double, shade: Double, swell: Double)] = [
+        (0, 0.05, 0), (0.17, 0.38, 0.05), (0.32, 0.22, 0.09),
+        (0.47, 0.62, 0.09), (0.62, 0.48, 0.08), (0.80, 0.95, 0.06), (1, 1, 0),
+    ]
+
+    private static func phase(at date: Date) -> Double {
+        // Sways back and forth rather than travelling, so it never reads as scrolling.
+        sin(2 * .pi * date.timeIntervalSinceReferenceDate / driftPeriod) * 0.9
+    }
+
+    private static func points(phase: Double) -> [SIMD2<Float>] {
+        bands.enumerated().flatMap { index, band in
+            (0..<columns).map { column in
+                let x = Double(column) / Double(columns - 1)
+                let wave = sin(x * 1.5 * .pi + Double(index) * 0.6 + phase)
+                return SIMD2(Float(x), Float(band.y + band.swell * wave))
+            }
         }
     }
 
     private static let driftPeriod: TimeInterval = 22
-
-    // The columns lean right so the bright corner stays behind the bar's trailing picture
-    // and the title beside it keeps its contrast.
-    private static let resting: [SIMD2<Float>] = [
-        [0.0, 0.0], [0.72, 0.0], [1.0, 0.0],
-        [0.0, 0.20], [0.54, 0.22], [1.0, 0.26],
-        [0.0, 0.50], [0.52, 0.54], [1.0, 0.62],
-        [0.0, 1.0], [0.5, 1.0], [1.0, 1.0],
-    ]
-
-    private static let drifted: [SIMD2<Float>] = [
-        [0.0, 0.0], [0.68, 0.0], [1.0, 0.0],
-        [0.0, 0.23], [0.48, 0.25], [1.0, 0.31],
-        [0.0, 0.46], [0.58, 0.49], [1.0, 0.68],
-        [0.0, 1.0], [0.5, 1.0], [1.0, 1.0],
-    ]
 }
 
 #Preview {
