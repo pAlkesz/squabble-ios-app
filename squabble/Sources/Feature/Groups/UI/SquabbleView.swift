@@ -41,7 +41,11 @@ struct SquabbleView: View {
         .foregroundStyle(.white)
         .navigationBarTitleDisplayMode(.inline)
         .background { SquabbleMoodBackdrop(groupID: groupID) }
-        .task { await chat.observe() }
+        .task(id: isAwaitingServer) { await chat.observe(isAwaitingServer: isAwaitingServer) }
+    }
+
+    private var isAwaitingServer: Bool {
+        groups.group(id: groupID)?.isAwaitingServer ?? false
     }
 
     private func content(_ group: SquabbleGroup) -> some View {

@@ -52,8 +52,8 @@ nonisolated struct PagedFeed<Item: FeedItem>: Equatable {
         if !page.isFromCache, !page.isFull { hasReachedStart = true }
     }
 
-    /// The listener is gone; show what there is.
-    mutating func fail() {
+    /// Nothing to wait for; show what there is.
+    mutating func stopWaiting() {
         hasLoaded = true
     }
 }

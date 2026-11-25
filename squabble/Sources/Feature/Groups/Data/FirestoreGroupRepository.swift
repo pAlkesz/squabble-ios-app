@@ -26,7 +26,10 @@ nonisolated final class FirestoreGroupRepository: GroupRepository {
                     // Estimated, so a group created offline sorts by now rather than by nothing.
                     let data = Self.convertingTimestamps(document.data(with: .estimate))
                     do {
-                        return try SquabbleGroup(id: document.documentID, firestoreData: data)
+                        var group = try SquabbleGroup(id: document.documentID, firestoreData: data)
+                        // Unestimated, the creation time is null until the server has set it.
+                        group.isAwaitingServer = document.get(SquabbleGroup.Field.createdAt) is NSNull
+                        return group
                     } catch {
                         AppLog.error(error, "Unreadable group")
                         return nil

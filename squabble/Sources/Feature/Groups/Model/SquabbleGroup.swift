@@ -24,11 +24,13 @@ nonisolated struct SquabbleGroup: Identifiable, Equatable, Sendable {
     var memberIds: [String]
     /// Current, former and deleted members, by uid.
     var members: [String: GroupMember]
-    /// Minted by the server the first time a member shares the squabble; see `InviteLink`.
+    /// Minted by the server when the squabble reaches it; see `InviteLink`.
     var inviteCode: String?
     /// Minor units of `currencyCode` by uid, kept by the server; zeros are left out. Nil until
     /// the squabble's first bill.
     var balances: [String: Int64]?
+    /// Only just created here: until the server has it, its chat and bills are refused.
+    var isAwaitingServer = false
 
     func balance(of uid: String) -> Money {
         Money(minorUnits: balances?[uid] ?? 0, currencyCode: currencyCode)

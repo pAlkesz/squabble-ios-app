@@ -123,6 +123,28 @@ struct ChatStoreTests {
 
     private func ids(_ range: Range<Int>) -> [String] { range.map { "m\($0)" } }
 
+    @Test func aRefusalBeforeTheSquabbleReachesTheServerIsNotAFailure() async {
+        repository.latestError = ChatError.unavailable
+        let store = ChatStore(groupID: "g1")
+        await store.observe(isAwaitingServer: true)
+        #expect(store.hasLoaded)
+        #expect(!store.failed)
+        repository.latestError = nil
+        repository.latest = [page(0..<3)]
+        await store.observe()
+        #expect(store.messages.map(\.id) == ids(0..<3))
+    }
+
+    @Test func aRefusalOtherwiseFailsUntilItWorksAgain() async {
+        repository.latestError = ChatError.unavailable
+        let store = ChatStore(groupID: "g1")
+        await store.observe()
+        #expect(store.failed)
+        repository.latestError = nil
+        await store.observe()
+        #expect(!store.failed)
+    }
+
     @Test func olderPagesGoBeforeTheLivePageWithoutDuplicates() async {
         repository.latest = [page(100..<150)]
         repository.olderPages = [page(90..<101, text: "stale")]

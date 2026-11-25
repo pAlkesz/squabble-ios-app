@@ -3,6 +3,7 @@ import Foundation
 
 final class FakeChatRepository: ChatRepository, @unchecked Sendable {
     var latest: [FeedPage<ChatMessage>] = []
+    var latestError: Error?
     var olderPages: [FeedPage<ChatMessage>] = []
     private(set) var sent: [ChatMessage] = []
     private(set) var reactions: [(emoji: String?, uid: String, messageID: String)] = []
@@ -11,9 +12,10 @@ final class FakeChatRepository: ChatRepository, @unchecked Sendable {
 
     func latestMessages(in groupID: String, limit: Int) -> AsyncThrowingStream<FeedPage<ChatMessage>, Error> {
         let pages = latest
+        let error = latestError
         return AsyncThrowingStream { continuation in
             pages.forEach { continuation.yield($0) }
-            continuation.finish()
+            continuation.finish(throwing: error)
         }
     }
 

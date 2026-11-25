@@ -29,9 +29,16 @@ final class ChatStore {
     var canLoadOlder: Bool { messageFeed.canLoadOlder || billFeed.canLoadOlder }
     var messages: [ChatMessage] { messageFeed.items }
 
-    func observe() async {
-        async let messages: Void = observeMessages()
-        async let bills: Void = observeBills()
+    /// For as long as `isAwaitingServer`, a refusal only means the squabble hasn't got there yet:
+    /// call again once it has. Offline, what's written meanwhile shows from the cache.
+    func observe(isAwaitingServer: Bool = false) async {
+        failed = false
+        if isAwaitingServer {
+            messageFeed.stopWaiting()
+            billFeed.stopWaiting()
+        }
+        async let messages: Void = observeMessages(isAwaitingServer)
+        async let bills: Void = observeBills(isAwaitingServer)
         _ = await (messages, bills)
     }
 
@@ -116,29 +123,31 @@ final class ChatStore {
         }
     }
 
-    private func observeMessages() async {
+    private func observeMessages(_ isAwaitingServer: Bool) async {
         do {
             for try await page in repository.latestMessages(in: groupID, limit: Self.pageSize) {
                 messageFeed.show(latest: page)
                 merge()
             }
         } catch {
+            guard !isAwaitingServer, !Task.isCancelled else { return }
             AppLog.error(error, "Chat listener failed")
             failed = true
-            messageFeed.fail()
+            messageFeed.stopWaiting()
         }
     }
 
-    private func observeBills() async {
+    private func observeBills(_ isAwaitingServer: Bool) async {
         do {
             for try await page in billRepository.latestBills(in: groupID, limit: Self.pageSize) {
                 billFeed.show(latest: page)
                 merge()
             }
         } catch {
+            guard !isAwaitingServer, !Task.isCancelled else { return }
             AppLog.error(error, "Bills listener failed")
             failed = true
-            billFeed.fail()
+            billFeed.stopWaiting()
         }
     }
 
