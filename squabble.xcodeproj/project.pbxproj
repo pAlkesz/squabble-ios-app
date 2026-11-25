@@ -43,6 +43,7 @@
 		60693ABC304CD73D00C6DE98 /* Exceptions for "squabble" folder in "squabble" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				"Info-Debug.plist",
 				Info.plist,
 			);
 			target = 60693189304CD73D00C6DE98 /* squabble */;
@@ -474,7 +475,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = squabble/Info.plist;
+				INFOPLIST_FILE = "squabble/Info-Debug.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Squabble;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Take a photo for your avatar, so people know exactly who's asking for their money.";

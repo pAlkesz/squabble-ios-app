@@ -7,7 +7,8 @@ rules tests.
 
 Development has one phone and one Apple Account, and won't use other people's accounts or
 phone numbers. Features with several members are tested with **fake people on a local
-Firebase emulator**, one simulator per person.
+Firebase emulator**, one simulator per person, or on the
+phone over Wi-Fi.
 
 ## Using it
 
@@ -15,29 +16,53 @@ Firebase emulator**, one simulator per person.
    the Firebase CLI and `npm install` in `functions/`) and seeds them. The repo's own rules and
    functions run, so undeployed changes can be tried. Nothing is kept between runs;
    `node emulator/seed.mjs` resets it while running.
-2. In a Debug simulator build, the **LIVE / LOCAL** capsule on the sign-in screen switches
+2. In a Debug build, the **LIVE / LOCAL** capsule on the sign-in screen switches
    (quitting the app), and on LOCAL lists the people to sign in as. Or launch straight into it
    with `xcrun simctl launch <device> com.palkesz.squabble -useLocalEmulator YES`.
-3. Invite links work too: `xcrun simctl openurl <device> https://squabble-club.web.app/join/<code>`
+3. **On a phone:** run `emulator/start.sh --wifi`, which also lets devices on the same network
+   in and prints the Mac's address. Run the app from Xcode, sign out, tap LIVE, choose the local
+   emulator and enter that address (asked once; change it in the same menu when it moves). Allow
+   Local Network, and allow Java and Node through the Mac's firewall if it asks. Anyone on that
+   network can reach the fake data meanwhile, so use it on a trusted one and stop it after.
+4. Invite links work too: `xcrun simctl openurl <device> https://squabble-club.web.app/join/<code>`
    (the app looks the code up in the emulator).
 
 | Person | In |
 | --- | --- |
+| **Emma** | **Every example below**; start here |
 | Anna | Flat (started it), Vienna weekend (started it), Ghosted dinner |
 | Béla | Flat, Vienna weekend |
 | Cili | Vienna weekend, Ghosted dinner (started it) |
 | Dóra | Nothing, for joining: `local-flat`, `local-vienna`, `local-ghost` |
 | Someone new | A fresh account without a profile, for onboarding |
 
-Flat is brand new and empty; Vienna weekend has 130 messages (three pages); Ghosted dinner has
-a deleted member. Cili is deep in debt there.
+Emma's squabbles, one per state a screen can be in:
+
+| Squabble | State |
+| --- | --- |
+| Just me | Nobody else, nothing in it |
+| Flat | People, no content |
+| Vienna weekend | Full: bills and 130 messages (three pages) |
+| All square | Bills, everyone at zero |
+| Ski trip | Emma owes a lot |
+| Coffee run | Emma owes €1.90 |
+| Birthday bash | Emma is owed a lot |
+| Forint flat | HUF, no decimals |
+| The whole extended family reunion, 2026 | 20 people, long names and titles |
+| All talk | Messages, no bills |
+| Ghosted dinner | A deleted member; Cili deep in debt |
+| Second thoughts | An edited bill, a deleted one, a deleted message |
+| Old festival | Archived with an open debt |
 
 ## Rules
 
 - **It can't reach live.** The project id is `demo-squabble`, which the emulators refuse to
   connect to anything real, and the app's Firebase options are made up (`LocalEmulator`).
   Sign-in and cache are separate from live's. Analytics and Crashlytics are off.
-- **Debug simulator builds only**; the code is compiled out of everything else. Its few
+- **Debug builds only**; the code, and the permission to talk to the local network
+  (`Info-Debug.plist`), aren't in Release builds.
+- Turning Analytics and Crashlytics off is remembered by their SDKs, so a live launch turns them
+  back on. Its few
   strings aren't localized.
 - The fake people's password is in the repo on purpose: it opens nothing outside the emulator.
 - Firestore's `useEmulator` leaves TLS on in this SDK (12.19), so the host is set through
@@ -45,6 +70,7 @@ a deleted member. Cili is deep in debt there.
 
 ## Not covered
 
+- Photos (avatars, squabble pictures): the rules only accept live Storage addresses.
 - What needs Apple: sign-in, account deletion (it re-authenticates with Apple), camera, haptics
   and real invite links. These are checked on the phone against live.
 - Push notifications (once they exist).

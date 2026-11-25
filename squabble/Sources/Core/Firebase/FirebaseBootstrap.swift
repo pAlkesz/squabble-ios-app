@@ -1,4 +1,6 @@
+import FirebaseAnalytics
 import FirebaseCore
+import FirebaseCrashlytics
 import OSLog
 
 enum FirebaseBootstrap {
@@ -12,7 +14,7 @@ enum FirebaseBootstrap {
     static func configure() {
         guard !isConfigured else { return }
         isConfigured = true
-        #if DEBUG && targetEnvironment(simulator)
+        #if DEBUG
         if LocalEmulator.isEnabled {
             LocalEmulator.configure()
             return
@@ -23,5 +25,9 @@ enum FirebaseBootstrap {
             return
         }
         FirebaseApp.configure()
+        // Their SDKs remember being turned off across launches and app updates, and
+        // `LocalEmulator` turns them off.
+        Analytics.setAnalyticsCollectionEnabled(true)
+        Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(true)
     }
 }

@@ -535,8 +535,11 @@ xcodebuild test -project squabble.xcodeproj -scheme squabble \
 Test with several people (local Firebase emulator, fake users; `docs/specs/testing.md`):
 
 ```bash
-emulator/start.sh
+emulator/start.sh          # --wifi to let a phone in
 ```
+
+Debug builds use `squabble/Info-Debug.plist` (local networking, for the emulator); any other
+key goes in both it and `Info.plist`.
 
 Test the security rules (after any rules change, before deploying):
 

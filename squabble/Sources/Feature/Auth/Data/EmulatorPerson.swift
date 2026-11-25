@@ -1,10 +1,10 @@
-#if DEBUG && targetEnvironment(simulator)
+#if DEBUG
 import FirebaseAuth
 import Foundation
 
 /// The fake people `emulator/seed.mjs` puts in the local emulator.
 nonisolated enum EmulatorPerson: String, CaseIterable, Identifiable {
-    case anna, bela, cili, dora
+    case emma, anna, bela, cili, dora
 
     var id: String { rawValue }
 

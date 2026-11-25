@@ -11,7 +11,7 @@ struct SignInView: View {
             SquabbleBackdrop()
             content
         }
-        #if DEBUG && targetEnvironment(simulator)
+        #if DEBUG
         .overlay(alignment: .topTrailing) { EmulatorSignInMenu() }
         #endif
         .alert(
