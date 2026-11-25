@@ -22,7 +22,6 @@ struct HomeTotalTests {
         )
         #expect(total.headline == Money(minorUnits: 300, currencyCode: "HUF"))
         #expect(total.others == [Money(minorUnits: -700, currencyCode: "USD")])
-        #expect(!total.isApproximate)
     }
 
     @Test func withoutRatesTheOnlyBalanceIsTheHeadlineWhateverItsCurrency() {
@@ -36,12 +35,7 @@ struct HomeTotalTests {
         // 1,000 HUF − €10.00 (4,000 HUF) + $2.50 (€2.00, 800 HUF)
         let total = total([group("a", "HUF", 1000), group("b", "EUR", -1000), group("c", "USD", 250)], rates: rates)
         #expect(total.headline == Money(minorUnits: -2200, currencyCode: "HUF"))
-        #expect(total.isApproximate)
         #expect(total.others.isEmpty)
-    }
-
-    @Test func oneCurrencyStaysExact() {
-        #expect(!total([group("a", "HUF", 1000), group("b", "EUR", 0)], rates: rates).isApproximate)
     }
 
     @Test func aCurrencyWithoutARateIsShownSeparately() {
@@ -54,7 +48,6 @@ struct HomeTotalTests {
         let total = total([group("a", "RSD", 100), group("b", "EUR", 200)], home: "RSD", rates: rates)
         #expect(total.headline == Money(minorUnits: 100, currencyCode: "RSD"))
         #expect(total.others == [Money(minorUnits: 200, currencyCode: "EUR")])
-        #expect(!total.isApproximate)
     }
 
     @Test func roundsOnceAtTheEnd() {

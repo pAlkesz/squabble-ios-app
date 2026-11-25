@@ -411,8 +411,7 @@ stutters on a device even when the simulator looks smooth.
   The avatar, a glass search pill and a `+` for a new squabble are real **toolbar items**
   (search and `+` have no destination yet). Below them `TotalBalanceView`, the net of
   everything owed either way, labelled "Total · <code>": the stored balances
-  converted into the home currency at the ECB's latest rates (`HomeTotal`, `Feature/Rates`),
-  marked ≈ when anything was converted.
+  converted into the home currency at the ECB's latest rates (`HomeTotal`, `Feature/Rates`).
 - **Balance backdrop:** `BalanceMood` (`Feature/Home/Model`) turns the total into a signed
   intensity (−1…1) and a `BackdropPalette` for `SquabbleBackdrop` — hue says which way the
   money flows, saturation how much. Petrol at zero (deliberately not a Revolut-ish royal

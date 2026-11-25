@@ -24,8 +24,8 @@ either direction. There's no tab bar; squabbles are pushed from home like conver
   at the ECB's latest daily rates (`HomeTotal`, `RatesStore`; see
   [Bills](bills.md#exchange-rates)). Added up exactly and rounded once. Display only: what
   people owe stays in each squabble's currency.
-- With anything converted it's marked **≈** (VoiceOver: "About"), as it moves with the rates.
-  With one currency it's exact.
+- A converted total isn't marked as approximate (an "≈" was tried and dropped, Nov 2026).
+- It's centred between the toolbar and the first tile.
 - A currency without a rate is listed under the total instead of guessed. Before any rates have
   arrived that's all of them, except that a lone balance in another currency is the headline
   rather than a zero.

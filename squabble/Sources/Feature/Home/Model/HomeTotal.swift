@@ -5,8 +5,6 @@ import Foundation
 /// headline rather than guessed. Display only: nobody owes this number.
 nonisolated struct HomeTotal: Equatable, Sendable {
     let headline: Money
-    /// Something in it was converted, so it moves with the rates.
-    let isApproximate: Bool
     /// What couldn't be converted. Never zero; by currency code.
     let others: [Money]
 
@@ -27,16 +25,13 @@ nonisolated struct HomeTotal: Equatable, Sendable {
         let converted = foreign.compactMap { rates?.amount(of: $0, in: homeCurrencyCode) }
         if !converted.isEmpty, let sum = Money(rounding: converted.reduce(home.amount, +), currencyCode: homeCurrencyCode) {
             headline = sum
-            isApproximate = true
             others = foreign.filter { rates?.amount(of: $0, in: homeCurrencyCode) == nil }
         } else if home.minorUnits == 0, foreign.count == 1, let only = foreign.first {
             // Better than a zero.
             headline = only
-            isApproximate = false
             others = []
         } else {
             headline = home
-            isApproximate = false
             others = foreign
         }
     }

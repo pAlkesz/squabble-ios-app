@@ -48,10 +48,13 @@ struct HomeView: View {
                     TotalBalanceView(
                         amount: balance,
                         currencyCode: headlineCurrencyCode,
-                        isApproximate: isApproximate,
                         others: total.others
                     )
                         .frame(maxWidth: .infinity)
+                        // Uneven because the number's line box reaches below its digits: what
+                        // you see is centred between the toolbar and the first tile.
+                        .padding(.top, 52)
+                        .padding(.bottom, 28)
                     #if DEBUG
                         .onLongPressGesture {
                             debugBalance = debugBalance == nil ? 0 : nil
@@ -63,7 +66,6 @@ struct HomeView: View {
                     squabbleList
                 }
                 .padding(.horizontal, 16)
-                .padding(.top, 72)
             }
             // iOS 26's soft fade under the bar; iOS 27 no longer defaults to it.
             .scrollEdgeEffectStyle(.soft, for: .top)
@@ -288,13 +290,6 @@ struct HomeView: View {
         if debugBalance != nil { return homeCurrencyCode }
         #endif
         return total.headline.currencyCode
-    }
-
-    private var isApproximate: Bool {
-        #if DEBUG
-        if debugBalance != nil { return false }
-        #endif
-        return total.isApproximate
     }
 
     private var total: HomeTotal {
