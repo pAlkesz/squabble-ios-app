@@ -296,7 +296,7 @@
       }
     },
     "Anyone with this link or QR code can join. They'll need the app, no freeloaders." : {
-      "comment" : "Invite sheet: explanation shown to other members.",
+      "comment" : "Invite sheet: what the link does.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
