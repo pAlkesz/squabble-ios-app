@@ -24,8 +24,7 @@ newest at the bottom. The composer sits at the bottom.
   <title>" (with the converted amount when the bill is in another currency), the avatars
   of everyone sharing it, and the time.
 - **Settlement entries:** "Marked as paid" pill, the amount large, "To <name>".
-- **Empty:** the ready state (picture, "Your squabble is ready", next steps), with an
-  invite action while the user is alone.
+- **Empty:** the ready state ("Your squabble is ready", the invite link, next steps).
 - The bar shows the name and, under it, the user's standing ("You're settled up", "You
   owe 12 €", "You're owed 30 €").
 
@@ -45,6 +44,9 @@ newest at the bottom. The composer sits at the bottom.
 
 ## Decisions
 
+- **Settle up goes at the right of the composer** (Nov 2026, planned with settlements): a
+  small labelled button, shown only when there's something to settle and hidden while
+  typing, so Send has the space.
 - **Add a bill lives in the composer** (Nov 2026; on the left, leaving the right free for a
   future Settle up shortcut): a button at the left of the message
   field, like iMessage's `+`. Revolut stacks a full-width button above the field, which

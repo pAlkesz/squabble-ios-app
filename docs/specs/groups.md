@@ -135,12 +135,12 @@ Laid out like Revolut's group pages (Nov 2026):
   · CODE" and, on the right on the name's line, when it was last active (`ActivityDate`: the time today, the
   weekday within the last week, then the date, with the year only for earlier years).
 - **Squabble** (`SquabbleView`): the name in the bar with a subtitle ("No bills yet"), the
-  picture on the right of the bar, and **Add a bill** pinned at the bottom (disabled until
-  bills exist). With no bills, the middle says "Your squabble is ready", with a joke line
-  about being alone or about the member count and a card of what to do next.
+  picture on the right of the bar, and the chat with its composer below (see [Chat](chat.md)).
+  Before any message, the middle says "Your squabble is ready", with the invite link under
+  it and a card of what to do next.
 - **Info** (`SquabbleInfoView`, from the picture in the bar): the picture, name and
-  currency, and the members with "You" and "Started it" tags. Editing, inviting and
-  leaving will go here.
+  currency, the invite link, and the members with "You" and "Started it" tags. Settings
+  (planned: editing, leaving, archiving, and the creator's **Reset link**) will go here.
 
 Adding people (planned, from the info page):
 

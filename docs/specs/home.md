@@ -78,6 +78,11 @@ rows. Rows have a 48 pt picture, a title and a grey subtitle, and no chevron.
 - The tile stays hidden until the first answer from Firestore, so a returning user never
   sees the empty state flash.
 
+**Tile ideas, undecided** (Nov 2026), roughly by value, all waiting on bills: **You owe /
+Owed to you** (the people behind the total, with nudge and pay), **Expenses** (recent bills
+across squabbles), **People** (a net balance per person), **Activity**. No quick-action row
+like Revolut's: `+` already covers the one main action.
+
 ## Home currency
 
 - Stored in `users/{uid}/private/preferences` as `homeCurrency` (an ISO 4217 code).

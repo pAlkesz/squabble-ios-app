@@ -47,3 +47,6 @@ firestore-debug.log
 # Cloud Functions
 functions/node_modules/
 functions/lib/
+
+# Reference screenshots kept on this machine only (they hold personal data)
+design/local/

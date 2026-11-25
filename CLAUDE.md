@@ -22,7 +22,7 @@ well-structured, and easy for the next agent session to pick up.
 - Language: **Swift 6** (`SWIFT_VERSION = 6.0`) — full strict concurrency.
 - Architecture: **Model-View (MV)**. See "Architecture" below — no ViewModels.
 - Package manager: **Swift Package Manager** only (no CocoaPods, no Carthage).
-- Xcode 26.6. Bundle ID `com.palkesz.squabble` (tests: `.squabbleTests`,
+- Xcode 27.1. Bundle ID `com.palkesz.squabble` (tests: `.squabbleTests`,
   `.squabbleUITests`).
 - Xcode project uses **file-system-synchronized groups** — add/move/delete files and
   folders on disk and the target picks them up automatically. Don't hand-edit
@@ -543,6 +543,12 @@ specs say what the app does.
   as the behaviour change.
 - A new feature starts as a *Draft* spec with its open questions; settle them with the
   user before building, then mark it *Built*.
+
+## Reference screenshots
+
+Revolut screenshots the user has pasted live in `design/local/revolut/` (gitignored, on this
+machine only; `INDEX.md` there describes each). They show personal data: never commit, upload
+or publish them.
 
 ## Working Agreements for Claude
 
