@@ -1,7 +1,7 @@
 # Testing with several people
 
-**Status:** Partly built (Nov 2026). Built: the local emulator, its fake people, and "Sign in
-as". Not built: security rules tests.
+**Status:** Built (Nov 2026): the local emulator, its fake people, "Sign in as", and security
+rules tests.
 
 ## Summary
 
@@ -54,7 +54,18 @@ a deleted member. Someone deep in debt comes with bills.
 
 - Opening an invite link with the `squabble-club.web.app` address into the app.
 
+## Security rules tests
+
+`npm test` in `emulator/` (once `npm install` has been run there, and with `start.sh` stopped,
+as both use the same ports) tests `firestore.rules` and `storage.rules` against the emulator.
+
+- **Every rules change comes with tests**, for what's allowed and what's refused.
+- Checked by removing each Firestore condition in turn (Nov 2026): a test fails for every one
+  except the type checks that a later line already implies.
+- Packages (dev-only, never in the app or the functions): `@firebase/rules-unit-testing` and
+  `firebase`, the JS SDK it requires. npm reports `@grpc/grpc-js` advisories in the latter with
+  no fixed version (Nov 2026); accepted, since it only talks to this Mac.
+
 ## Open questions
 
-- **Security rules tests** against the same emulator need the dev-only npm package
-  `@firebase/rules-unit-testing`. OK to add it?
+None.

@@ -534,6 +534,12 @@ Test with several people (local Firebase emulator, fake users; `docs/specs/testi
 emulator/start.sh
 ```
 
+Test the security rules (after any rules change, before deploying):
+
+```bash
+npm --prefix emulator test
+```
+
 To see the app running, prefer the iOS Simulator tooling (attach the live panel, build,
 launch) over describing manual steps.
 

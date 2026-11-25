@@ -50,3 +50,6 @@ functions/lib/
 
 # Reference screenshots kept on this machine only (they hold personal data)
 design/local/
+
+# Emulator tooling
+emulator/node_modules/

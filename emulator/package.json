@@ -1,0 +1,15 @@
+{
+  "name": "squabble-emulator",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.12"
+  },
+  "scripts": {
+    "test": "cd .. && firebase emulators:exec --only firestore,storage --project demo-squabble \"node --test --test-concurrency=1 emulator/rules/*.test.mjs\""
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^6.0.0",
+    "firebase": "^13.4.0"
+  }
+}
