@@ -19,6 +19,13 @@ nonisolated enum ChatEntry: Identifiable, Equatable, Sendable {
         }
     }
 
+    var isPending: Bool {
+        switch self {
+        case .message(let message): message.isPending
+        case .bill(let bill): bill.isPending
+        }
+    }
+
     /// Both feeds in one, oldest first. Where one has been loaded further back than the other,
     /// it waits for it, so nothing turns up later in the middle of what's been read.
     static func merged(_ messages: PagedFeed<ChatMessage>, _ bills: PagedFeed<Bill>, now: Date = .now) -> [ChatEntry] {

@@ -89,6 +89,9 @@ groups/{gid}/messages/{messageId}
   (a long time offline), the timeline starts over from it. Only the server can say where a
   chat begins, never the cache. A page loads once the scroll settles near the top, and the
   list stays on the message it was on.
+- **A chat opens already at the bottom**, without scrolling there (Nov 2026): the list isn't
+  mounted until both feeds have loaded, and catching up from the cache to the server jumps.
+  Only new entries while live, or your own, scroll in.
 - **Sending bumps the squabble's `updatedAt`** in the same batch (Nov 2026), so "most
   recently active" includes chat. It costs one write, and a group read per listening member,
   per message.

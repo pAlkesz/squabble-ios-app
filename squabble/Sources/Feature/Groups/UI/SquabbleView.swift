@@ -46,65 +46,72 @@ struct SquabbleView: View {
 
     private func content(_ group: SquabbleGroup) -> some View {
         ScrollViewReader { proxy in
-            ScrollView {
-                LazyVStack(spacing: 4) {
-                    ForEach(ChatTimeline.rows(for: chat.entries)) { row in
-                        switch row {
-                        case .day(let day):
-                            ChatDayHeader(day: day)
-                        case .message(let message, let startsRun, let endsRun):
-                            messageRow(message, startsRun: startsRun, endsRun: endsRun, in: group, proxy: proxy)
-                                .id(message.id)
-                        case .bill(let bill):
-                            BillCard(bill: bill, group: group, myUID: session.user?.id) {
-                                isComposing = false
-                                openBill = OpenBill(id: bill.id)
+            // Mounted with its content, so it opens at the bottom rather than scrolling there.
+            if !chat.hasLoaded {
+                Color.clear
+            } else {
+                ScrollView {
+                    LazyVStack(spacing: 4) {
+                        ForEach(ChatTimeline.rows(for: chat.entries)) { row in
+                            switch row {
+                            case .day(let day):
+                                ChatDayHeader(day: day)
+                            case .message(let message, let startsRun, let endsRun):
+                                messageRow(message, startsRun: startsRun, endsRun: endsRun, in: group, proxy: proxy)
+                                    .id(message.id)
+                            case .bill(let bill):
+                                BillCard(bill: bill, group: group, myUID: session.user?.id) {
+                                    isComposing = false
+                                    openBill = OpenBill(id: bill.id)
+                                }
+                                .id(bill.id)
                             }
-                            .id(bill.id)
                         }
                     }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .frame(maxWidth: 720)
+                    .frame(maxWidth: .infinity)
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .frame(maxWidth: 720)
-                .frame(maxWidth: .infinity)
-            }
-            .defaultScrollAnchor(.bottom)
-            // An older page is added above, which would leave the list at the very top of it:
-            // stay on what was first. Loading waits for the scroll to settle, because its
-            // momentum would override this.
-            .onChange(of: chat.olderPageAnchor) { _, anchor in
-                guard let anchor else { return }
-                proxy.scrollTo(anchor, anchor: .top)
-            }
-            .onScrollPhaseChange { _, phase in
-                isSettled = phase == .idle
-            }
-            .onScrollGeometryChange(for: Bool.self) { geometry in
-                geometry.contentOffset.y + geometry.contentInsets.top < Self.olderPageDistance
-            } action: { _, isNearTop in
-                self.isNearTop = isNearTop
-            }
-            // Also once the connection comes back.
-            .task(id: OlderPageTrigger(isAtTop: isNearTop && isSettled, isLive: chat.isLive)) {
-                if isNearTop, isSettled { await chat.loadOlder() }
-            }
-            .overlay(alignment: .top) {
-                if chat.isLoadingOlder {
-                    ProgressView().tint(.white).padding(.top, 8)
+                .defaultScrollAnchor(.bottom)
+                // An older page is added above, which would leave the list at the very top of it:
+                // stay on what was first. Loading waits for the scroll to settle, because its
+                // momentum would override this.
+                .onChange(of: chat.olderPageAnchor) { _, anchor in
+                    guard let anchor else { return }
+                    proxy.scrollTo(anchor, anchor: .top)
                 }
-            }
-            .scrollDismissesKeyboard(.interactively)
-            // iOS 26's soft fade under the bar; iOS 27 no longer defaults to it.
-            .scrollEdgeEffectStyle(.soft, for: [.top, .bottom])
-            .overlay {
-                if chat.hasLoaded, chat.entries.isEmpty {
-                    emptyState(group)
+                .onScrollPhaseChange { _, phase in
+                    isSettled = phase == .idle
                 }
-            }
-            .onChange(of: chat.entries.last?.id) { _, id in
-                guard let id else { return }
-                withAnimation(.snappy) { proxy.scrollTo(id, anchor: .bottom) }
+                .onScrollGeometryChange(for: Bool.self) { geometry in
+                    geometry.contentOffset.y + geometry.contentInsets.top < Self.olderPageDistance
+                } action: { _, isNearTop in
+                    self.isNearTop = isNearTop
+                }
+                // Also once the connection comes back.
+                .task(id: OlderPageTrigger(isAtTop: isNearTop && isSettled, isLive: chat.isLive)) {
+                    if isNearTop, isSettled { await chat.loadOlder() }
+                }
+                .overlay(alignment: .top) {
+                    if chat.isLoadingOlder {
+                        ProgressView().tint(.white).padding(.top, 8)
+                    }
+                }
+                .scrollDismissesKeyboard(.interactively)
+                // iOS 26's soft fade under the bar; iOS 27 no longer defaults to it.
+                .scrollEdgeEffectStyle(.soft, for: [.top, .bottom])
+                .overlay {
+                    if chat.entries.isEmpty {
+                        emptyState(group)
+                    }
+                }
+                .onChange(of: ChatEnd(id: chat.entries.last?.id, isLive: chat.isLive)) { old, new in
+                    guard let id = new.id, id != old.id else { return }
+                    // Catching up from the cache to the server isn't news, so it doesn't move.
+                    let isNews = old.isLive || chat.entries.last?.isPending == true
+                    withAnimation(isNews ? .snappy : nil) { proxy.scrollTo(id, anchor: .bottom) }
+                }
             }
         }
         .navigationTitle(Text(verbatim: group.name))
@@ -248,6 +255,11 @@ struct SquabbleView: View {
 
     private struct OpenBill: Identifiable {
         let id: String
+    }
+
+    private struct ChatEnd: Equatable {
+        let id: String?
+        let isLive: Bool
     }
 
     private struct OlderPageTrigger: Equatable {
