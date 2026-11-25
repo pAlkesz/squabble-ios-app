@@ -86,7 +86,8 @@ groups/{gid}/messages/{messageId}
   older ones load in pages of 50 with `getDocuments` as the user scrolls up (`ChatStore`).
   Messages the live page moves past stay on screen. If it jumps ahead with a possible gap
   (a long time offline), the timeline starts over from it. Only the server can say where a
-  chat begins, never the cache.
+  chat begins, never the cache. A page loads once the scroll settles near the top, and the
+  list stays on the message it was on.
 - **Sending bumps the squabble's `updatedAt`** in the same batch (Nov 2026), so "most
   recently active" includes chat. It costs one write, and a group read per listening member,
   per message.

@@ -12,21 +12,18 @@ final class ChatStore {
     private(set) var hasLoaded = false
     private(set) var failed = false
     private(set) var isLoadingOlder = false
+    /// The message the last older page was added above.
+    private(set) var olderPageAnchor: String?
 
     @ObservationIgnored @Injected(\.chatRepository) private var repository
-    private var isLive = false
+    /// The server has answered since the last time the connection dropped.
+    private(set) var isLive = false
     private var isLatestFull = false
     private var hasReachedStart = false
     let groupID: String
 
     init(groupID: String) {
         self.groupID = groupID
-    }
-
-    /// The spinner above the oldest message reloads when this changes: after each page, and
-    /// when the connection comes back.
-    var olderPageTrigger: String {
-        "\(messages.first?.id ?? "")-\(isLive)"
     }
 
     var canLoadOlder: Bool { isLatestFull && !hasReachedStart }
@@ -54,6 +51,7 @@ final class ChatStore {
             guard messages.first?.id == oldest.id else { return }
             let known = Set(messages.map(\.id))
             messages = page.messages.filter { !known.contains($0.id) } + messages
+            if messages.first?.id != oldest.id { olderPageAnchor = oldest.id }
             // The cache only holds what this phone has seen, so it can't say where it starts.
             if !page.isFromCache, !page.isFull { hasReachedStart = true }
         } catch {

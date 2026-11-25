@@ -10,6 +10,8 @@ struct SquabbleView: View {
     @Environment(GroupsStore.self) private var groups
     @Environment(AuthSession.self) private var session
     @State private var chat: ChatStore
+    @State private var isNearTop = false
+    @State private var isSettled = true
     @State private var draft = ""
     @State private var replyingTo: ChatMessage?
     @State private var deleting: ChatMessage?
@@ -42,12 +44,6 @@ struct SquabbleView: View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(spacing: 4) {
-                    if chat.canLoadOlder, !chat.messages.isEmpty {
-                        ProgressView()
-                            .tint(.white)
-                            .padding(.vertical, 12)
-                            .task(id: chat.olderPageTrigger) { await chat.loadOlder() }
-                    }
                     ForEach(ChatTimeline.rows(for: chat.messages)) { row in
                         switch row {
                         case .day(let day):
@@ -64,6 +60,30 @@ struct SquabbleView: View {
                 .frame(maxWidth: .infinity)
             }
             .defaultScrollAnchor(.bottom)
+            // An older page is added above, which would leave the list at the very top of it:
+            // stay on what was first. Loading waits for the scroll to settle, because its
+            // momentum would override this.
+            .onChange(of: chat.olderPageAnchor) { _, anchor in
+                guard let anchor else { return }
+                proxy.scrollTo(anchor, anchor: .top)
+            }
+            .onScrollPhaseChange { _, phase in
+                isSettled = phase == .idle
+            }
+            .onScrollGeometryChange(for: Bool.self) { geometry in
+                geometry.contentOffset.y + geometry.contentInsets.top < Self.olderPageDistance
+            } action: { _, isNearTop in
+                self.isNearTop = isNearTop
+            }
+            // Also once the connection comes back.
+            .task(id: OlderPageTrigger(isAtTop: isNearTop && isSettled, isLive: chat.isLive)) {
+                if isNearTop, isSettled { await chat.loadOlder() }
+            }
+            .overlay(alignment: .top) {
+                if chat.isLoadingOlder {
+                    ProgressView().tint(.white).padding(.top, 8)
+                }
+            }
             .scrollDismissesKeyboard(.interactively)
             // iOS 26's soft fade under the bar; iOS 27 no longer defaults to it.
             .scrollEdgeEffectStyle(.soft, for: [.top, .bottom])
@@ -178,6 +198,13 @@ struct SquabbleView: View {
             }
         )
     }
+
+    private struct OlderPageTrigger: Equatable {
+        let isAtTop: Bool
+        let isLive: Bool
+    }
+
+    private static let olderPageDistance: CGFloat = 100
 
     private func send() {
         guard let uid = session.user?.id else { return }

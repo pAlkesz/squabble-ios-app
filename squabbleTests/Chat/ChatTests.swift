@@ -129,6 +129,7 @@ struct ChatStoreTests {
         await store.loadOlder()
         #expect(store.messages.map(\.id) == ids(90..<150))
         #expect(store.message(id: "m100")?.text == "x")
+        #expect(store.olderPageAnchor == "m100")
         #expect(!store.canLoadOlder)
     }
 
