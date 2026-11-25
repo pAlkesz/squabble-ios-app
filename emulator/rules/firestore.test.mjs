@@ -331,7 +331,92 @@ describe("chat", () => {
   });
 });
 
+describe("bills", () => {
+  const bill = (more = {}) => ({
+    title: "Dinner", date: "2026-11-25", currency: "EUR", totalMinor: 1000, paidBy: "anna", split: "equally",
+    shares: { anna: 500, bela: 500 }, createdBy: "bela", createdAt: joinedAt, updatedBy: "bela", updatedAt: joinedAt, ...more,
+  });
+  beforeEach(() => seed(environment, {
+    "groups/g": group(),
+    "groups/old": group({ archivedAt: joinedAt }),
+    "groups/g/bills/b": bill(),
+    "groups/g/bills/gone": bill({ deletedAt: joinedAt }),
+    "groups/old/bills/b": bill(),
+  }));
+  const create = (more = {}, db = bela, id = "g") =>
+    setDoc(doc(db, `groups/${id}/bills/new`), bill({ createdAt: serverTimestamp(), updatedAt: serverTimestamp(), ...more }));
+  const edit = (db, fields, path = "g/bills/b") =>
+    updateDoc(doc(db, `groups/${path.split("/")[0]}/bills/${path.split("/")[2]}`), { updatedAt: serverTimestamp(), ...fields });
+
+  test("adding as the app does, with the activity bump", () => {
+    const batch = writeBatch(bela);
+    batch.set(doc(bela, "groups/g/bills/new"), bill({ createdAt: serverTimestamp(), updatedAt: serverTimestamp() }));
+    batch.update(doc(bela, "groups/g"), { updatedAt: serverTimestamp() });
+    return assertSucceeds(batch.commit());
+  });
+  test("split by exact amounts", () => assertSucceeds(create({ split: "exactly" })));
+  test("reading is for members", async () => {
+    const latest = (db) => getDocs(query(collection(db, "groups/g/bills"), orderBy("createdAt", "desc"), limit(50)));
+    await assertSucceeds(latest(anna));
+    await assertFails(latest(cili));
+    await assertSucceeds(getDoc(doc(anna, "groups/old/bills/b")));
+  });
+  for (const [name, more] of Object.entries({
+    "extra fields": { extra: 1 },
+    "the server's fields": { frozen: {} },
+    "an empty title": { title: "" },
+    "a long title": { title: "x".repeat(121) },
+    "a title that isn't text": { title: ["x"] },
+    "a date of the wrong shape": { date: "25 Nov" },
+    "another currency": { currency: "USD" },
+    "a zero total": { totalMinor: 0 },
+    "a fractional total": { totalMinor: 1.5 },
+    "a huge total": { totalMinor: 1000000000001 },
+    "a stranger paying": { paidBy: "cili" },
+    "an unknown split": { split: "vibes" },
+    "no shares": { shares: {} },
+    "shares that aren't a map": { shares: ["anna"] },
+    "a stranger's share": { shares: { anna: 500, cili: 500 } },
+    "someone else as its creator": { createdBy: "anna" },
+    "someone else as its editor": { updatedBy: "anna" },
+    "a creation in the past": { createdAt: joinedAt },
+    "an edit in the past": { updatedAt: joinedAt },
+  })) {
+    test(`not with ${name}`, () => assertFails(create(more)));
+  }
+  test("not from outside", () => assertFails(create({ createdBy: "cili", updatedBy: "cili" }, cili)));
+  test("not once archived", async () => {
+    await assertFails(create({}, bela, "old"));
+    await assertFails(edit(anna, { title: "New", updatedBy: "anna" }, "old/bills/b"));
+  });
+
+  test("any member edits, as themselves", async () => {
+    await assertSucceeds(edit(anna, { title: "Lunch", totalMinor: 800, shares: { anna: 400, bela: 400 }, updatedBy: "anna" }));
+    await assertFails(edit(anna, { title: "Lunch", updatedBy: "bela" }));
+    await assertFails(edit(cili, { title: "Lunch", updatedBy: "cili" }));
+    await assertFails(edit(anna, { totalMinor: 0, updatedBy: "anna" }));
+  });
+  test("who added it and when never change", async () => {
+    await assertFails(edit(anna, { createdBy: "anna", updatedBy: "anna" }));
+    await assertFails(edit(anna, { createdAt: serverTimestamp(), updatedBy: "anna" }));
+  });
+  test("any member deletes, leaving a trace", async () => {
+    await assertFails(edit(anna, { deletedAt: serverTimestamp(), updatedBy: "bela" }));
+    await assertFails(edit(anna, { deletedAt: joinedAt, updatedBy: "anna" }));
+    await assertFails(edit(anna, { deletedAt: serverTimestamp(), updatedBy: "anna", updatedAt: joinedAt }));
+    await assertFails(edit(anna, { deletedAt: serverTimestamp(), updatedBy: "anna", title: "Gone" }));
+    await assertSucceeds(edit(anna, { deletedAt: serverTimestamp(), updatedBy: "anna" }));
+    await assertFails(deleteDoc(doc(anna, "groups/g/bills/b")));
+  });
+  test("a deleted bill stays as it is", () => assertFails(edit(anna, { deletedAt: deleteField(), updatedBy: "anna" }, "g/bills/gone")));
+  test("someone who left can still be on an old bill", async () => {
+    await seed(environment, { "groups/g": group({ memberIds: ["anna"] }) });
+    await assertSucceeds(edit(anna, { title: "Lunch", updatedBy: "anna" }));
+    await assertFails(edit(bela, { title: "Lunch", updatedBy: "bela" }));
+  });
+});
+
 test("anything unlisted is closed", async () => {
   await assertFails(getDoc(doc(anna, "rates/latest")));
-  await assertFails(setDoc(doc(anna, "groups/g/bills/b"), { totalMinor: 1 }));
+  await assertFails(setDoc(doc(anna, "groups/g/settlements/s"), { amountMinor: 1 }));
 });

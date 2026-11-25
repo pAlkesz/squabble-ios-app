@@ -3,8 +3,36 @@ import { FieldPath, FieldValue, getFirestore, Timestamp } from "firebase-admin/f
 import { randomBytes } from "node:crypto";
 import { getStorage } from "firebase-admin/storage";
 import * as functions from "firebase-functions/v1";
+import { computeBalances, sameBalances } from "./balances";
 
 initializeApp();
+
+/**
+ * Keeps `groups/{gid}.balances` in step with its bills (docs/specs/bills.md, "Balances").
+ * Recomputed from scratch in a transaction rather than added up from changes, so retries and
+ * events out of order are harmless.
+ */
+export const updateBalances = functions
+  .runWith({ failurePolicy: true, serviceAccount: "firebase-adminsdk-fbsvc@squabble-9c1df.iam.gserviceaccount.com" })
+  .firestore.document("groups/{groupId}/bills/{billId}")
+  .onWrite(async (_change, context) => {
+    const db = getFirestore();
+    const group = db.doc(`groups/${context.params.groupId}`);
+    await db.runTransaction(async (transaction) => {
+      const data = (await transaction.get(group)).data();
+      // The whole group is being deleted.
+      if (!data) return;
+      const bills = await transaction.get(group.collection("bills"));
+      const { balances, invalid } = computeBalances(
+        bills.docs.map((bill) => ({ id: bill.id, data: bill.data() })),
+        data.currency,
+        new Set(Object.keys(data.members ?? {})),
+      );
+      if (invalid.length > 0) functions.logger.warn("Skipped invalid bills", { group: group.id, invalid });
+      if (data.balances && sameBalances(data.balances, balances)) return;
+      transaction.update(group, { balances });
+    });
+  });
 
 /**
  * Wipes everything stored for a user once their Auth account is deleted, so the app's own

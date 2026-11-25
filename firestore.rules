@@ -7,6 +7,7 @@ rules_version = '2';
 //   handles/{handle}            { uid } — the lock that keeps handles unique
 //   groups/{groupId}            a squabble — readable by its current members (docs/specs/groups.md)
 //   groups/{groupId}/messages   its chat (docs/specs/chat.md)
+//   groups/{groupId}/bills      its bills (docs/specs/bills.md)
 //   reports/{id}                reported messages — write-only, read by the developer
 //   invites/{code}              Cloud Functions only (no rule, so no access)
 //
@@ -172,6 +173,48 @@ service cloud.firestore {
 
       function isOpenToMe() {
         return signedIn() && request.auth.uid in group().memberIds && !('archivedAt' in group());
+      }
+
+      // Any member may change any bill. The shares must name members; that they add up to the
+      // total is the app's job, and `updateBalances` ignores a bill where they don't.
+      function isValidBill(bill) {
+        return bill.keys().hasOnly(['title', 'date', 'currency', 'totalMinor', 'paidBy', 'split', 'shares', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'])
+          && bill.title is string
+          && bill.title.size() > 0
+          && bill.title.size() <= 120
+          && bill.date is string
+          && bill.date.matches('[0-9]{4}-[0-9]{2}-[0-9]{2}')
+          && bill.currency == group().currency
+          && bill.totalMinor is int
+          && bill.totalMinor > 0
+          && bill.totalMinor <= 1000000000000
+          && bill.paidBy in group().members
+          && bill.split in ['equally', 'exactly']
+          && bill.shares is map
+          && bill.shares.size() > 0
+          && group().members.keys().hasAll(bill.shares.keys())
+          && bill.updatedBy == request.auth.uid
+          && bill.updatedAt == request.time;
+      }
+
+      match /bills/{billId} {
+        allow read: if signedIn() && request.auth.uid in group().memberIds;
+
+        allow create: if isOpenToMe()
+          && isValidBill(request.resource.data)
+          && request.resource.data.createdBy == request.auth.uid
+          && request.resource.data.createdAt == request.time;
+
+        allow update: if isOpenToMe()
+          && !('deletedAt' in resource.data)
+          && request.resource.data.createdBy == resource.data.createdBy
+          && request.resource.data.createdAt == resource.data.createdAt
+          && (isValidBill(request.resource.data)
+            // Deleting keeps the document, so it can say who did it.
+            || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['deletedAt', 'updatedBy', 'updatedAt'])
+              && request.resource.data.deletedAt == request.time
+              && request.resource.data.updatedBy == request.auth.uid
+              && request.resource.data.updatedAt == request.time));
       }
 
       match /messages/{messageId} {

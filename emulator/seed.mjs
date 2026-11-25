@@ -108,5 +108,17 @@ await squabble("ghost", {
 await db.doc("groups/ghost/messages/g1").set({ authorId: "gone", kind: "text", createdAt: ago(60 * 24 * 11), deletedAt: ago(60 * 24 * 10), reactions: {} });
 await message("ghost", "g2", "anna", "So who's paying for the dessert now?", ago(60 * 24 * 10));
 
-// A joke about debt needs a debt: added with bills. Dóra is in nothing yet, for joining.
+// Bills; the balances come from the `updateBalances` function, as they would live.
+const bill = (groupId, id, currency, title, totalMinor, paidBy, shares, createdAt) =>
+  db.doc(`groups/${groupId}/bills/${id}`).set({
+    title, date: createdAt.toDate().toISOString().slice(0, 10), currency, totalMinor, paidBy, split: "equally", shares,
+    createdBy: paidBy, createdAt, updatedBy: paidBy, updatedAt: createdAt,
+  });
+await bill("vienna", "hotel", "EUR", "Hotel", 48000, "anna", { anna: 16000, bela: 16000, cili: 16000 }, ago(60 * 24 * 2));
+await bill("vienna", "lobster", "EUR", "The lobster", 10000, "cili", { anna: 3334, bela: 3333, cili: 3333 }, ago(60 * 5));
+await bill("vienna", "coffee", "EUR", "Coffee", 740, "bela", { anna: 370, bela: 370 }, ago(3));
+// Cili is deep in debt: someone has to be.
+await bill("ghost", "wine", "EUR", "Wine, all of it", 92000, "anna", { cili: 92000 }, ago(60 * 24 * 10 + 5));
+
+// Dóra is in nothing yet, for joining.
 console.log(`Seeded ${Object.keys(people).length} people and 3 squabbles.`);
