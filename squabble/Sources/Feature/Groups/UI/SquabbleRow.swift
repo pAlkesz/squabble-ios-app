@@ -13,6 +13,13 @@ struct SquabbleRow: View {
     var body: some View {
         HStack(spacing: 14) {
             SquabbleImageView(group.image, size: pictureSize)
+                .overlay {
+                    if let balance, balance.minorUnits != 0 {
+                        Circle()
+                            .strokeBorder(BalanceMood(balances: [balance]).palette.top, lineWidth: 3)
+                            .padding(-5)
+                    }
+                }
             VStack(alignment: .leading, spacing: 2) {
                 // The date sits on the name's baseline, as in Revolut's lists.
                 HStack(alignment: .firstTextBaseline, spacing: 8) {

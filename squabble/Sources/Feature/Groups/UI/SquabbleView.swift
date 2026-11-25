@@ -154,7 +154,6 @@ struct SquabbleView: View {
                     onDelete: { chat.delete(bill, by: uid) }
                 )
                 .presentationBackground { ProfileBackdrop() }
-                .presentationDetents([.medium, .large])
             }
         }
         .confirmationDialog(

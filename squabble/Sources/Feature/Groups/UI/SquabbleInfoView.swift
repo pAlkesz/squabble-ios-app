@@ -30,6 +30,7 @@ struct SquabbleInfoView: View {
                             memberRow(member, in: group)
                         }
                     }
+                    .padding(.vertical, 6)
                 }
             }
             .padding(16)
@@ -83,11 +84,21 @@ struct SquabbleInfoView: View {
                 }
             }
             Spacer(minLength: 0)
-            if member.id == session.user?.id {
-                tag(Text("You", comment: "Squabble page: tag on the user's own row."))
-            }
-            if member.id == group.createdBy {
-                tag(Text("Started it", comment: "Squabble page: tag on the row of whoever created (and runs) the squabble."))
+            VStack(alignment: .trailing, spacing: 4) {
+                HStack(spacing: 6) {
+                    if member.id == session.user?.id {
+                        tag(Text("You", comment: "Squabble page: tag on the user's own row."))
+                    }
+                    if member.id == group.createdBy {
+                        tag(Text("Started it", comment: "Squabble page: tag on the row of whoever created (and runs) the squabble."))
+                    }
+                }
+                let balance = group.balance(of: member.id)
+                if balance.minorUnits != 0 {
+                    Text(verbatim: balance.formattedWithSign())
+                        .font(.subheadline.weight(.semibold))
+                        .monospacedDigit()
+                }
             }
         }
         .padding(.horizontal, 16)

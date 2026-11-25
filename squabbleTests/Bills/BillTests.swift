@@ -160,8 +160,16 @@ struct HomeTotalTests {
             groups: [group("a", "HUF", 500), group("b", "HUF", -200), group("c", "USD", -700), group("d", "EUR", 100), group("e", "EUR", -100)],
             uid: "pal", homeCurrencyCode: "HUF"
         )
-        #expect(total.home == Money(minorUnits: 300, currencyCode: "HUF"))
+        #expect(total.headline == Money(minorUnits: 300, currencyCode: "HUF"))
         #expect(total.others == [Money(minorUnits: -700, currencyCode: "USD")])
+    }
+
+    @Test func theOnlyBalanceIsTheHeadlineWhateverItsCurrency() {
+        let total = HomeTotal(groups: [group("a", "EUR", 100), group("b", "HUF", 0)], uid: "pal", homeCurrencyCode: "HUF")
+        #expect(total.headline == Money(minorUnits: 100, currencyCode: "EUR"))
+        #expect(total.others.isEmpty)
+        let none = HomeTotal(groups: [group("a", "EUR", 0)], uid: "pal", homeCurrencyCode: "HUF")
+        #expect(none.headline == Money(minorUnits: 0, currencyCode: "HUF"))
     }
 }
 

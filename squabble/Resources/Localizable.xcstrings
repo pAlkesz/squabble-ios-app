@@ -2654,7 +2654,7 @@
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fizette: %1$@ (%2$@) · %3$@"
+            "value" : "%1$@ fizetett: %2$@ · %3$@"
           }
         }
       }
@@ -3007,6 +3007,39 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Szerkesztés"
+          }
+        }
+      }
+    },
+    "You paid %@ · %@" : {
+      "comment" : "Bill in the chat: the user paid; the total, and what for.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Te fizettél: %1$@ · %2$@"
+          }
+        }
+      }
+    },
+    "You deleted “%@”" : {
+      "comment" : "Chat: line in place of a bill the user deleted; its title.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Törölted ezt: „%@”"
+          }
+        }
+      }
+    },
+    "you" : {
+      "comment" : "Bill details: the user, inside a phrase like 'Paid by you'.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "te"
           }
         }
       }

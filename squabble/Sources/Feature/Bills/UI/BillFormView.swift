@@ -33,7 +33,7 @@ struct BillFormView: View {
             form
                 .background { Color.backdropDeep.ignoresSafeArea() }
                 .navigationDestination(isPresented: $isSplitting) {
-                    BillSplitView(draft: $draft, group: group)
+                    BillSplitView(draft: $draft, group: group, me: uid)
                         .background { Color.backdropDeep.ignoresSafeArea() }
                 }
         }
@@ -42,8 +42,8 @@ struct BillFormView: View {
 
     private var form: some View {
         ScrollView {
-            VStack(spacing: 24) {
-                VStack(spacing: 4) {
+            VStack(spacing: 16) {
+                VStack(spacing: 2) {
                     amountField
                     // A space keeps the line's height while there's nothing to say.
                     Text(verbatim: hint ?? " ")
@@ -54,7 +54,8 @@ struct BillFormView: View {
                 titleField
                 details
             }
-            .padding(16)
+            .padding(.horizontal, 16)
+            .padding(.bottom, 16)
             .frame(maxWidth: 560)
             .frame(maxWidth: .infinity)
         }
@@ -105,7 +106,6 @@ struct BillFormView: View {
                 .foregroundStyle(.white.opacity(0.6))
         }
         .frame(maxWidth: .infinity)
-        .padding(.top, 12)
         .contentShape(.rect)
         .onTapGesture { focus = .amount }
     }
@@ -121,7 +121,7 @@ struct BillFormView: View {
         .submitLabel(.done)
         .onSubmit { focus = nil }
         .padding(.horizontal, 16)
-        .frame(minHeight: 54)
+        .frame(minHeight: 50)
         .background(.white.opacity(0.08), in: .rect(cornerRadius: SquabbleMetrics.cornerRadius))
         // The field itself is only as tall as its text.
         .contentShape(.rect)
@@ -193,7 +193,7 @@ struct BillFormView: View {
         }
         .colorScheme(.dark)
         .padding(.horizontal, 16)
-        .frame(minHeight: 54)
+        .frame(minHeight: 50)
     }
 
     /// `CalendarDay` reads as midday, which is still to come in the morning; the picker would
@@ -213,7 +213,7 @@ struct BillFormView: View {
                 .accessibilityHidden(true)
         }
         .padding(.horizontal, 16)
-        .frame(minHeight: 54)
+        .frame(minHeight: 50)
         .contentShape(.rect)
     }
 
@@ -226,9 +226,10 @@ struct BillFormView: View {
         .buttonStyle(.squabblePrimary)
         .disabled(!draft.canSave)
         .padding(.horizontal, 24)
-        .padding(.top, 16)
-        // Keeps clear air between the button and the keyboard when it's up.
-        .padding(.bottom, 20)
+        .padding(.top, 8)
+        // Keeps clear air between the button and the keyboard when it's up; the rows need
+        // the rest.
+        .padding(.bottom, 12)
         .frame(maxWidth: 560)
     }
 
@@ -242,9 +243,7 @@ struct BillFormView: View {
     }
 
     private func name(_ candidate: String) -> String {
-        candidate == uid
-            ? String(localized: "You", comment: "Squabble page: tag on the user's own row.")
-            : BillText.name(of: candidate, in: group)
+        BillText.name(of: candidate, in: group, me: uid)
     }
 
     private func save() {

@@ -4,6 +4,7 @@ import SwiftUI
 struct BillSplitView: View {
     @Binding var draft: BillDraft
     let group: SquabbleGroup
+    let me: String
 
     var body: some View {
         ScrollView {
@@ -69,7 +70,7 @@ struct BillSplitView: View {
                 .multilineTextAlignment(.trailing)
                 .monospacedDigit()
                 .frame(width: 110)
-                .accessibilityLabel(Text(verbatim: BillText.name(of: uid, in: group)))
+                .accessibilityLabel(Text(verbatim: BillText.name(of: uid, in: group, me: me)))
                 Text(verbatim: draft.currencyCode)
                     .font(.footnote)
                     .foregroundStyle(.white.opacity(0.6))
@@ -81,7 +82,7 @@ struct BillSplitView: View {
     private func person(_ uid: String) -> some View {
         HStack(spacing: 12) {
             AvatarView(BillText.avatar(of: uid, in: group), size: 36)
-            Text(verbatim: BillText.name(of: uid, in: group))
+            Text(verbatim: BillText.name(of: uid, in: group, me: me))
                 .lineLimit(1)
             Spacer(minLength: 8)
         }

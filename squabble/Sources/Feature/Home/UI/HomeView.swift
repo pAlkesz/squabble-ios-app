@@ -43,7 +43,7 @@ struct HomeView: View {
         NavigationStack(path: $path) {
             ScrollView {
                 VStack(spacing: 24) {
-                    TotalBalanceView(amount: balance, currencyCode: homeCurrencyCode, others: total.others)
+                    TotalBalanceView(amount: balance, currencyCode: headlineCurrencyCode, others: total.others)
                         .frame(maxWidth: .infinity)
                     #if DEBUG
                         .onLongPressGesture {
@@ -272,7 +272,14 @@ struct HomeView: View {
             return BalanceMood(amount: balance, currencyCode: homeCurrencyCode)
         }
         #endif
-        return BalanceMood(balances: [total.home] + total.others)
+        return BalanceMood(balances: [total.headline] + total.others)
+    }
+
+    private var headlineCurrencyCode: String {
+        #if DEBUG
+        if debugBalance != nil { return homeCurrencyCode }
+        #endif
+        return total.headline.currencyCode
     }
 
     private var total: HomeTotal {
@@ -285,7 +292,7 @@ struct HomeView: View {
             return Decimal(Int(debugBalance.rounded()))
         }
         #endif
-        return total.home.amount
+        return total.headline.amount
     }
 
     #if DEBUG

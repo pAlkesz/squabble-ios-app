@@ -22,7 +22,8 @@ either direction. There's no tab bar; squabbles are pushed from home like conver
 - Shown in the **home currency**, labelled "Total · <code>".
 - **Built (Nov 2026):** the sum of the user's stored balances. Nothing converts yet, so the
   headline adds up squabbles in the home currency, and other currencies are listed under it
-  (`HomeTotal`); the mood judges them all together in rough euro terms.
+  (`HomeTotal`). If the only balance is in another currency, that's the headline instead of
+  a zero. Separately, the mood judges them all together in rough euro terms.
 - **Planned:** one converted total, using the ECB's latest daily rates (see
   [Bills](bills.md#exchange-rates)).
 
@@ -55,7 +56,7 @@ A bright fade always stands for a balance; pages without one stay quiet (Nov 202
 | Page | Backdrop |
 | --- | --- |
 | Home | Bright band from the top: the total balance |
-| Squabbles list | Plum in slow waves (`QuietBackdrop`), a hue no mood uses; dark petrol looked too much like the other pages. Planned with bills: each row's picture carries its squabble's mood |
+| Squabbles list | Plum in slow waves (`QuietBackdrop`), a hue no mood uses; dark petrol looked too much like the other pages. Each row's picture has a ring in its squabble's mood, here and on home, unless it's settled |
 | Squabble page | Wavy glow from the top-right corner (a clean diagonal felt too rigid), by the picture: the balance in that squabble |
 | Squabble info | The same glow, dimmed |
 | Account pages and sheets | Dark brand green (`ProfileBackdrop`) |

@@ -140,7 +140,7 @@ Laid out like Revolut's group pages (Nov 2026):
   Before any message, the middle says "Your squabble is ready", with the invite link under
   it and a card of what to do next.
 - **Info** (`SquabbleInfoView`, from the picture in the bar): the picture, name and
-  currency, the invite link, and the members with "You" and "Started it" tags. Settings
+  currency, the invite link, and the members with "You" and "Started it" tags and each one's balance. Settings
   (planned: editing, leaving, archiving, and the creator's **Reset link**) will go here.
 
 Adding people (planned, from the info page):

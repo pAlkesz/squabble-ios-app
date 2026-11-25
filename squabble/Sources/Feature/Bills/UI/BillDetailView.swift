@@ -11,6 +11,8 @@ struct BillDetailView: View {
 
     @Environment(\.dismiss) private var dismiss
     @State private var isConfirmingDelete = false
+    /// A guess until the first layout.
+    @State private var contentHeight: CGFloat = 360
 
     var body: some View {
         NavigationStack {
@@ -23,7 +25,9 @@ struct BillDetailView: View {
                 .padding(16)
                 .frame(maxWidth: 560)
                 .frame(maxWidth: .infinity)
+                .onGeometryChange(for: CGFloat.self, of: \.size.height) { contentHeight = $0 }
             }
+            .scrollBounceBehavior(.basedOnSize)
             // iOS 26's soft fade under the bar; iOS 27 no longer defaults to it.
             .scrollEdgeEffectStyle(.soft, for: [.top, .bottom])
             .foregroundStyle(.white)
@@ -37,7 +41,12 @@ struct BillDetailView: View {
             }
         }
         .tint(.white)
+        // As tall as the bill needs; a big squabble's scrolls at full height.
+        .presentationDetents([.height(contentHeight + Self.chromeHeight), .large])
     }
+
+    /// The bar above the bill and the buttons below it.
+    private static let chromeHeight: CGFloat = 150
 
     private var header: some View {
         VStack(spacing: 6) {
@@ -49,7 +58,7 @@ struct BillDetailView: View {
                 .lineLimit(1)
                 .minimumScaleFactor(0.5)
             Text(
-                "Paid by \(BillText.name(of: bill.paidBy, in: group)) · \(BillText.day(bill.date))",
+                "Paid by \(BillText.nameInPhrase(of: bill.paidBy, in: group, me: uid)) · \(BillText.day(bill.date))",
                 comment: "Bill details: who paid, then the day."
             )
             .font(.subheadline)
@@ -63,7 +72,7 @@ struct BillDetailView: View {
             ForEach(bill.shares.filter { $0.value != 0 }.keys.sorted(by: inMemberOrder), id: \.self) { person in
                 HStack(spacing: 12) {
                     AvatarView(BillText.avatar(of: person, in: group), size: 36)
-                    Text(verbatim: BillText.name(of: person, in: group))
+                    Text(verbatim: BillText.name(of: person, in: group, me: uid))
                         .lineLimit(1)
                     Spacer(minLength: 8)
                     Text(verbatim: bill.share(of: person).formatted())
@@ -86,12 +95,12 @@ struct BillDetailView: View {
     private var history: some View {
         VStack(spacing: 4) {
             Text(
-                "Added by \(BillText.name(of: bill.createdBy, in: group)), \(Self.time(bill.createdAt))",
+                "Added by \(BillText.nameInPhrase(of: bill.createdBy, in: group, me: uid)), \(Self.time(bill.createdAt))",
                 comment: "Bill details: who added it, then the date and time."
             )
             if bill.isEdited {
                 Text(
-                    "Edited by \(BillText.name(of: bill.updatedBy, in: group)), \(Self.time(bill.updatedAt))",
+                    "Edited by \(BillText.nameInPhrase(of: bill.updatedBy, in: group, me: uid)), \(Self.time(bill.updatedAt))",
                     comment: "Bill details: who last edited it, then the date and time."
                 )
             }

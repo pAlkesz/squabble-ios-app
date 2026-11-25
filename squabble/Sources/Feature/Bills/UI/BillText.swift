@@ -6,6 +6,20 @@ enum BillText {
         ChatMessageRow.name(of: group.members[uid])
     }
 
+    /// For lists and rows, where "You" reads better than your own name.
+    static func name(of uid: String, in group: SquabbleGroup, me: String?) -> String {
+        uid == me
+            ? String(localized: "You", comment: "Squabble page: tag on the user's own row.")
+            : name(of: uid, in: group)
+    }
+
+    /// The same inside a phrase ("Paid by you").
+    static func nameInPhrase(of uid: String, in group: SquabbleGroup, me: String?) -> String {
+        uid == me
+            ? String(localized: "you", comment: "Bill details: the user, inside a phrase like 'Paid by you'.")
+            : name(of: uid, in: group)
+    }
+
     static func avatar(of uid: String, in group: SquabbleGroup) -> Avatar {
         group.members[uid]?.avatar ?? .preset(.default(for: uid))
     }

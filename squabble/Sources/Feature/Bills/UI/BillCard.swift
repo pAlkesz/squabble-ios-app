@@ -43,10 +43,7 @@ struct BillCard: View {
                 .font(.system(.title, design: .rounded, weight: .bold))
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
-            Text(
-                "\(BillText.name(of: bill.paidBy, in: group)) paid \(bill.total.formatted()) · \(bill.title)",
-                comment: "Bill in the chat: who paid, the total, and what for."
-            )
+            paid
             .font(.subheadline)
             .multilineTextAlignment(.leading)
             HStack(alignment: .bottom) {
@@ -60,6 +57,24 @@ struct BillCard: View {
         .background(.white.opacity(isMine ? 0.2 : 0.1), in: .rect(cornerRadius: SquabbleMetrics.bubbleCornerRadius))
         .contentShape(.rect)
         .accessibilityElement(children: .combine)
+    }
+
+    private var paid: Text {
+        bill.paidBy == myUID
+            ? Text("You paid \(bill.total.formatted()) · \(bill.title)", comment: "Bill in the chat: the user paid; the total, and what for.")
+            : Text(
+                "\(BillText.name(of: bill.paidBy, in: group)) paid \(bill.total.formatted()) · \(bill.title)",
+                comment: "Bill in the chat: who paid, the total, and what for."
+            )
+    }
+
+    private var deletedText: Text {
+        bill.updatedBy == myUID
+            ? Text("You deleted “\(bill.title)”", comment: "Chat: line in place of a bill the user deleted; its title.")
+            : Text(
+                "\(BillText.name(of: bill.updatedBy, in: group)) deleted “\(bill.title)”",
+                comment: "Chat: line in place of a deleted bill; who deleted it, then its title."
+            )
     }
 
     private var avatars: some View {
@@ -92,10 +107,7 @@ struct BillCard: View {
     }
 
     private var deleted: some View {
-        Text(
-            "\(BillText.name(of: bill.updatedBy, in: group)) deleted “\(bill.title)”",
-            comment: "Chat: line in place of a deleted bill; who deleted it, then its title."
-        )
+        deletedText
         .font(.footnote)
         .foregroundStyle(.white.opacity(0.6))
         .multilineTextAlignment(.center)
