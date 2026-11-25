@@ -1,6 +1,7 @@
 # Bills & splitting
 
-**Status:** Draft. Not built. Depends on [Groups](groups.md). Product questions settled
+**Status:** Draft. Only the money model (`Money`, `CurrencyPrecision`) and the split
+algorithm (`BillSplit`) are built. Depends on [Groups](groups.md). Product questions settled
 (Nov 2026).
 
 ## Summary
@@ -73,13 +74,18 @@ rates/latest, rates/{yyyy-MM-dd}                          ← written only by fu
 - **Exact amounts:** the user enters each share, and they must add up to the total.
 - **By item:** each item is split equally among the people who had it. Tax and tip are
   spread proportionally to each person's item subtotal.
+  - Tax and tip are whatever the total has beyond the items; a discount is the same thing,
+    negative.
+  - Someone whose subtotal is zero (or whose sign is opposite to the bill's) gets none of it.
+    If nobody has a subtotal, it's split equally.
 - (Later) by shares / percentages.
 
 ### Leftover cents rule
 
 When an amount doesn't divide evenly:
 
-1. Work out each exact share as a `Decimal`.
+1. Work out each exact share with integers, as a quotient and a remainder (`BillSplit`).
+   Not `Decimal`, which can't hold a third exactly and could misjudge a tie.
 2. Give everyone their share **truncated towards zero**, in minor units.
 3. Hand out the remaining minor units **one each**, largest fractional remainder first.
    Ties are broken by member order: the order the members are listed in the bill, then
@@ -97,7 +103,8 @@ Example: €10.00 between 3 people → 334, 333, 333 cents.
 - **Override: HUF uses 0 decimals.** ISO says 2, but there are no fillér coins and nobody
   writes them. Entry, splits, storage and display all use whole forints, and leftover
   forints are handed out by the rule above.
-- Overrides live in one small table next to the money model. Add a currency there only
+- ISO exponents and overrides live in one small table (`CurrencyPrecision`), not the
+  system's: it has other exponents for some currencies, and the server must agree. Add a currency there only
   when its subunit is genuinely unused.
 
 ## Exchange rates

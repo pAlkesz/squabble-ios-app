@@ -339,6 +339,7 @@ squabble/
     Core/               Shared, cross-feature code:
       UI/               Components/, Extensions/, Util/  (reusable views, view helpers)
       Firebase/         FirebaseApp bootstrap, Firestore codec helpers, Auth session
+      Money/            Exact amounts (Money) and per-currency precision
       Networking/       Alamofire client for the AI service, request/response models
       Persistence/      SwiftData container, model schema (device-local state only)
       DI/               FactoryKit container & registrations
@@ -491,7 +492,9 @@ stutters on a device even when the simulator looks smooth.
   fade under the bar, which iOS 27 no longer applies by default. Add it to every new
   scrolling page.
 - **Placeholder:** search on home has no destination.
-- **Not started:** bills — capture, AI parsing, the split algorithm, settlements,
+- **Bills, started:** `Money`/`CurrencyPrecision` (`Core/Money`) and `BillSplit`
+  (`Feature/Bills/Model`), no UI or storage yet.
+- **Not started:** bills — capture, AI parsing, settlements,
   reminders.
 
 ### Screen conventions worth knowing
