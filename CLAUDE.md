@@ -158,9 +158,10 @@ groups/{groupId}                 name, currency, createdBy, createdAt,
   members: { uid: { displayName, handle, avatar, payment?, ... } }
                                  ← members are always app users (no guests, Nov 2026);
                                    payment details are copied here so group-mates can
-                                   read them. Full plan: docs/specs/groups.md
+                                   read them. balances + chapter: functions only (bills.md). Full plan: docs/specs/groups.md
 groups/{gid}/bills/{billId}      title, currency, totalMinor, paidBy, items (embedded),
-                                 shares: { memberId: amountMinor }
+                                 shares: { memberId: amountMinor }, date,
+                                 frozen? (converted copy) + chapter? ← functions only
 groups/{gid}/settlements/{id}    from, to, amountMinor, currency, createdAt
 groups/{gid}/reminders/{id}
 ```

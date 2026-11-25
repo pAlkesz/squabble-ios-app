@@ -23,9 +23,13 @@ in the same form.
 - **One payer per bill in v1** (Nov 2026). If two people paid, enter two bills.
   `paidBy` stays a single member id for now; it can become a map later.
 - **A bill can be in a different currency from its squabble's** (Nov 2026). The bill
-  form has a currency picker, defaulting to the squabble's currency. Amounts are stored
-  in the bill's own currency and converted only for display (see
-  [Groups](groups.md#currency)).
+  form has a currency picker, defaulting to the squabble's currency. The original amounts
+  are never rewritten; a converted copy in the squabble's currency is **frozen** at the
+  rate of the bill's day (see "Exchange rates"). Converting at each day's current rate was
+  rejected: a debt paid off in another currency would reopen when rates moved.
+- **Balances are kept by a Cloud Function** on the group document (Nov 2026; see
+  "Balances"). Rejected: the app adjusting them (rules can't check the sums) and adding up
+  every bill on the phone (reads grow with history).
 - **Exchange rates are the ECB's daily reference rates**, fetched by a scheduled Cloud
   Function (Nov 2026). See "Exchange rates" below.
 - **Either side can record a settlement**, payer or receiver, and it counts right away,
@@ -38,20 +42,26 @@ in the same form.
 
 ```
 groups/{gid}/bills/{billId}
-  title, currency, totalMinor, paidBy: uid,
+  title, date, currency, totalMinor, paidBy: uid,
   createdBy, createdAt, updatedBy, updatedAt
   items: [ { id, name, amountMinor, sharedBy: [uid] } ]   ← optional, itemized bills
   shares: { uid: amountMinor }                            ← the result; sums to totalMinor
+  frozen?: { currency, rate, rateDate, totalMinor, shares } ← written only by the function
+  chapter?                                                ← written only by the function
 groups/{gid}/settlements/{id}
-  from: uid, to: uid, amountMinor, currency, createdBy, createdAt
+  from: uid, to: uid, amountMinor, currency, date, createdBy, createdAt
+  frozen?: { currency, rate, rateDate, amountMinor }, chapter?   ← written only by the function
 groups/{gid}/reminders/{id}
   to: uid, message, createdBy, createdAt
-rates/latest                                              ← written only by the rates function
+rates/latest, rates/{yyyy-MM-dd}                          ← written only by functions
   base: "EUR", date, rates: { code: Decimal-as-string }
 ```
 
 - `shares` is stored, not recomputed on read, so balances never shift if the algorithm
   changes later.
+- `date` is the day of the bill or payment, a calendar day defaulting to today and never
+  in the future.
+- `frozen` and `chapter` are never written by the app; the rules refuse them.
 - Bills and settlements in an **archived** squabble are read-only (see
   [Groups](groups.md)).
 
@@ -92,26 +102,52 @@ Example: €10.00 between 3 people → 334, 333, 333 cents.
 
 ## Exchange rates
 
-- A **scheduled Cloud Function** fetches the ECB's reference rates once a day (via
-  Frankfurter: free, no API key) and writes them to `rates/latest`.
-- Any signed-in user can read `rates/latest`; nobody can write it from the app. Apps
-  listen to that one document, so it's one cached read that works offline with the last
-  rates.
-- Rates are stored as decimal strings and converted with `Decimal`, and the converted
-  result is rounded to the target currency's precision **only for display**. Converted
-  amounts are never stored.
-- The rates replace `BalanceMood`'s rough per-currency table (see
-  [Home](home.md#balance-mood)).
-- **Missing rates:** the ECB publishes about 30 currencies. A currency without a rate
-  can't be converted. Totals then show that part separately in its own currency instead
-  of guessing.
+The ECB's daily reference rates, through Frankfurter (free, no API key, with historical
+rates). Only Cloud Functions fetch them.
+
+**Frozen conversions**
+
+- When a bill or settlement is written, a function stores its amount in the squabble's
+  currency in `frozen`. In the squabble's own currency the rate is 1 and no lookup is
+  needed.
+- The rate is the one for the **bill's day**: the latest published on or before `date`
+  (weekends and holidays have none). `rateDate` records which, and is reused whenever the
+  bill is edited or reconverted; only changing `date` picks a new one. So the numbers
+  never drift, and changing the squabble's currency and back restores them exactly.
+- The total is converted with exact decimal arithmetic and rounded to the target's
+  precision, half away from zero. The shares are then split from the converted total in
+  proportion to the original shares, by the leftover cents rule with ties broken by uid,
+  so they add up exactly.
+- Until `frozen` exists (offline, or the rates are unreachable and the function is
+  retrying), the bill shows as "still converting". It counts only in a provisional
+  balance, and only if it's in the squabble's currency.
+- Settlements are always entered in the squabble's current currency. One written offline
+  before a currency change is converted like a bill.
+- **Missing rates:** the ECB publishes about 30 currencies. The bill form offers only
+  currencies convertible into the squabble's, plus its own.
+- `rates/{date}` caches the days looked up. The Swift and TypeScript money code share
+  test vectors, including the HUF override.
+
+**Display conversions**
+
+- A scheduled function writes `rates/latest` daily. Any signed-in user can read it; apps
+  listen to that one document, which works offline with the last rates.
+- It's used only for home's total and its mood, replacing `BalanceMood`'s rough table (see
+  [Home](home.md#balance-mood)). Those results are never stored. A balance whose currency
+  has no rate is shown separately instead of guessed.
 
 ## Balances
 
 - A member's balance in a group = what they paid − their shares + settlements paid −
-  settlements received. It's computed per original currency, then converted into the
-  group's currency for display (see [Groups](groups.md#currency)).
-- The balances in a group add up to zero (per currency, before conversion).
+  settlements received, using the **frozen** amounts of the current chapter (see
+  [Groups](groups.md#currency)).
+- **Stored in `groups/{gid}.balances`** (`{ uid: amountMinor }`, in the group's currency).
+  A function triggered by bill and settlement writes recomputes them from scratch in a
+  transaction, rather than adding changes up, so retries and out-of-order events are
+  harmless. New entries also bump `updatedAt`. The app can't write `balances`.
+- The balances in a group add up to exactly zero.
+- Home reads `balances` from its existing group listener. An open squabble can show a
+  provisional balance that includes the user's own unsynced bills.
 - **Settle-up suggestions:** keep the number of transfers small (greedy: the largest
   debtor pays the largest creditor).
 - **Home total:** the user's net across all groups, archived ones included, converted into
@@ -128,5 +164,5 @@ Example: €10.00 between 3 people → 334, 333, 333 cents.
 
 ## Open questions
 
-None at the product level for manual bills, splitting, balances and settlements.
+None at the product level (currencies and balance storage settled Nov 2026) for manual bills, splitting, balances and settlements.
 Reminder delivery and AI parsing get their own decisions when they're built.

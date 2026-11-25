@@ -25,6 +25,8 @@ groups and bills are in [Groups](groups.md) and [Bills](bills.md).
 | `createInvite`, `resetInvite`, `previewInvite`, `joinGroup` | Callables | Built ([Groups](groups.md#joining-with-an-invite-link)) |
 | People sync | Firestore triggers on groups and users | Planned ([People](people.md#keeping-it-up-to-date-cloud-functions)) |
 | Exchange rates | Scheduled, daily | Planned ([Bills](bills.md#exchange-rates)) |
+| Frozen conversions and balances | Firestore triggers on bills and settlements | Planned ([Bills](bills.md#balances)) |
+| `changeGroupCurrency` | Callable | Planned ([Groups](groups.md#currency)) |
 
 ## Current layout
 

@@ -55,9 +55,8 @@ and in Firestore it's called a *group*; in the UI it's a *squabble*.
   payment details are removed. Before deleting, the app warns users about what they still
   owe and to whom, but doesn't block them (App Review requires that deletion is always
   possible).
-- **The currency can change at any time.** Stored amounts are never rewritten: each bill
-  keeps the currency it was entered in, and the group's currency is the one its balances
-  are *shown and settled* in, converted at current rates. See "Currency" below.
+- **The currency can change**, by reconverting every bill at the rate of its own day; once
+  there are settlements, only while everyone is settled. See "Currency" below.
 - **At most 50 members** per squabble. The members map lives in one document.
 
 ## Data model (planned)
@@ -67,6 +66,8 @@ groups/{groupId}
   name, currency, image, createdBy, createdAt, updatedAt
   archivedAt?                            ← set by the creator; read-only for everyone
   inviteCode                             ← current invite code; reset by the creator
+  balances: { uid: amountMinor }         ← planned; written only by functions (bills.md)
+  chapter                                ← planned; written only by functions ("Currency")
   memberIds: [uid]                       ← current members; drives the rules + home query
   members: {
     uid: { displayName, handle, avatar, payment?, joinedAt, leftAt?, deleted? }
@@ -229,17 +230,35 @@ count.
 
 ## Currency
 
-- Each bill stores its amounts in the currency it was entered in. **Stored amounts are
-  never converted or rewritten.**
-- The group's `currency` is its *display and settle-up* currency. Balances are summed per
-  original currency, then converted into the group currency at current rates.
-- Changing the group currency is therefore just a field update: every number on screen
-  follows, and switching back gives back exactly what was there before. This avoids
-  rewriting every bill, the rounding drift of repeated conversion, and conflicting edits
-  from offline devices.
-- The conversion uses the same exchange-rate source as the home total (see
-  [Bills](bills.md#exchange-rates)).
-- Groups whose bills all share one currency need no conversion at all.
+**Decided Nov 2026** (replaces converting at current rates): the group's `currency` is the
+one its balances are kept and settled in. Each bill keeps its original currency and
+amounts, plus a conversion frozen at the rate of its own day (see
+[Bills](bills.md#exchange-rates)).
+
+Any member of an open squabble can change the currency. It goes through a callable
+function, `changeGroupCurrency`, and needs a connection:
+
+- **No settlements in the current chapter:** every bill in it is reconverted **from its
+  original amount** at its own `rateDate`, and the balances are recomputed. Changing back
+  restores the earlier numbers exactly. If any bill can't be converted, nothing changes.
+- **With settlements:** allowed only while **every balance is exactly zero**. Reconverting
+  would use different rates for a debt and its payment and reopen it. Instead the chapter
+  is **closed**: its bills and settlements keep their old currency and become read-only
+  history, and a new `chapter` starts at zero in the new currency. Otherwise the app says
+  who still has to settle.
+
+Rules around it:
+
+- The function does it all in one step as far as members can see: it refuses to start
+  while any bill is still converting, and a bill written during the change is frozen in
+  the new currency afterwards.
+- `chapter` on a bill or settlement is set by the function when it first processes it, so
+  an entry made offline before the change lands in the current chapter rather than being
+  lost. An offline edit to a closed chapter is refused, and the app says so.
+- Entries in a closed chapter can't be edited or deleted: that would move balances that
+  are no longer kept.
+- "Settled" everywhere (leaving, removing) means a zero balance in the current chapter;
+  closed chapters are zero by definition.
 
 ## Rules
 
@@ -260,7 +279,7 @@ below is planned and gets its rule along with its screen.
   - edit their own `members[uid]` entry
   - add members (each added uid must exist)
   - remove themselves (the app checks they're settled)
-  - rename the group / change its currency
+  - rename the group (its currency changes only through `changeGroupCurrency`)
 - **Creator only:** set or clear `archivedAt`, reset `inviteCode`, remove other members,
   and delete the group.
 - **No `inviteCode` reads for non-members.** Joining only happens through `joinGroup`,

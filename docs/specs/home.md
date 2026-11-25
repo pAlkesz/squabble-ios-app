@@ -20,8 +20,8 @@ either direction. There's no tab bar; squabbles are pushed from home like conver
 
 - **Positive** means others owe the user; **negative** means the user owes others.
 - Shown in the **home currency**, labelled "Total · <code>".
-- **Planned:** the sum across all squabbles, converted into the home currency. Nothing
-  converts yet. It will use the ECB's daily rates (see
+- **Planned:** the sum of the user's stored balance in every squabble, converted into the
+  home currency. Nothing converts yet. It will use the ECB's latest daily rates (see
   [Bills](bills.md#exchange-rates)).
 
 ## Balance mood
