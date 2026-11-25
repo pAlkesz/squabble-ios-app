@@ -12,6 +12,12 @@ enum FirebaseBootstrap {
     static func configure() {
         guard !isConfigured else { return }
         isConfigured = true
+        #if DEBUG && targetEnvironment(simulator)
+        if LocalEmulator.isEnabled {
+            LocalEmulator.configure()
+            return
+        }
+        #endif
         guard Bundle.main.url(forResource: "GoogleService-Info", withExtension: "plist") != nil else {
             logger.warning("GoogleService-Info.plist missing; Firebase disabled for this build")
             return

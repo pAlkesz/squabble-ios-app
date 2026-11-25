@@ -11,6 +11,9 @@ struct SignInView: View {
             SquabbleBackdrop()
             content
         }
+        #if DEBUG && targetEnvironment(simulator)
+        .overlay(alignment: .topTrailing) { EmulatorSignInMenu() }
+        #endif
         .alert(
             "Sign-in failed",
             isPresented: Binding(get: { failure != nil }, set: { if !$0 { failure = nil } }),

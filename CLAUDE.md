@@ -352,7 +352,8 @@ squabble/
         Util/           Feature-local helpers
 ```
 
-`functions/` at the repo root holds the Cloud Functions (TypeScript sources in `src/`).
+`functions/` at the repo root holds the Cloud Functions (TypeScript sources in `src/`);
+`emulator/` starts and seeds the local Firebase emulator.
 
 Empty folders aren't committed (git doesn't track them) — create each folder when the
 first real file for it lands, following the layout above. The app target folder is
@@ -525,6 +526,12 @@ Test (unit + UI):
 ```bash
 xcodebuild test -project squabble.xcodeproj -scheme squabble \
   -destination 'platform=iOS Simulator,name=iPhone 17'
+```
+
+Test with several people (local Firebase emulator, fake users; `docs/specs/testing.md`):
+
+```bash
+emulator/start.sh
 ```
 
 To see the app running, prefer the iOS Simulator tooling (attach the live panel, build,
