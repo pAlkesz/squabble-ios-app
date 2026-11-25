@@ -55,7 +55,7 @@ the rules and this spec in the same commit.
 | `users/{uid}` | any signed-in user | owner only; shape-checked; must point at a handle the owner holds |
 | `users/{uid}/private/*` | owner | owner; `payment` = `methods` list ≤ 5, `preferences` = optional 3-letter code |
 | `handles/{h}` | any signed-in user | create: own uid, valid handle, profile names it. Delete: owner. **Never updated.** |
-| `groups/{id}` | current members (`memberIds`) | create: creator first, ≤ 50 members, valid own entry. Update: a member's own entry only, not while archived |
+| `groups/{id}` | current members (`memberIds`) | create: creator first, ≤ 50 members, valid own entry. Update: a member's own entry, or `updatedAt` to now; not while archived |
 | `invites/{code}` | nobody | nobody (functions only) |
 | `groups/{id}/messages/{m}` | current members | create: as yourself, text ≤ 4,000, no reactions. Update: your own reaction, or the author soft-deletes. Not while archived |
 | `reports/{id}` | nobody | create: members of the reported squabble, as themselves |

@@ -158,6 +158,13 @@ service cloud.firestore {
           == resource.data.members[request.auth.uid].get('joinedAt', null)
         && isValidMemberEntry(request.resource.data.members[request.auth.uid], request.auth.uid);
 
+      // Sending a message marks the squabble as just active.
+      allow update: if signedIn()
+        && request.auth.uid in resource.data.memberIds
+        && !('archivedAt' in resource.data)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['updatedAt'])
+        && request.resource.data.updatedAt == request.time;
+
       // One get() of the group per request, shared by every message in a query.
       function group() {
         return get(/databases/$(database)/documents/groups/$(groupId)).data;

@@ -12,7 +12,7 @@ nonisolated final class FirestoreChatRepository: ChatRepository {
         db.collection("groups").document(groupID).collection("messages")
     }
 
-    func latestMessages(in groupID: String, limit: Int) -> AsyncThrowingStream<[ChatMessage], Error> {
+    func latestMessages(in groupID: String, limit: Int) -> AsyncThrowingStream<ChatPage, Error> {
         guard let db else {
             return AsyncThrowingStream { $0.finish(throwing: ChatError.unavailable) }
         }
@@ -27,27 +27,33 @@ nonisolated final class FirestoreChatRepository: ChatRepository {
                     return
                 }
                 guard let snapshot else { return }
-                continuation.yield(snapshot.documents.reversed().compactMap(Self.message(from:)))
+                continuation.yield(Self.page(from: snapshot, limit: limit))
             }
             continuation.onTermination = { _ in registration.remove() }
         }
     }
 
-    func messages(in groupID: String, before date: Date, limit: Int) async throws -> [ChatMessage] {
+    func messages(in groupID: String, before date: Date, limit: Int) async throws -> ChatPage {
         guard let db else { throw ChatError.unavailable }
         let snapshot = try await messages(db, groupID)
             .order(by: ChatMessage.Field.createdAt, descending: true)
             .whereField(ChatMessage.Field.createdAt, isLessThan: Timestamp(date: date))
             .limit(to: limit)
             .getDocuments()
-        return snapshot.documents.reversed().compactMap(Self.message(from:))
+        return Self.page(from: snapshot, limit: limit)
     }
 
     func send(_ message: ChatMessage, in groupID: String) throws {
         guard let db else { throw ChatError.unavailable }
         var data = message.firestoreData
         data[ChatMessage.Field.createdAt] = FieldValue.serverTimestamp()
-        messages(db, groupID).document(message.id).setData(data) { error in
+        let batch = db.batch()
+        batch.setData(data, forDocument: messages(db, groupID).document(message.id))
+        batch.updateData(
+            [SquabbleGroup.Field.updatedAt: FieldValue.serverTimestamp()],
+            forDocument: db.collection("groups").document(groupID)
+        )
+        batch.commit { error in
             if let error { AppLog.error(error, "Message send failed") }
         }
     }
@@ -87,6 +93,14 @@ nonisolated final class FirestoreChatRepository: ChatRepository {
     func newMessageID(in groupID: String) -> String {
         guard let db else { return UUID().uuidString }
         return messages(db, groupID).document().documentID
+    }
+
+    private static func page(from snapshot: QuerySnapshot, limit: Int) -> ChatPage {
+        ChatPage(
+            messages: snapshot.documents.reversed().compactMap(message(from:)),
+            isFull: snapshot.documents.count >= limit,
+            isFromCache: snapshot.metadata.isFromCache
+        )
     }
 
     private static func message(from document: QueryDocumentSnapshot) -> ChatMessage? {

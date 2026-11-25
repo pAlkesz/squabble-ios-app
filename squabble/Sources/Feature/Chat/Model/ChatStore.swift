@@ -11,25 +11,30 @@ final class ChatStore {
     private(set) var messages: [ChatMessage] = []
     private(set) var hasLoaded = false
     private(set) var failed = false
-    private(set) var canLoadOlder = true
     private(set) var isLoadingOlder = false
 
     @ObservationIgnored @Injected(\.chatRepository) private var repository
-    @ObservationIgnored private var latest: [ChatMessage] = []
-    @ObservationIgnored private var older: [ChatMessage] = []
+    private var isLive = false
+    private var isLatestFull = false
+    private var hasReachedStart = false
     let groupID: String
 
     init(groupID: String) {
         self.groupID = groupID
     }
 
+    /// The spinner above the oldest message reloads when this changes: after each page, and
+    /// when the connection comes back.
+    var olderPageTrigger: String {
+        "\(messages.first?.id ?? "")-\(isLive)"
+    }
+
+    var canLoadOlder: Bool { isLatestFull && !hasReachedStart }
+
     func observe() async {
         do {
             for try await page in repository.latestMessages(in: groupID, limit: Self.pageSize) {
-                latest = page
-                // A short first page means there's nothing older.
-                if !hasLoaded { canLoadOlder = page.count == Self.pageSize }
-                merge()
+                show(latest: page)
                 hasLoaded = true
             }
         } catch {
@@ -40,14 +45,17 @@ final class ChatStore {
     }
 
     func loadOlder() async {
-        guard canLoadOlder, !isLoadingOlder, let oldest = messages.first?.createdAt else { return }
+        guard canLoadOlder, !isLoadingOlder, let oldest = messages.first, let date = oldest.createdAt else { return }
         isLoadingOlder = true
         defer { isLoadingOlder = false }
         do {
-            let page = try await repository.messages(in: groupID, before: oldest, limit: Self.pageSize)
-            canLoadOlder = page.count == Self.pageSize
-            older = page + older
-            merge()
+            let page = try await repository.messages(in: groupID, before: date, limit: Self.pageSize)
+            // The live page started over meanwhile, so this one no longer joins on.
+            guard messages.first?.id == oldest.id else { return }
+            let known = Set(messages.map(\.id))
+            messages = page.messages.filter { !known.contains($0.id) } + messages
+            // The cache only holds what this phone has seen, so it can't say where it starts.
+            if !page.isFromCache, !page.isFull { hasReachedStart = true }
         } catch {
             AppLog.error(error, "Loading older messages failed")
         }
@@ -91,9 +99,22 @@ final class ChatStore {
         }
     }
 
-    /// The live page wins where pages overlap: it has the latest reactions and deletions.
-    private func merge() {
-        let liveIDs = Set(latest.map(\.id))
-        messages = older.filter { !liveIDs.contains($0.id) } + latest
+    /// Puts the live page after what's already loaded: it wins where they overlap (it has the
+    /// latest reactions and deletions), and what it has moved past stays above it.
+    private func show(latest page: ChatPage) {
+        isLive = !page.isFromCache
+        isLatestFull = page.isFull
+        if !page.isFromCache, !page.isFull {
+            // The server's whole chat fits in one page.
+            messages = page.messages
+            hasReachedStart = true
+        } else if let first = page.messages.first, let index = messages.firstIndex(where: { $0.id == first.id }) {
+            messages = messages[..<index] + page.messages
+        } else {
+            // No overlap at its start: there may be messages in between (a long time offline),
+            // so start over rather than leave a silent hole.
+            messages = page.messages
+            hasReachedStart = false
+        }
     }
 }

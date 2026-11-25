@@ -108,22 +108,78 @@ struct ChatStoreTests {
         #expect(repository.reactions.map(\.emoji) == [nil, "😂"])
     }
 
-    @Test func olderPagesGoBeforeTheLivePageWithoutDuplicates() async {
-        let now = Date()
-        repository.latest = (0..<ChatStore.pageSize).map {
-            ChatMessage(id: "l\($0)", authorID: "pal", createdAt: now.addingTimeInterval(Double($0)), text: "x")
+    private func messages(_ range: Range<Int>, text: String = "x") -> [ChatMessage] {
+        range.map {
+            ChatMessage(id: "m\($0)", authorID: "pal", createdAt: Date(timeIntervalSince1970: Double($0)), text: text)
         }
-        repository.olderPages = [[
-            ChatMessage(id: "o1", authorID: "pal", createdAt: now.addingTimeInterval(-10), text: "x"),
-            ChatMessage(id: "l0", authorID: "pal", createdAt: now, text: "stale"),
-        ]]
+    }
+
+    private func page(_ range: Range<Int>, text: String = "x", cached: Bool = false) -> ChatPage {
+        ChatPage(messages: messages(range, text: text), isFull: range.count >= ChatStore.pageSize, isFromCache: cached)
+    }
+
+    private func ids(_ range: Range<Int>) -> [String] { range.map { "m\($0)" } }
+
+    @Test func olderPagesGoBeforeTheLivePageWithoutDuplicates() async {
+        repository.latest = [page(100..<150)]
+        repository.olderPages = [page(90..<101, text: "stale")]
         let store = ChatStore(groupID: "g1")
         await store.observe()
         #expect(store.canLoadOlder)
         await store.loadOlder()
-        #expect(store.messages.first?.id == "o1")
-        #expect(store.messages.filter { $0.id == "l0" }.map(\.text) == ["x"])
-        #expect(store.messages.count == ChatStore.pageSize + 1)
+        #expect(store.messages.map(\.id) == ids(90..<150))
+        #expect(store.message(id: "m100")?.text == "x")
         #expect(!store.canLoadOlder)
+    }
+
+    @Test func aShortCachedPageDoesNotHideOlderMessages() async {
+        repository.latest = [page(140..<150, cached: true), page(100..<150)]
+        let store = ChatStore(groupID: "g1")
+        await store.observe()
+        #expect(store.messages.map(\.id) == ids(100..<150))
+        #expect(store.canLoadOlder)
+    }
+
+    @Test func messagesTheLivePageMovesPastStay() async {
+        repository.latest = [page(0..<49), page(0..<50), page(2..<52)]
+        let store = ChatStore(groupID: "g1")
+        await store.observe()
+        #expect(store.messages.map(\.id) == ids(0..<52))
+        #expect(!store.canLoadOlder)
+    }
+
+    @Test func loadedOlderPagesStayJoinedAsTheLivePageMoves() async {
+        repository.latest = [page(100..<150)]
+        repository.olderPages = [page(50..<100)]
+        let store = ChatStore(groupID: "g1")
+        await store.observe()
+        await store.loadOlder()
+        repository.latest = [page(103..<153, text: "new")]
+        await store.observe()
+        #expect(store.messages.map(\.id) == ids(50..<153))
+        #expect(store.message(id: "m103")?.text == "new")
+        #expect(store.canLoadOlder)
+    }
+
+    @Test func aGapStartsOverEvenWhenAnUnsentMessageOverlaps() async {
+        let mine = ChatMessage(id: "mine", authorID: "pal", createdAt: Date(timeIntervalSince1970: 400), text: "x")
+        repository.latest = [
+            ChatPage(messages: messages(1..<50) + [mine], isFull: true, isFromCache: true),
+            ChatPage(messages: messages(200..<249) + [mine], isFull: true, isFromCache: false),
+        ]
+        let store = ChatStore(groupID: "g1")
+        await store.observe()
+        #expect(store.messages.map(\.id) == ids(200..<249) + ["mine"])
+        #expect(store.canLoadOlder)
+    }
+
+    @Test func aShortOlderPageFromTheCacheIsNotTheStart() async {
+        repository.latest = [page(100..<150)]
+        repository.olderPages = [page(95..<100, cached: true)]
+        let store = ChatStore(groupID: "g1")
+        await store.observe()
+        await store.loadOlder()
+        #expect(store.messages.first?.id == "m95")
+        #expect(store.canLoadOlder)
     }
 }

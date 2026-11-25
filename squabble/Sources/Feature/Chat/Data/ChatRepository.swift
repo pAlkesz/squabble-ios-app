@@ -4,9 +4,10 @@ import Foundation
 /// chatting works offline; only reading older pages needs the server.
 nonisolated protocol ChatRepository: Sendable {
     /// The latest `limit` messages, oldest first, from the cache and then every change.
-    func latestMessages(in groupID: String, limit: Int) -> AsyncThrowingStream<[ChatMessage], Error>
+    func latestMessages(in groupID: String, limit: Int) -> AsyncThrowingStream<ChatPage, Error>
     /// Up to `limit` messages from before `date`, oldest first.
-    func messages(in groupID: String, before date: Date, limit: Int) async throws -> [ChatMessage]
+    func messages(in groupID: String, before date: Date, limit: Int) async throws -> ChatPage
+    /// Also marks the squabble as just active.
     func send(_ message: ChatMessage, in groupID: String) throws
     /// Sets the user's reaction, or clears it with nil.
     func setReaction(_ emoji: String?, by uid: String, on messageID: String, in groupID: String) throws

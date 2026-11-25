@@ -46,7 +46,7 @@ struct SquabbleView: View {
                         ProgressView()
                             .tint(.white)
                             .padding(.vertical, 12)
-                            .task { await chat.loadOlder() }
+                            .task(id: chat.olderPageTrigger) { await chat.loadOlder() }
                     }
                     ForEach(ChatTimeline.rows(for: chat.messages)) { row in
                         switch row {

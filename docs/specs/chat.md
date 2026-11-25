@@ -84,6 +84,12 @@ groups/{gid}/messages/{messageId}
   settlement document in the same `reactions` map.
 - **Reads cost money:** one listener per collection on the **latest 50** entries;
   older ones load in pages of 50 with `getDocuments` as the user scrolls up (`ChatStore`).
+  Messages the live page moves past stay on screen. If it jumps ahead with a possible gap
+  (a long time offline), the timeline starts over from it. Only the server can say where a
+  chat begins, never the cache.
+- **Sending bumps the squabble's `updatedAt`** in the same batch (Nov 2026), so "most
+  recently active" includes chat. It costs one write, and a group read per listening member,
+  per message.
 - `reports/{id}`: `{ groupId, messageId, authorId, text, reportedBy, createdAt }`,
   create-only for members of that squabble; nobody reads it from the app.
 - **Rules:** members read; a member creates messages as themselves; only the author
