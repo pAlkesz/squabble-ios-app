@@ -1,7 +1,7 @@
 # Home & balance
 
 **Status:** Partly built. The layout, balance mood, home currency and the Squabbles tile
-are done. The balance is a fixed 0 until bills land.
+are done. Totals are per currency until exchange rates land.
 
 ## Summary
 
@@ -20,8 +20,10 @@ either direction. There's no tab bar; squabbles are pushed from home like conver
 
 - **Positive** means others owe the user; **negative** means the user owes others.
 - Shown in the **home currency**, labelled "Total · <code>".
-- **Planned:** the sum of the user's stored balance in every squabble, converted into the
-  home currency. Nothing converts yet. It will use the ECB's latest daily rates (see
+- **Built (Nov 2026):** the sum of the user's stored balances. Nothing converts yet, so the
+  headline adds up squabbles in the home currency, and other currencies are listed under it
+  (`HomeTotal`); the mood judges them all together in rough euro terms.
+- **Planned:** one converted total, using the ECB's latest daily rates (see
   [Bills](bills.md#exchange-rates)).
 
 ## Balance mood
@@ -72,7 +74,7 @@ rows. Rows have a 48 pt picture, a title and a grey subtitle, and no chevron.
   pushes the squabble.
   Only the **3 most recently active** show. The title has a chevron, and a **See all** row
   closes the card; both push the full list (see [Groups](groups.md#squabble-pages)).
-  Planned: the user's balance in each squabble on the right.
+  The user's balance in it shows on the right unless it's zero.
 - **Empty:** a dove, "No squabbles yet", a joke about the peace, and a white **Start a
   squabble** button that zooms the create sheet out of itself (as `+` does).
 - The tile stays hidden until the first answer from Firestore, so a returning user never
@@ -96,7 +98,7 @@ like Revolut's: `+` already covers the one main action.
 - **Flags:** a currency's country is the region its code starts with (HUF → HU,
   EUR → EU), or otherwise the only region that uses it. Currencies shared by several
   countries show a banknote instead. A test fails if a mapped flag asset is missing.
-- **Today it only relabels the total.** Nothing is converted.
+- **Nothing is converted yet:** it decides which squabbles make up the headline total.
 
 ## Placeholders and built entry points
 

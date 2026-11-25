@@ -15,6 +15,14 @@ nonisolated struct BalanceMood: Equatable, Sendable {
         intensity = amount < 0 ? -scaled : scaled
     }
 
+    /// Several currencies, judged together in rough euro terms.
+    init(balances: [Money]) {
+        let euros = balances.reduce(0.0) {
+            $0 + NSDecimalNumber(decimal: $1.amount).doubleValue / Self.unitsPerEuro($1.currencyCode)
+        }
+        self.init(amount: Decimal(euros), currencyCode: "EUR")
+    }
+
     // The colour assets' generated symbols are main-actor isolated.
     @MainActor var palette: BackdropPalette {
         let strength = abs(intensity)

@@ -25,7 +25,7 @@ groups and bills are in [Groups](groups.md) and [Bills](bills.md).
 | `createInvite`, `resetInvite`, `previewInvite`, `joinGroup` | Callables | Built ([Groups](groups.md#joining-with-an-invite-link)) |
 | People sync | Firestore triggers on groups and users | Planned ([People](people.md#keeping-it-up-to-date-cloud-functions)) |
 | Exchange rates | Scheduled, daily | Planned ([Bills](bills.md#exchange-rates)) |
-| Frozen conversions and balances | Firestore triggers on bills and settlements | Planned ([Bills](bills.md#balances)) |
+| `updateBalances` | Firestore trigger on bills | Built ([Bills](bills.md#balances)); settlements and frozen conversions planned |
 | `changeGroupCurrency` | Callable | Planned ([Groups](groups.md#currency)) |
 
 ## Current layout
@@ -40,6 +40,7 @@ groups/{groupId}                 a squabble; current members can read it (see gr
   inviteCode?                    written only by the invite functions
 invites/{code}                   { groupId, createdAt }: only the invite functions touch it
 groups/{groupId}/messages/{id}   chat messages (see chat.md)
+groups/{groupId}/bills/{id}      bills (see bills.md)
 reports/{id}                     reported messages; create-only, read by the developer
 avatars/{uid}/{random}.jpg       Storage: square JPEG, < 1 MB
 groupImages/{uid}/{random}.jpg   Storage: squabble photos, filed by uploader, < 1 MB
@@ -58,6 +59,7 @@ the rules and this spec in the same commit.
 | `groups/{id}` | current members (`memberIds`) | create: creator first, ≤ 50 members, valid own entry. Update: a member's own entry, or `updatedAt` to now; not while archived |
 | `invites/{code}` | nobody | nobody (functions only) |
 | `groups/{id}/messages/{m}` | current members | create: as yourself, text ≤ 4,000, no reactions. Update: your own reaction, or the author soft-deletes. Not while archived |
+| `groups/{id}/bills/{b}` | current members | any member creates, edits or soft-deletes, as themselves; shape-checked. Not while archived |
 | `reports/{id}` | nobody | create: members of the reported squabble, as themselves |
 | `avatars/{uid}/*` | any signed-in user | owner; `.jpg`, `image/jpeg`, < 1 MB |
 | `groupImages/{uid}/*` | any signed-in user | uploader; `.jpg`, `image/jpeg`, < 1 MB |

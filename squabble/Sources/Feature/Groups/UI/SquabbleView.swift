@@ -16,6 +16,10 @@ struct SquabbleView: View {
     @State private var replyingTo: ChatMessage?
     @State private var deleting: ChatMessage?
     @State private var reporting: ChatMessage?
+    @State private var billForm: BillDraft?
+    @State private var openBill: OpenBill?
+    /// Opened once the details sheet is gone; two sheets can't swap in one go.
+    @State private var billToEdit: BillDraft?
     @FocusState private var isComposing: Bool
     #if DEBUG
     @Environment(DebugBalances.self) private var debugBalances: DebugBalances?
@@ -44,13 +48,19 @@ struct SquabbleView: View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(spacing: 4) {
-                    ForEach(ChatTimeline.rows(for: chat.messages)) { row in
+                    ForEach(ChatTimeline.rows(for: chat.entries)) { row in
                         switch row {
                         case .day(let day):
                             ChatDayHeader(day: day)
                         case .message(let message, let startsRun, let endsRun):
                             messageRow(message, startsRun: startsRun, endsRun: endsRun, in: group, proxy: proxy)
                                 .id(message.id)
+                        case .bill(let bill):
+                            BillCard(bill: bill, group: group, myUID: session.user?.id) {
+                                isComposing = false
+                                openBill = OpenBill(id: bill.id)
+                            }
+                            .id(bill.id)
                         }
                     }
                 }
@@ -88,11 +98,11 @@ struct SquabbleView: View {
             // iOS 26's soft fade under the bar; iOS 27 no longer defaults to it.
             .scrollEdgeEffectStyle(.soft, for: [.top, .bottom])
             .overlay {
-                if chat.hasLoaded, chat.messages.isEmpty {
+                if chat.hasLoaded, chat.entries.isEmpty {
                     emptyState(group)
                 }
             }
-            .onChange(of: chat.messages.last?.id) { _, id in
+            .onChange(of: chat.entries.last?.id) { _, id in
                 guard let id else { return }
                 withAnimation(.snappy) { proxy.scrollTo(id, anchor: .bottom) }
             }
@@ -112,9 +122,39 @@ struct SquabbleView: View {
                     replyAuthorName: replyingTo.map { ChatMessageRow.name(of: group.members[$0.authorID]) },
                     isFocused: $isComposing,
                     onCancelReply: { replyingTo = nil },
-                    onSend: send
+                    onSend: send,
+                    onAddBill: {
+                        guard let uid = session.user?.id else { return }
+                        isComposing = false
+                        billForm = BillDraft(newBillIn: group, by: uid)
+                    }
                 )
                 .frame(maxWidth: 720)
+            }
+        }
+        .sheet(item: $billForm) { draft in
+            if let uid = session.user?.id {
+                BillFormView(draft: draft, group: group, uid: uid) { bill, isNew in
+                    chat.save(bill, isNew: isNew)
+                }
+                .presentationBackground(Color.backdropDeep)
+            }
+        }
+        .sheet(item: $openBill, onDismiss: {
+            billForm = billToEdit
+            billToEdit = nil
+        }) { open in
+            // By id, so an edit by someone else shows while it's open.
+            if let uid = session.user?.id, let bill = chat.bill(id: open.id), !bill.isDeleted {
+                BillDetailView(
+                    bill: bill,
+                    group: group,
+                    uid: uid,
+                    onEdit: { billToEdit = BillDraft(editing: bill, in: group) },
+                    onDelete: { chat.delete(bill, by: uid) }
+                )
+                .presentationBackground { ProfileBackdrop() }
+                .presentationDetents([.medium, .large])
             }
         }
         .confirmationDialog(
@@ -154,8 +194,9 @@ struct SquabbleView: View {
                 Text(verbatim: group.name)
                     .font(.headline)
                     .lineLimit(1)
-                Text("No bills yet", comment: "Squabble page: subtitle under the name in the bar while there are no bills.")
+                standing(group)
                     .font(.subheadline)
+                    .lineLimit(1)
             }
             .foregroundStyle(.white)
             #if DEBUG
@@ -197,6 +238,17 @@ struct SquabbleView: View {
                 withAnimation(.snappy) { proxy.scrollTo(id, anchor: .center) }
             }
         )
+    }
+
+    private func standing(_ group: SquabbleGroup) -> Text {
+        guard group.balances != nil, let uid = session.user?.id else {
+            return Text("No bills yet", comment: "Squabble page: subtitle under the name in the bar while there are no bills.")
+        }
+        return Text(verbatim: BillText.standing(group.balance(of: uid)))
+    }
+
+    private struct OpenBill: Identifiable {
+        let id: String
     }
 
     private struct OlderPageTrigger: Equatable {

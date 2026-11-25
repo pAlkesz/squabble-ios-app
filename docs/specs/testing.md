@@ -30,7 +30,7 @@ Firebase emulator**, one simulator per person.
 | Someone new | A fresh account without a profile, for onboarding |
 
 Flat is brand new and empty; Vienna weekend has 130 messages (three pages); Ghosted dinner has
-a deleted member. Someone deep in debt comes with bills.
+a deleted member. Cili is deep in debt there.
 
 ## Rules
 

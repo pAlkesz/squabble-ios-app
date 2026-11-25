@@ -2,8 +2,8 @@
 
 **Status:** Partly built (Nov 2026). Built: text messages, day headers, runs, replies,
 reactions, copy, delete, report, the composer, paging, rules and account-deletion cleanup.
-Not built: bill and settlement entries and their detail sheet (they need [Bills](bills.md)),
-system lines, Add a bill (shown, disabled), and the standing in the bar.
+Bill entries, their details sheet, Add a bill, and the standing in the bar.
+Not built: settlement entries, system lines, and reactions and replies on bills.
 
 ## Summary
 
@@ -19,10 +19,10 @@ newest at the bottom. The composer sits at the bottom.
 - **Own messages on the right**, others on the left with the author's avatar; consecutive
   messages from one author group together, the avatar shown on the last one and the name
   on the first.
-- **Bill entries** are cards: a pill with the user's side of it ("You owe Anna", "Anna
-  owes you", "You're not in this one"), the bill total large, "<payer> paid <amount> ·
-  <title>" (with the converted amount when the bill is in another currency), the avatars
-  of everyone sharing it, and the time.
+- **Bill entries** are cards (`BillCard`), on the right when the user added them: a pill with
+  the user's side of it ("You owe Anna", "You're owed", "You're not in this one"), that amount
+  large, "<payer> paid <total> · <title>", the avatars of everyone sharing it, and the time.
+  A deleted bill is one quiet line saying who deleted it.
 - **Settlement entries:** "Marked as paid" pill, the amount large, "To <name>".
 - **Empty:** the ready state ("Your squabble is ready", the invite link, next steps).
 - The bar shows the name and, under it, the user's standing ("You're settled up", "You
@@ -80,7 +80,8 @@ groups/{gid}/messages/{messageId}
 ```
 
 - Bills and settlements stay in their own collections (see [Bills](bills.md)); the
-  timeline merges them on the device by `createdAt`. Their reactions live on the bill or
+  timeline merges them on the device by `createdAt` (`ChatEntry.merged`), showing only as far
+  back as both have been loaded, so nothing turns up later in the middle. Their reactions live on the bill or
   settlement document in the same `reactions` map.
 - **Reads cost money:** one listener per collection on the **latest 50** entries;
   older ones load in pages of 50 with `getDocuments` as the user scrolls up (`ChatStore`).

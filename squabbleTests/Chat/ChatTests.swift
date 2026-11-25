@@ -60,11 +60,12 @@ struct ChatTimelineTests {
             message("3", "pal", at(18, 19, 3)),
             message("4", "pal", at(18, 19, 30)),
             message("5", "pal", at(19, 9, 0)),
-        ], now: at(19, 12), calendar: calendar)
+        ].map(ChatEntry.message), now: at(19, 12), calendar: calendar)
 
         let shape = rows.map { row -> String in
             switch row {
             case .day: "day"
+            case .bill(let bill): bill.id
             case .message(let m, let starts, let ends): "\(m.id)\(starts ? "s" : "")\(ends ? "e" : "")"
             }
         }
@@ -84,9 +85,11 @@ struct ChatTimelineTests {
 @Suite(.serialized)
 struct ChatStoreTests {
     private let repository = FakeChatRepository()
+    private let bills = FakeBillRepository()
 
     init() {
         Container.shared.chatRepository.register { [repository] in repository }
+        Container.shared.billRepository.register { [bills] in bills }
     }
 
     @Test func sendsTrimmedTextWithTheReplyAndIgnoresBlanks() {
@@ -114,8 +117,8 @@ struct ChatStoreTests {
         }
     }
 
-    private func page(_ range: Range<Int>, text: String = "x", cached: Bool = false) -> ChatPage {
-        ChatPage(messages: messages(range, text: text), isFull: range.count >= ChatStore.pageSize, isFromCache: cached)
+    private func page(_ range: Range<Int>, text: String = "x", cached: Bool = false) -> FeedPage<ChatMessage> {
+        FeedPage(items: messages(range, text: text), isFull: range.count >= ChatStore.pageSize, isFromCache: cached)
     }
 
     private func ids(_ range: Range<Int>) -> [String] { range.map { "m\($0)" } }
@@ -165,8 +168,8 @@ struct ChatStoreTests {
     @Test func aGapStartsOverEvenWhenAnUnsentMessageOverlaps() async {
         let mine = ChatMessage(id: "mine", authorID: "pal", createdAt: Date(timeIntervalSince1970: 400), text: "x")
         repository.latest = [
-            ChatPage(messages: messages(1..<50) + [mine], isFull: true, isFromCache: true),
-            ChatPage(messages: messages(200..<249) + [mine], isFull: true, isFromCache: false),
+            FeedPage(items: messages(1..<50) + [mine], isFull: true, isFromCache: true),
+            FeedPage(items: messages(200..<249) + [mine], isFull: true, isFromCache: false),
         ]
         let store = ChatStore(groupID: "g1")
         await store.observe()

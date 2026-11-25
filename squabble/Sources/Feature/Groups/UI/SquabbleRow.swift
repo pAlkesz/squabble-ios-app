@@ -8,6 +8,8 @@ struct SquabbleRow: View {
     /// How strong the date and summary are; a lighter backdrop needs more.
     var secondaryOpacity = 0.6
 
+    @Environment(AuthSession.self) private var session
+
     var body: some View {
         HStack(spacing: 14) {
             SquabbleImageView(group.image, size: pictureSize)
@@ -25,16 +27,31 @@ struct SquabbleRow: View {
                             .foregroundStyle(.white.opacity(secondaryOpacity))
                     }
                 }
-                Text(summary)
-                    .font(.subheadline)
-                    .foregroundStyle(.white.opacity(secondaryOpacity))
-                    .lineLimit(1)
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Text(summary)
+                        .foregroundStyle(.white.opacity(secondaryOpacity))
+                        .lineLimit(1)
+                    Spacer(minLength: 0)
+                    if let balance, balance.minorUnits != 0 {
+                        Text(verbatim: balance.formattedWithSign())
+                            .fontWeight(.semibold)
+                            .monospacedDigit()
+                            .lineLimit(1)
+                            .layoutPriority(1)
+                            .accessibilityLabel(Text(verbatim: BillText.standing(balance)))
+                    }
+                }
+                .font(.subheadline)
             }
         }
         .foregroundStyle(.white)
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
         .contentShape(.rect)
+    }
+
+    private var balance: Money? {
+        session.user.map { group.balance(of: $0.id) }
     }
 
     private var summary: String {

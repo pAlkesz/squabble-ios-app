@@ -16,7 +16,7 @@ Design, branding and code conventions stay in [`CLAUDE.md`](../CLAUDE.md).
 | [Data & sync](specs/data-and-sync.md) | Built | Firestore layout, security rules, offline behaviour, money storage, data deletion |
 | [Groups (squabbles)](specs/groups.md) | Partly built | Creating squabbles, members, invites, archiving |
 | [People](specs/people.md) | Draft | Finding people you've squabbled with before |
-| [Bills & splitting](specs/bills.md) | Draft | Bills, the split algorithm, settlements, reminders |
+| [Bills & splitting](specs/bills.md) | Partly built | Bills, the split algorithm, settlements, reminders |
 | [Testing with several people](specs/testing.md) | Built | Emulator, fake people, rules tests |
 | [Squabble chat](specs/chat.md) | Partly built | The squabble page's timeline: messages, bill entries, reactions, replies |
 

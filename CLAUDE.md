@@ -74,7 +74,7 @@ ObjC-based SDK, NoSQL modeling, `Sendable` friction under Swift 6.
 - **Cloud Functions** live in `functions/` (TypeScript, Node 22, `firebase-functions` +
   `firebase-admin`; `node_modules/` and the compiled `lib/` are gitignored). Deploy with
   `firebase deploy --only functions` — Claude deploys them itself, like the rules. Functions:
-  the invite callables (`createInvite`, `resetInvite`, `previewInvite`, `joinGroup`, also
+  `updateBalances` (Firestore trigger, retries on), the invite callables (`createInvite`, `resetInvite`, `previewInvite`, `joinGroup`, also
   first-generation, as the same service account) and `deleteUserData`, a first-generation `auth.user().onDelete` trigger (the
   newer API has no Auth delete trigger) with retries on, running as the Firebase Admin SDK
   service account (the project has no default Compute Engine account), which wipes `users/{uid}` and its
@@ -410,8 +410,9 @@ stutters on a device even when the simulator looks smooth.
   home like conversations; add a `TabView` only once there are 3+ peer destinations).
   The avatar, a glass search pill and a `+` for a new squabble are real **toolbar items**
   (search and `+` have no destination yet). Below them `TotalBalanceView`, the net of
-  everything owed either way, labelled "Total · <code>"; it's a fixed 0 until groups
-  exist. Totals will be **converted into one home currency** (for now the locale's).
+  everything owed either way, labelled "Total · <code>": the stored balances
+  in the home currency, with other currencies listed under it (`HomeTotal`). Totals will be
+  **converted into one home currency**.
 - **Balance backdrop:** `BalanceMood` (`Feature/Home/Model`) turns the total into a signed
   intensity (−1…1) and a `BackdropPalette` for `SquabbleBackdrop` — hue says which way the
   money flows, saturation how much. Petrol at zero (deliberately not a Revolut-ish royal
@@ -493,8 +494,11 @@ stutters on a device even when the simulator looks smooth.
   fade under the bar, which iOS 27 no longer applies by default. Add it to every new
   scrolling page.
 - **Placeholder:** search on home has no destination.
-- **Bills, started:** `Money`/`CurrencyPrecision` (`Core/Money`) and `BillSplit`
-  (`Feature/Bills/Model`), no UI or storage yet.
+- **Bills, in progress** (`Feature/Bills`, spec `docs/specs/bills.md`): added from the chat's
+  composer in a sheet (`BillFormView`, split page pushed), shown in the timeline (`BillCard`,
+  details sheet), same currency as the squabble only. `updateBalances` keeps
+  `groups/{id}.balances`; home totals them per currency (`HomeTotal`), nothing converts yet.
+  Amount fields go through `AmountField`: a binding that rejects input leaves it on screen.
 - **Not started:** bills — capture, AI parsing, settlements,
   reminders.
 

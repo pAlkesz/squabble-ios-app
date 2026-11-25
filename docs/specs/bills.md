@@ -1,8 +1,13 @@
 # Bills & splitting
 
-**Status:** Draft. Only the money model (`Money`, `CurrencyPrecision`) and the split
-algorithm (`BillSplit`) are built. Depends on [Groups](groups.md). Product questions settled
-(Nov 2026).
+**Status:** Partly built (Nov 2026). Depends on [Groups](groups.md).
+
+- **Built:** manual bills in the squabble's own currency (add, edit, delete, split equally or
+  by exact amounts), their chat cards and details, balances kept by `updateBalances`, the
+  rules, and balances on home, the squabbles list and the squabble page.
+- **Not built yet:** other currencies (`frozen`, `chapter`, rates), items, settlements,
+  settle-up suggestions, reactions and replies on bills, reminders, AI parsing. The rules
+  refuse a bill in another currency until then.
 
 ## Summary
 
@@ -21,6 +26,10 @@ in the same form.
 - **Any member can edit or delete any bill** (Nov 2026), so anyone can fix a mistake.
   Every change records who made it (`updatedBy`), and the bill shows "edited by …", so
   edits are never silent.
+- **Deleting keeps the bill** (Nov 2026), marked `deletedAt`: it counts for nothing, and the
+  chat says who deleted it. A hard delete would wipe a debt without a trace.
+- **A squabble with one member can have bills** (Nov 2026). They can be edited to include
+  people once those join.
 - **One payer per bill in v1** (Nov 2026). If two people paid, enter two bills.
   `paidBy` stays a single member id for now; it can become a map later.
 - **A bill can be in a different currency from its squabble's** (Nov 2026). The bill
@@ -43,8 +52,8 @@ in the same form.
 
 ```
 groups/{gid}/bills/{billId}
-  title, date, currency, totalMinor, paidBy: uid,
-  createdBy, createdAt, updatedBy, updatedAt
+  title, date, currency, totalMinor, paidBy: uid, split: equally | exactly,
+  createdBy, createdAt, updatedBy, updatedAt, deletedAt?
   items: [ { id, name, amountMinor, sharedBy: [uid] } ]   ← optional, itemized bills
   shares: { uid: amountMinor }                            ← the result; sums to totalMinor
   frozen?: { currency, rate, rateDate, totalMinor, shares } ← written only by the function
@@ -60,6 +69,10 @@ rates/latest, rates/{yyyy-MM-dd}                          ← written only by fu
 
 - `shares` is stored, not recomputed on read, so balances never shift if the algorithm
   changes later.
+- A total is above zero and at most 10^12 minor units (so sums stay exact on the server too);
+  a title is 1–50 characters.
+- The rules can't add up a map, so **`updateBalances` skips a bill whose shares don't match its
+  total**, names someone who was never a member, or isn't in the group's currency.
 - `date` is the day of the bill or payment, a calendar day defaulting to today and never
   in the future.
 - `frozen` and `chapter` are never written by the app; the rules refuse them.
@@ -88,8 +101,10 @@ When an amount doesn't divide evenly:
    Not `Decimal`, which can't hold a third exactly and could misjudge a tie.
 2. Give everyone their share **truncated towards zero**, in minor units.
 3. Hand out the remaining minor units **one each**, largest fractional remainder first.
-   Ties are broken by member order: the order the members are listed in the bill, then
-   by uid.
+   Ties are broken by the order the people are given in. **Equal splits rotate it by bill**
+   (Nov 2026): sorted by uid, starting from a person picked by the bill's id, so leftovers
+   don't always land on the same people yet every phone agrees. Always the list order, and
+   the payer absorbing it, were rejected.
 4. Check: the shares add up exactly to `totalMinor`.
 
 **Negative amounts** (refunds, discounts) are split by size and then given back their
@@ -151,10 +166,13 @@ rates). Only Cloud Functions fetch them.
 - **Stored in `groups/{gid}.balances`** (`{ uid: amountMinor }`, in the group's currency).
   A function triggered by bill and settlement writes recomputes them from scratch in a
   transaction, rather than adding changes up, so retries and out-of-order events are
-  harmless. New entries also bump `updatedAt`. The app can't write `balances`.
+  harmless. The app can't write `balances`; it
+  does bump the group's `updatedAt` in the same batch as any bill write, as messages do.
+  Members at zero are left out, and there's no `balances` until the first bill.
 - The balances in a group add up to exactly zero.
-- Home reads `balances` from its existing group listener. An open squabble can show a
-  provisional balance that includes the user's own unsynced bills.
+- Home reads `balances` from its existing group listener. A provisional balance that
+  includes the user's own unsynced bills is planned; until then a bill added offline changes
+  balances once it syncs.
 - **Settle-up suggestions:** keep the number of transfers small (greedy: the largest
   debtor pays the largest creditor).
 - **Home total:** the user's net across all groups, archived ones included, converted into

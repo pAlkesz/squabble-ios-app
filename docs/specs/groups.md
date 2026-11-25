@@ -66,7 +66,7 @@ groups/{groupId}
   name, currency, image, createdBy, createdAt, updatedAt
   archivedAt?                            ← set by the creator; read-only for everyone
   inviteCode                             ← current invite code; reset by the creator
-  balances: { uid: amountMinor }         ← planned; written only by functions (bills.md)
+  balances: { uid: amountMinor }         ← written only by functions (bills.md)
   chapter                                ← planned; written only by functions ("Currency")
   memberIds: [uid]                       ← current members; drives the rules + home query
   members: {
@@ -135,7 +135,7 @@ Laid out like Revolut's group pages (Nov 2026):
   that zooms the create sheet out of itself, and every squabble in one card, most recently active first. Each row has a 56 pt picture, the name, "N members
   · CODE" and, on the right on the name's line, when it was last active (`ActivityDate`: the time today, the
   weekday within the last week, then the date, with the year only for earlier years).
-- **Squabble** (`SquabbleView`): the name in the bar with a subtitle ("No bills yet"), the
+- **Squabble** (`SquabbleView`): the name in the bar with the user's standing under it, the
   picture on the right of the bar, and the chat with its composer below (see [Chat](chat.md)).
   Before any message, the middle says "Your squabble is ready", with the invite link under
   it and a card of what to do next.

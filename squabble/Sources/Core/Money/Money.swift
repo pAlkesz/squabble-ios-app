@@ -27,6 +27,16 @@ nonisolated struct Money: Equatable, Hashable, Sendable {
         Decimal(minorUnits) / pow(10, CurrencyPrecision.fractionDigits(for: currencyCode))
     }
 
+    /// "+€12.00" for what you're owed, "−€12.00" for what you owe.
+    func formattedWithSign(locale: Locale = .current) -> String {
+        amount.formatted(
+            .currency(code: currencyCode)
+                .precision(.fractionLength(CurrencyPrecision.fractionDigits(for: currencyCode)))
+                .sign(strategy: .always(showZero: false))
+                .locale(locale)
+        )
+    }
+
     func formatted(locale: Locale = .current) -> String {
         amount.formatted(
             .currency(code: currencyCode)

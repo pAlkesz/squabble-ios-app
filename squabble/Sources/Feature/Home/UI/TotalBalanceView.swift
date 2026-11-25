@@ -6,6 +6,8 @@ import SwiftUI
 struct TotalBalanceView: View {
     let amount: Decimal
     let currencyCode: String
+    /// Balances in other currencies, until totals convert.
+    var others: [Money] = []
 
     @ScaledMetric(relativeTo: .largeTitle) private var amountSize: CGFloat = 56
 
@@ -19,12 +21,22 @@ struct TotalBalanceView: View {
                 .lineLimit(1)
                 .minimumScaleFactor(0.5)
                 .contentTransition(.numericText(value: NSDecimalNumber(decimal: amount).doubleValue))
+            if !others.isEmpty {
+                Text(verbatim: others.map { $0.formattedWithSign() }.joined(separator: "  ·  "))
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(.white.opacity(0.85))
+                    .multilineTextAlignment(.center)
+            }
         }
         .accessibilityElement(children: .combine)
     }
 
     private var formattedAmount: AttributedString {
-        var text = amount.formatted(.currency(code: currencyCode).attributed)
+        var text = amount.formatted(
+            .currency(code: currencyCode)
+                .precision(.fractionLength(CurrencyPrecision.fractionDigits(for: currencyCode)))
+                .attributed
+        )
         let large = Font.system(size: amountSize, weight: .bold, design: .rounded)
         let small = Font.system(size: amountSize * 0.55, weight: .bold, design: .rounded)
         for run in text.runs {

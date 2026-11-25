@@ -43,7 +43,7 @@ struct HomeView: View {
         NavigationStack(path: $path) {
             ScrollView {
                 VStack(spacing: 24) {
-                    TotalBalanceView(amount: balance, currencyCode: homeCurrencyCode)
+                    TotalBalanceView(amount: balance, currencyCode: homeCurrencyCode, others: total.others)
                         .frame(maxWidth: .infinity)
                     #if DEBUG
                         .onLongPressGesture {
@@ -267,17 +267,25 @@ struct HomeView: View {
     }
 
     private var mood: BalanceMood {
-        BalanceMood(amount: balance, currencyCode: homeCurrencyCode)
+        #if DEBUG
+        if debugBalance != nil {
+            return BalanceMood(amount: balance, currencyCode: homeCurrencyCode)
+        }
+        #endif
+        return BalanceMood(balances: [total.home] + total.others)
     }
 
-    // Nothing to total yet: bills haven't landed.
+    private var total: HomeTotal {
+        HomeTotal(groups: groups.groups, uid: session.user?.id ?? "", homeCurrencyCode: homeCurrencyCode)
+    }
+
     private var balance: Decimal {
         #if DEBUG
         if let debugBalance {
             return Decimal(Int(debugBalance.rounded()))
         }
         #endif
-        return 0
+        return total.home.amount
     }
 
     #if DEBUG

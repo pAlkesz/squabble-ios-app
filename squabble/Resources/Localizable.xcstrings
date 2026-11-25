@@ -208,7 +208,7 @@
       }
     },
     "Add a bill" : {
-      "comment" : "Squabble page: button at the bottom that adds a bill (not built yet).",
+      "comment" : "Squabble page: button at the bottom that adds a bill.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
@@ -2644,6 +2644,369 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kész a veszekedésed"
+          }
+        }
+      }
+    },
+    "%@ paid %@ · %@" : {
+      "comment" : "Bill in the chat: who paid, the total, and what for.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fizette: %1$@ (%2$@) · %3$@"
+          }
+        }
+      }
+    },
+    "%@ deleted “%@”" : {
+      "comment" : "Chat: line in place of a deleted bill; who deleted it, then its title.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ törölte ezt: „%2$@”"
+          }
+        }
+      }
+    },
+    "You owe %@" : {
+      "comment" : "The user owes an amount (a squabble's balance) or a person (a bill in the chat); the argument is either.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tartozol: %@"
+          }
+        }
+      }
+    },
+    "You're owed %@" : {
+      "comment" : "The user's balance in a squabble: what they're owed altogether.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neked jár: %@"
+          }
+        }
+      }
+    },
+    "You're settled up" : {
+      "comment" : "The user's balance in a squabble: exactly zero.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kvittek vagytok"
+          }
+        }
+      }
+    },
+    "You're owed" : {
+      "comment" : "Bill in the chat: the user paid for others; the amount follows.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neked jár"
+          }
+        }
+      }
+    },
+    "All yours" : {
+      "comment" : "Bill in the chat: the user paid only for themselves.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ez csak a tiéd"
+          }
+        }
+      }
+    },
+    "You're not in this one" : {
+      "comment" : "Bill in the chat: the user neither paid nor shares it.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ebből kimaradtál"
+          }
+        }
+      }
+    },
+    "Edit bill" : {
+      "comment" : "Bill form: title when editing.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Számla szerkesztése"
+          }
+        }
+      }
+    },
+    "Discard this bill?" : {
+      "comment" : "Bill form: title of the prompt when cancelling with something entered.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elveted ezt a számlát?"
+          }
+        }
+      }
+    },
+    "Title" : {
+      "comment" : "Bill form: VoiceOver label of the title field.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Megnevezés"
+          }
+        }
+      }
+    },
+    "What was it for?" : {
+      "comment" : "Bill form: placeholder in the title field.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mire ment el?"
+          }
+        }
+      }
+    },
+    "Paid by" : {
+      "comment" : "Bill form: row that picks who paid.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fizette"
+          }
+        }
+      }
+    },
+    "Split" : {
+      "comment" : "Bill form: row that opens how the bill is split, and that page's title.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Felosztás"
+          }
+        }
+      }
+    },
+    "By amounts" : {
+      "comment" : "Bill form: the bill is split by amounts entered by hand.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Összegek szerint"
+          }
+        }
+      }
+    },
+    "Equally" : {
+      "comment" : "Bill split: everyone ticked pays the same.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Egyenlően"
+          }
+        }
+      }
+    },
+    "Equally, everyone" : {
+      "comment" : "Bill form: split equally among all members.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Egyenlően, mindenki"
+          }
+        }
+      }
+    },
+    "Equally, %lld of %lld" : {
+      "comment" : "Bill form: split equally among some of the members; how many, of how many.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Egyenlően, %2$lld főből %1$lld"
+          }
+        }
+      }
+    },
+    "Date" : {
+      "comment" : "Bill form: row that picks the day of the bill.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dátum"
+          }
+        }
+      }
+    },
+    "Add bill" : {
+      "comment" : "Bill form: button that saves a new bill.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Számla hozzáadása"
+          }
+        }
+      }
+    },
+    "Save changes" : {
+      "comment" : "Bill form: button that saves an edited bill.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Változások mentése"
+          }
+        }
+      }
+    },
+    "This one changes nothing for you" : {
+      "comment" : "Bill form: under the amount; the bill doesn't affect the user's balance.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ez neked se nem oszt, se nem szoroz"
+          }
+        }
+      }
+    },
+    "Enter the amount first" : {
+      "comment" : "Bill split: shown before the bill has an amount.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Előbb add meg az összeget"
+          }
+        }
+      }
+    },
+    "Somebody has to pay. Pick at least one victim." : {
+      "comment" : "Bill split: nobody is ticked.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Valakinek fizetnie kell. Válassz legalább egy áldozatot."
+          }
+        }
+      }
+    },
+    "Every last cent is accounted for" : {
+      "comment" : "Bill split: the shares add up to the total.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Az utolsó fillérig megvan"
+          }
+        }
+      }
+    },
+    "%@ still needs an owner" : {
+      "comment" : "Bill split: how much of the total nobody has been given yet.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ még gazdára vár"
+          }
+        }
+      }
+    },
+    "%@ too much. Overcharging is a separate squabble." : {
+      "comment" : "Bill split: how far the amounts exceed the total.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ennyivel több: %@. A túlszámlázás már egy másik veszekedés."
+          }
+        }
+      }
+    },
+    "Paid by %@ · %@" : {
+      "comment" : "Bill details: who paid, then the day.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fizette: %1$@ · %2$@"
+          }
+        }
+      }
+    },
+    "Added by %@, %@" : {
+      "comment" : "Bill details: who added it, then the date and time.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hozzáadta: %1$@, %2$@"
+          }
+        }
+      }
+    },
+    "Edited by %@, %@" : {
+      "comment" : "Bill details: who last edited it, then the date and time.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szerkesztette: %1$@, %2$@"
+          }
+        }
+      }
+    },
+    "Delete this bill?" : {
+      "comment" : "Bill details: title of the delete confirmation.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Törlöd ezt a számlát?"
+          }
+        }
+      }
+    },
+    "Everyone's balance changes, and everyone will see it was you." : {
+      "comment" : "Bill details: explanation in the delete confirmation.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mindenki egyenlege változik, és mindenki látni fogja, hogy te voltál."
+          }
+        }
+      }
+    },
+    "Edit" : {
+      "comment" : "Bill details: button that opens the form.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szerkesztés"
           }
         }
       }

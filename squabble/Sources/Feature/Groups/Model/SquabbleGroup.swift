@@ -26,6 +26,13 @@ nonisolated struct SquabbleGroup: Identifiable, Equatable, Sendable {
     var members: [String: GroupMember]
     /// Minted by the server the first time a member shares the squabble; see `InviteLink`.
     var inviteCode: String?
+    /// Minor units of `currencyCode` by uid, kept by the server; zeros are left out. Nil until
+    /// the squabble's first bill.
+    var balances: [String: Int64]?
+
+    func balance(of uid: String) -> Money {
+        Money(minorUnits: balances?[uid] ?? 0, currencyCode: currencyCode)
+    }
 
     var isArchived: Bool { archivedAt != nil }
 

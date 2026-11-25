@@ -2,61 +2,80 @@ import FactoryKit
 import Foundation
 import Observation
 
-/// One squabble's chat, owned by its page: the latest page live, older pages loaded on
-/// demand as the user scrolls up.
+/// One squabble's timeline, owned by its page: its messages and bills, the latest of each live
+/// and older ones loaded on demand as the user scrolls up.
 @Observable
 final class ChatStore {
     static let pageSize = 50
 
-    private(set) var messages: [ChatMessage] = []
-    private(set) var hasLoaded = false
+    private var messageFeed = PagedFeed<ChatMessage>()
+    private var billFeed = PagedFeed<Bill>()
+    private(set) var entries: [ChatEntry] = []
     private(set) var failed = false
     private(set) var isLoadingOlder = false
-    /// The message the last older page was added above.
+    /// The entry the last older page was added above.
     private(set) var olderPageAnchor: String?
 
     @ObservationIgnored @Injected(\.chatRepository) private var repository
-    /// The server has answered since the last time the connection dropped.
-    private(set) var isLive = false
-    private var isLatestFull = false
-    private var hasReachedStart = false
+    @ObservationIgnored @Injected(\.billRepository) private var billRepository
     let groupID: String
 
     init(groupID: String) {
         self.groupID = groupID
     }
 
-    var canLoadOlder: Bool { isLatestFull && !hasReachedStart }
+    var hasLoaded: Bool { messageFeed.hasLoaded && billFeed.hasLoaded }
+    var isLive: Bool { messageFeed.isLive && billFeed.isLive }
+    var canLoadOlder: Bool { messageFeed.canLoadOlder || billFeed.canLoadOlder }
+    var messages: [ChatMessage] { messageFeed.items }
 
     func observe() async {
-        do {
-            for try await page in repository.latestMessages(in: groupID, limit: Self.pageSize) {
-                show(latest: page)
-                hasLoaded = true
-            }
-        } catch {
-            AppLog.error(error, "Chat listener failed")
-            failed = true
-            hasLoaded = true
-        }
+        async let messages: Void = observeMessages()
+        async let bills: Void = observeBills()
+        _ = await (messages, bills)
     }
 
+    /// Loads whichever is holding the timeline back: the one known the least far back.
     func loadOlder() async {
-        guard canLoadOlder, !isLoadingOlder, let oldest = messages.first, let date = oldest.createdAt else { return }
+        let since = [messageFeed.loadedSince, billFeed.loadedSince].compactMap(\.self).max()
+        guard let since, !isLoadingOlder else { return }
         isLoadingOlder = true
         defer { isLoadingOlder = false }
         do {
-            let page = try await repository.messages(in: groupID, before: date, limit: Self.pageSize)
-            // The live page started over meanwhile, so this one no longer joins on.
-            guard messages.first?.id == oldest.id else { return }
-            let known = Set(messages.map(\.id))
-            messages = page.messages.filter { !known.contains($0.id) } + messages
-            if messages.first?.id != oldest.id { olderPageAnchor = oldest.id }
-            // The cache only holds what this phone has seen, so it can't say where it starts.
-            if !page.isFromCache, !page.isFull { hasReachedStart = true }
+            if messageFeed.loadedSince == since, let oldest = messageFeed.items.first {
+                let page = try await repository.messages(in: groupID, before: since, limit: Self.pageSize)
+                messageFeed.add(older: page, before: oldest)
+            }
+            if billFeed.loadedSince == since, let oldest = billFeed.items.first {
+                let page = try await billRepository.bills(in: groupID, before: since, limit: Self.pageSize)
+                billFeed.add(older: page, before: oldest)
+            }
         } catch {
-            AppLog.error(error, "Loading older messages failed")
+            AppLog.error(error, "Loading older chat failed")
         }
+        let first = entries.first?.id
+        merge()
+        if let first, entries.first?.id != first, entries.contains(where: { $0.id == first }) {
+            olderPageAnchor = first
+        }
+    }
+
+    func bill(id: String) -> Bill? {
+        billFeed.items.first { $0.id == id }
+    }
+
+    func save(_ bill: Bill, isNew: Bool) {
+        perform {
+            if isNew {
+                try billRepository.add(bill, in: groupID)
+            } else {
+                try billRepository.update(bill, in: groupID)
+            }
+        }
+    }
+
+    func delete(_ bill: Bill, by uid: String) {
+        perform { try billRepository.delete(bill.id, by: uid, in: groupID) }
     }
 
     func message(id: String) -> ChatMessage? {
@@ -97,22 +116,33 @@ final class ChatStore {
         }
     }
 
-    /// Puts the live page after what's already loaded: it wins where they overlap (it has the
-    /// latest reactions and deletions), and what it has moved past stays above it.
-    private func show(latest page: ChatPage) {
-        isLive = !page.isFromCache
-        isLatestFull = page.isFull
-        if !page.isFromCache, !page.isFull {
-            // The server's whole chat fits in one page.
-            messages = page.messages
-            hasReachedStart = true
-        } else if let first = page.messages.first, let index = messages.firstIndex(where: { $0.id == first.id }) {
-            messages = messages[..<index] + page.messages
-        } else {
-            // No overlap at its start: there may be messages in between (a long time offline),
-            // so start over rather than leave a silent hole.
-            messages = page.messages
-            hasReachedStart = false
+    private func observeMessages() async {
+        do {
+            for try await page in repository.latestMessages(in: groupID, limit: Self.pageSize) {
+                messageFeed.show(latest: page)
+                merge()
+            }
+        } catch {
+            AppLog.error(error, "Chat listener failed")
+            failed = true
+            messageFeed.fail()
         }
+    }
+
+    private func observeBills() async {
+        do {
+            for try await page in billRepository.latestBills(in: groupID, limit: Self.pageSize) {
+                billFeed.show(latest: page)
+                merge()
+            }
+        } catch {
+            AppLog.error(error, "Bills listener failed")
+            failed = true
+            billFeed.fail()
+        }
+    }
+
+    private func merge() {
+        entries = ChatEntry.merged(messageFeed, billFeed)
     }
 }

@@ -24,6 +24,21 @@ nonisolated enum BillSplit {
         return result
     }
 
+    /// The people to split among in an order of the bill's own, so the leftover cents don't
+    /// always land on the same ones. By uid first, so every phone starts from the same order.
+    static func rotated(_ participants: [String], by billID: String) -> [String] {
+        guard !participants.isEmpty else { return [] }
+        let sorted = participants.sorted()
+        // FNV-1a: Swift's own hashes differ between launches.
+        var hash: UInt64 = 0xcbf29ce484222325
+        for byte in billID.utf8 {
+            hash ^= UInt64(byte)
+            hash &*= 0x100000001b3
+        }
+        let start = Int(hash % UInt64(sorted.count))
+        return Array(sorted[start...] + sorted[..<start])
+    }
+
     static func proportionally(_ total: Int64, weights: Shares, among participants: [String]) throws(BillSplitError) -> Shares {
         try check(participants)
         guard Set(weights.keys).isSubset(of: participants) else { throw .unknownParticipant }

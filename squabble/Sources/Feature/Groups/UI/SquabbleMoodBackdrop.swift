@@ -8,6 +8,7 @@ struct SquabbleMoodBackdrop: View {
     var isDimmed = false
 
     @Environment(GroupsStore.self) private var groups
+    @Environment(AuthSession.self) private var session
     #if DEBUG
     @Environment(DebugBalances.self) private var debugBalances: DebugBalances?
     #endif
@@ -21,13 +22,13 @@ struct SquabbleMoodBackdrop: View {
         BalanceMood(amount: balance, currencyCode: groups.group(id: groupID)?.currencyCode ?? "EUR")
     }
 
-    // Nothing to add up: bills haven't landed.
     private var balance: Decimal {
         #if DEBUG
         if let value = debugBalances?.values[groupID] {
             return Decimal(Int(value.rounded()))
         }
         #endif
-        return 0
+        guard let uid = session.user?.id, let group = groups.group(id: groupID) else { return 0 }
+        return group.balance(of: uid).amount
     }
 }

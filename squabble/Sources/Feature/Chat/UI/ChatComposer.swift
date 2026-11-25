@@ -10,6 +10,7 @@ struct ChatComposer: View {
     var isFocused: FocusState<Bool>.Binding
     let onCancelReply: () -> Void
     let onSend: () -> Void
+    let onAddBill: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -17,17 +18,14 @@ struct ChatComposer: View {
                 replyBanner(replyingTo)
             }
             HStack(alignment: .bottom, spacing: 10) {
-                // Bills aren't built yet.
-                Button {} label: {
+                Button(action: onAddBill) {
                     Image(systemName: "plus")
                         .font(.title3.weight(.semibold))
                         .frame(width: 44, height: 44)
                 }
                 .buttonStyle(.plain)
                 .glassEffect(.regular.interactive(), in: .circle)
-                .disabled(true)
-                .opacity(0.5)
-                .accessibilityLabel(Text("Add a bill", comment: "Squabble page: button at the bottom that adds a bill (not built yet)."))
+                .accessibilityLabel(Text("Add a bill", comment: "Squabble page: button at the bottom that adds a bill."))
 
                 HStack(alignment: .bottom, spacing: 8) {
                     TextField(

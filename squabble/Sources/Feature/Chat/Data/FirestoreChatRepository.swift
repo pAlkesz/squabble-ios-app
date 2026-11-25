@@ -12,7 +12,7 @@ nonisolated final class FirestoreChatRepository: ChatRepository {
         db.collection("groups").document(groupID).collection("messages")
     }
 
-    func latestMessages(in groupID: String, limit: Int) -> AsyncThrowingStream<ChatPage, Error> {
+    func latestMessages(in groupID: String, limit: Int) -> AsyncThrowingStream<FeedPage<ChatMessage>, Error> {
         guard let db else {
             return AsyncThrowingStream { $0.finish(throwing: ChatError.unavailable) }
         }
@@ -33,7 +33,7 @@ nonisolated final class FirestoreChatRepository: ChatRepository {
         }
     }
 
-    func messages(in groupID: String, before date: Date, limit: Int) async throws -> ChatPage {
+    func messages(in groupID: String, before date: Date, limit: Int) async throws -> FeedPage<ChatMessage> {
         guard let db else { throw ChatError.unavailable }
         let snapshot = try await messages(db, groupID)
             .order(by: ChatMessage.Field.createdAt, descending: true)
@@ -95,9 +95,9 @@ nonisolated final class FirestoreChatRepository: ChatRepository {
         return messages(db, groupID).document().documentID
     }
 
-    private static func page(from snapshot: QuerySnapshot, limit: Int) -> ChatPage {
-        ChatPage(
-            messages: snapshot.documents.reversed().compactMap(message(from:)),
+    private static func page(from snapshot: QuerySnapshot, limit: Int) -> FeedPage<ChatMessage> {
+        FeedPage(
+            items: snapshot.documents.reversed().compactMap(message(from:)),
             isFull: snapshot.documents.count >= limit,
             isFromCache: snapshot.metadata.isFromCache
         )
