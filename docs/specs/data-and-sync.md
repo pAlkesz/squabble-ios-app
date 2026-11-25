@@ -22,6 +22,7 @@ groups and bills are in [Groups](groups.md) and [Bills](bills.md).
 | Function | Kind | Status |
 | --- | --- | --- |
 | `deleteUserData` | Auth `onDelete` trigger | Built |
+| `createInviteForNewGroup` | Firestore trigger on new groups | Built ([Groups](groups.md#joining-with-an-invite-link)) |
 | `createInvite`, `resetInvite`, `previewInvite`, `joinGroup` | Callables | Built ([Groups](groups.md#joining-with-an-invite-link)) |
 | People sync | Firestore triggers on groups and users | Planned ([People](people.md#keeping-it-up-to-date-cloud-functions)) |
 | Exchange rates | Scheduled, daily | Planned ([Bills](bills.md#exchange-rates)) |

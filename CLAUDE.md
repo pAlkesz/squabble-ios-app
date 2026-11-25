@@ -74,7 +74,7 @@ ObjC-based SDK, NoSQL modeling, `Sendable` friction under Swift 6.
 - **Cloud Functions** live in `functions/` (TypeScript, Node 22, `firebase-functions` +
   `firebase-admin`; `node_modules/` and the compiled `lib/` are gitignored). Deploy with
   `firebase deploy --only functions` — Claude deploys them itself, like the rules. Functions:
-  `updateBalances` (Firestore trigger, retries on), the invite callables (`createInvite`, `resetInvite`, `previewInvite`, `joinGroup`, also
+  `updateBalances` and `createInviteForNewGroup` (Firestore triggers, retries on), the invite callables (`createInvite`, `resetInvite`, `previewInvite`, `joinGroup`, also
   first-generation, as the same service account) and `deleteUserData`, a first-generation `auth.user().onDelete` trigger (the
   newer API has no Auth delete trigger) with retries on, running as the Firebase Admin SDK
   service account (the project has no default Compute Engine account), which wipes `users/{uid}` and its

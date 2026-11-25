@@ -202,8 +202,11 @@ retry. A blurred overlay was tried instead of the sheet and dropped.
 already in stay in) works on the server but has no button yet: it moves to the squabble's
 settings.
 
-- `inviteCode` is minted by the server (`createInvite`, the first time any member opens
-  a page showing the link), never by the app, so the rules never have to vouch for it. It's stored on
+- **Made at creation** (Nov 2026): the `createInviteForNewGroup` trigger makes the code when the
+  squabble reaches the server, so the link is normally there before anyone looks. Not a call
+  from the app: that would race the squabble's own write. Squabbles without one (older ones,
+  or opened before the trigger ran) still get it from `createInvite` when a page shows the link.
+- `inviteCode` is minted by the server, never by the app, so the rules never have to vouch for it. It's stored on
   the group (members see it offline from then on) and in `invites/{code}` → `groupId`,
   which only the functions read. `resetInvite` (creator only) replaces both.
 

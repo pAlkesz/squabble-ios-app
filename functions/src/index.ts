@@ -183,24 +183,41 @@ function newInviteCode(): string {
   return randomBytes(16).toString("base64url");
 }
 
-/** Returns the squabble's invite code, creating one the first time any member asks. */
-export const createInvite = callable.onCall(async (data, context) => {
-  const uid = requireUid(context);
-  const groupId = requireString(data?.groupId, "groupId");
+/** Safe to call twice, or at once: whoever gets there first makes the code. */
+async function inviteCodeFor(groupId: string, checkAccess: (group: FirebaseFirestore.DocumentData | undefined) => void): Promise<string | null> {
   const db = getFirestore();
   const group = db.doc(`groups/${groupId}`);
-  const code = await db.runTransaction(async (transaction) => {
-    const snapshot = await transaction.get(group);
-    const groupData = snapshot.data();
-    if (!groupData || !(groupData.memberIds ?? []).includes(uid)) {
-      throw new functions.https.HttpsError("permission-denied", "Not a member.");
-    }
-    if (groupData.archivedAt) throw new functions.https.HttpsError("failed-precondition", "archived");
-    if (typeof groupData.inviteCode === "string") return groupData.inviteCode as string;
+  return db.runTransaction(async (transaction) => {
+    const groupData = (await transaction.get(group)).data();
+    checkAccess(groupData);
+    if (!groupData) return null;
+    if (typeof groupData.inviteCode === "string") return groupData.inviteCode;
     const fresh = newInviteCode();
     transaction.set(db.doc(`invites/${fresh}`), { groupId, createdAt: FieldValue.serverTimestamp() });
     transaction.update(group, { inviteCode: fresh });
     return fresh;
+  });
+}
+
+/**
+ * Makes a new squabble's invite link before anyone looks for it. A trigger rather than a call
+ * from the app, which would race the squabble's own write to the server.
+ */
+export const createInviteForNewGroup = functions
+  .runWith({ failurePolicy: true, serviceAccount: "firebase-adminsdk-fbsvc@squabble-9c1df.iam.gserviceaccount.com" })
+  .firestore.document("groups/{groupId}")
+  .onCreate(async (_snapshot, context) => {
+    await inviteCodeFor(context.params.groupId, () => {});
+  });
+
+/** Returns the squabble's invite code, creating one if it has none yet. */
+export const createInvite = callable.onCall(async (data, context) => {
+  const uid = requireUid(context);
+  const code = await inviteCodeFor(requireString(data?.groupId, "groupId"), (group) => {
+    if (!group || !(group.memberIds ?? []).includes(uid)) {
+      throw new functions.https.HttpsError("permission-denied", "Not a member.");
+    }
+    if (group.archivedAt) throw new functions.https.HttpsError("failed-precondition", "archived");
   });
   return { code };
 });
