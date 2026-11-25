@@ -1,12 +1,16 @@
-/// The user's balance across every squabble. Nothing converts yet, so only squabbles in the
-/// one currency make up the headline; the rest are added up per currency beside it. That's
-/// the home currency, unless nothing is owed in it and the only balance is in another.
+import Foundation
+
+/// The user's balance across every squabble, in the home currency. Balances in other
+/// currencies are converted at the latest rates; one without a rate is shown beside the
+/// headline rather than guessed. Display only: nobody owes this number.
 nonisolated struct HomeTotal: Equatable, Sendable {
     let headline: Money
-    /// Never zero; by currency code.
+    /// Something in it was converted, so it moves with the rates.
+    let isApproximate: Bool
+    /// What couldn't be converted. Never zero; by currency code.
     let others: [Money]
 
-    init(groups: [SquabbleGroup], uid: String, homeCurrencyCode: String) {
+    init(groups: [SquabbleGroup], uid: String, homeCurrencyCode: String, rates: ExchangeRates?) {
         var totals: [String: Int64] = [:]
         for group in groups {
             let (sum, overflow) = (totals[group.currencyCode] ?? 0)
@@ -18,11 +22,21 @@ nonisolated struct HomeTotal: Equatable, Sendable {
             .filter { $0.key != homeCurrencyCode && $0.value != 0 }
             .map { Money(minorUnits: $0.value, currencyCode: $0.key) }
             .sorted { $0.currencyCode < $1.currencyCode }
-        if home.minorUnits == 0, foreign.count == 1, let only = foreign.first {
+
+        // Added up before rounding, so each currency doesn't bring its own rounding error.
+        let converted = foreign.compactMap { rates?.amount(of: $0, in: homeCurrencyCode) }
+        if !converted.isEmpty, let sum = Money(rounding: converted.reduce(home.amount, +), currencyCode: homeCurrencyCode) {
+            headline = sum
+            isApproximate = true
+            others = foreign.filter { rates?.amount(of: $0, in: homeCurrencyCode) == nil }
+        } else if home.minorUnits == 0, foreign.count == 1, let only = foreign.first {
+            // Better than a zero.
             headline = only
+            isApproximate = false
             others = []
         } else {
             headline = home
+            isApproximate = false
             others = foreign
         }
     }

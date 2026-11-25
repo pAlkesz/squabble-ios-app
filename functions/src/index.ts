@@ -4,6 +4,7 @@ import { randomBytes } from "node:crypto";
 import { getStorage } from "firebase-admin/storage";
 import * as functions from "firebase-functions/v1";
 import { computeBalances, sameBalances } from "./balances";
+import { parseRates } from "./rates";
 
 initializeApp();
 
@@ -32,6 +33,25 @@ export const updateBalances = functions
       if (data.balances && sameBalances(data.balances, balances)) return;
       transaction.update(group, { balances });
     });
+  });
+
+/**
+ * Keeps `rates/latest` up to date (docs/specs/bills.md, "Exchange rates"). The ECB publishes
+ * once a working day; looking a few times makes up for a failed run or a late publication.
+ * Written only when there's something new, since every write is a read for every phone.
+ */
+export const updateRates = functions
+  .runWith({ serviceAccount: "firebase-adminsdk-fbsvc@squabble-9c1df.iam.gserviceaccount.com" })
+  .pubsub.schedule("0 */6 * * *")
+  .timeZone("Europe/Berlin")
+  .onRun(async () => {
+    const response = await fetch("https://api.frankfurter.dev/v1/latest", { signal: AbortSignal.timeout(20_000) });
+    if (!response.ok) throw new Error(`Rates answered ${response.status}`);
+    const rates = parseRates(await response.json());
+    const latest = getFirestore().doc("rates/latest");
+    const current = (await latest.get()).data();
+    if (typeof current?.date === "string" && current.date >= rates.date) return;
+    await latest.set(rates);
   });
 
 /**

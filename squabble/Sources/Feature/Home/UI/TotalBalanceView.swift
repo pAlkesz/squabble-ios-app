@@ -6,7 +6,9 @@ import SwiftUI
 struct TotalBalanceView: View {
     let amount: Decimal
     let currencyCode: String
-    /// Balances in other currencies, until totals convert.
+    /// Part of it was converted.
+    var isApproximate = false
+    /// Balances in currencies without an exchange rate.
     var others: [Money] = []
 
     @ScaledMetric(relativeTo: .largeTitle) private var amountSize: CGFloat = 56
@@ -20,6 +22,7 @@ struct TotalBalanceView: View {
                 .foregroundStyle(.white)
                 .lineLimit(1)
                 .minimumScaleFactor(0.5)
+                .accessibilityLabel(accessibleAmount)
                 .contentTransition(.numericText(value: NSDecimalNumber(decimal: amount).doubleValue))
             if !others.isEmpty {
                 Text(verbatim: others.map { $0.formattedWithSign() }.joined(separator: "  ·  "))
@@ -45,14 +48,28 @@ struct TotalBalanceView: View {
                 || run.numberSymbol == .sign
             text[run.range].font = isLarge ? large : small
         }
+        if isApproximate {
+            var sign = AttributedString("≈ ")
+            sign.font = small
+            text = sign + text
+        }
         return text
+    }
+
+    private var accessibleAmount: Text {
+        let exact = amount.formatted(
+            .currency(code: currencyCode)
+                .precision(.fractionLength(CurrencyPrecision.fractionDigits(for: currencyCode)))
+        )
+        guard isApproximate else { return Text(verbatim: exact) }
+        return Text("About \(exact)", comment: "Home: VoiceOver for the total balance when part of it was converted from another currency.")
     }
 }
 
 #Preview {
     VStack(spacing: 32) {
         TotalBalanceView(amount: Decimal(string: "48083.16") ?? 0, currencyCode: "HUF")
-        TotalBalanceView(amount: Decimal(string: "-1250.5") ?? 0, currencyCode: "EUR")
+        TotalBalanceView(amount: Decimal(string: "-1250.5") ?? 0, currencyCode: "EUR", isApproximate: true)
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .background { SquabbleBackdrop() }

@@ -73,6 +73,7 @@ Emma's squabbles, one per state a screen can be in:
 - Photos (avatars, squabble pictures): the rules only accept live Storage addresses.
 - What needs Apple: sign-in, account deletion (it re-authenticates with Apple), camera, haptics
   and real invite links. These are checked on the phone against live.
+- The scheduled `updateRates`: the seed writes made-up rates.
 - Push notifications (once they exist).
 - TestFlight with a few real users before release.
 

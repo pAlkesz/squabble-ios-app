@@ -7,18 +7,18 @@ import SwiftUI
 nonisolated struct BalanceMood: Equatable, Sendable {
     let intensity: Double
 
-    init(amount: Decimal, currencyCode: String) {
+    init(amount: Decimal, currencyCode: String, rates: ExchangeRates? = nil) {
         // Only picks a colour, never touches money, so Double precision is plenty.
         let magnitude = abs(NSDecimalNumber(decimal: amount).doubleValue)
-        let euros = magnitude / Self.unitsPerEuro(currencyCode)
+        let euros = magnitude / Self.unitsPerEuro(currencyCode, rates: rates)
         let scaled = min(1, log10(1 + euros) / log10(1 + Self.fullIntensityEuros))
         intensity = amount < 0 ? -scaled : scaled
     }
 
-    /// Several currencies, judged together in rough euro terms.
-    init(balances: [Money]) {
+    /// Several currencies, judged together in euro terms.
+    init(balances: [Money], rates: ExchangeRates?) {
         let euros = balances.reduce(0.0) {
-            $0 + NSDecimalNumber(decimal: $1.amount).doubleValue / Self.unitsPerEuro($1.currencyCode)
+            $0 + NSDecimalNumber(decimal: $1.amount).doubleValue / Self.unitsPerEuro($1.currencyCode, rates: rates)
         }
         self.init(amount: Decimal(euros), currencyCode: "EUR")
     }
@@ -46,11 +46,11 @@ nonisolated struct BalanceMood: Equatable, Sendable {
     /// khaki, so a debt has to get through it quickly to read as a warning.
     private static let owingMildIntensity = 0.125
 
-    /// "Small" depends on the currency (5 HUF is nothing), so amounts are judged in rough
-    /// euro terms. A vibe table, not exchange rates — swap for the real rates once home
-    /// totals convert currencies.
-    static func unitsPerEuro(_ currencyCode: String) -> Double {
-        switch currencyCode.uppercased() {
+    /// "Small" depends on the currency (5 HUF is nothing), so amounts are judged in euro terms.
+    /// The table is a rough stand-in until the rates are here, or for a currency without one.
+    static func unitsPerEuro(_ currencyCode: String, rates: ExchangeRates? = nil) -> Double {
+        if let rate = rates?.unitsPerEuro(of: currencyCode) { return NSDecimalNumber(decimal: rate).doubleValue }
+        return switch currencyCode.uppercased() {
         case "HUF": 400
         case "JPY": 160
         case "CZK": 25

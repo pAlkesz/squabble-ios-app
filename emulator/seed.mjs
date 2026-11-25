@@ -142,6 +142,9 @@ await bill("vienna", "coffee", "EUR", "Coffee", "bela", { anna: 370, bela: 370 }
 await bill("ghost", "wine", "EUR", "Wine, all of it", "anna", { cili: 92000 }, ago(10 * day + 5), exactly);
 await bill("ghost", "dinner", "EUR", "Dinner", "emma", { cili: 2500, emma: 2500, gone: 2500 }, ago(12 * day));
 
+// Made up but plausible. The scheduled function doesn't run here.
+await db.doc("rates/latest").set({ base: "EUR", date: new Date(now).toISOString().slice(0, 10), rates: { HUF: "380", USD: "1.1", GBP: "0.85", CZK: "25", PLN: "4.3" } });
+
 // The rest exist for Emma: one squabble per state a screen can be in.
 await squabble("solo", {
   name: "Just me", currency: "EUR", artwork: "suits", background: "sand",

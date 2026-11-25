@@ -8,6 +8,7 @@ struct SquabbleRow: View {
     /// How strong the date and summary are; a lighter backdrop needs more.
     var secondaryOpacity = 0.6
 
+    @Environment(RatesStore.self) private var rates
     @Environment(AuthSession.self) private var session
 
     var body: some View {
@@ -16,7 +17,7 @@ struct SquabbleRow: View {
                 .overlay {
                     if let balance, balance.minorUnits != 0 {
                         Circle()
-                            .strokeBorder(BalanceMood(balances: [balance]).palette.top, lineWidth: 3)
+                            .strokeBorder(BalanceMood(balances: [balance], rates: rates.rates).palette.top, lineWidth: 3)
                             .padding(-5)
                     }
                 }

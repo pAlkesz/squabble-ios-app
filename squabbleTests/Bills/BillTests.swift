@@ -148,31 +148,6 @@ struct CalendarDayTests {
     }
 }
 
-struct HomeTotalTests {
-    private func group(_ id: String, _ currency: String, _ balance: Int64) -> SquabbleGroup {
-        var group = SquabbleGroup(id: id, name: id, currencyCode: currency, createdBy: "pal", memberIds: ["pal"], members: [:])
-        group.balances = ["pal": balance]
-        return group
-    }
-
-    @Test func addsUpPerCurrency() {
-        let total = HomeTotal(
-            groups: [group("a", "HUF", 500), group("b", "HUF", -200), group("c", "USD", -700), group("d", "EUR", 100), group("e", "EUR", -100)],
-            uid: "pal", homeCurrencyCode: "HUF"
-        )
-        #expect(total.headline == Money(minorUnits: 300, currencyCode: "HUF"))
-        #expect(total.others == [Money(minorUnits: -700, currencyCode: "USD")])
-    }
-
-    @Test func theOnlyBalanceIsTheHeadlineWhateverItsCurrency() {
-        let total = HomeTotal(groups: [group("a", "EUR", 100), group("b", "HUF", 0)], uid: "pal", homeCurrencyCode: "HUF")
-        #expect(total.headline == Money(minorUnits: 100, currencyCode: "EUR"))
-        #expect(total.others.isEmpty)
-        let none = HomeTotal(groups: [group("a", "EUR", 0)], uid: "pal", homeCurrencyCode: "HUF")
-        #expect(none.headline == Money(minorUnits: 0, currencyCode: "HUF"))
-    }
-}
-
 struct ChatEntryTests {
     private func message(_ seconds: Double) -> ChatMessage {
         ChatMessage(id: "m\(Int(seconds))", authorID: "pal", createdAt: Date(timeIntervalSince1970: seconds), text: "x")

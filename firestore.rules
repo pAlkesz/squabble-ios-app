@@ -8,6 +8,7 @@ rules_version = '2';
 //   groups/{groupId}            a squabble — readable by its current members (docs/specs/groups.md)
 //   groups/{groupId}/messages   its chat (docs/specs/chat.md)
 //   groups/{groupId}/bills      its bills (docs/specs/bills.md)
+//   rates/latest                exchange rates — written by a Cloud Function only
 //   reports/{id}                reported messages — write-only, read by the developer
 //   invites/{code}              Cloud Functions only (no rule, so no access)
 //
@@ -251,6 +252,10 @@ service cloud.firestore {
             && request.resource.data.deletedAt == request.time)
         );
       }
+    }
+
+    match /rates/latest {
+      allow get: if signedIn();
     }
 
     match /reports/{reportId} {

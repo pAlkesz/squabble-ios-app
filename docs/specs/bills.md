@@ -5,7 +5,7 @@
 - **Built:** manual bills in the squabble's own currency (add, edit, delete, split equally or
   by exact amounts), their chat cards and details, balances kept by `updateBalances`, the
   rules, and balances on home, the squabbles list and the squabble page.
-- **Not built yet:** other currencies (`frozen`, `chapter`, rates), items, settlements,
+- **Not built yet:** other currencies (`frozen`, `chapter`, rates by day), items, settlements,
   settle-up suggestions, reactions and replies on bills, reminders, AI parsing. The rules
   refuse a bill in another currency until then.
 
@@ -152,7 +152,9 @@ rates). Only Cloud Functions fetch them.
 
 **Display conversions**
 
-- A scheduled function writes `rates/latest` daily. Any signed-in user can read it; apps
+- **Built (Nov 2026):** the scheduled `updateRates` function looks every six hours and writes
+  `rates/latest` when there are newer rates (the ECB publishes once a working day). An answer
+  that looks wrong is refused, so it never replaces good rates. Any signed-in user can read it; apps
   listen to that one document, which works offline with the last rates.
 - It's used only for home's total and its mood, replacing `BalanceMood`'s rough table (see
   [Home](home.md#balance-mood)). Those results are never stored. A balance whose currency

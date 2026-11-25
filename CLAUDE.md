@@ -74,7 +74,7 @@ ObjC-based SDK, NoSQL modeling, `Sendable` friction under Swift 6.
 - **Cloud Functions** live in `functions/` (TypeScript, Node 22, `firebase-functions` +
   `firebase-admin`; `node_modules/` and the compiled `lib/` are gitignored). Deploy with
   `firebase deploy --only functions` — Claude deploys them itself, like the rules. Functions:
-  `updateBalances` and `createInviteForNewGroup` (Firestore triggers, retries on), the invite callables (`createInvite`, `resetInvite`, `previewInvite`, `joinGroup`, also
+  `updateBalances` and `createInviteForNewGroup` (Firestore triggers, retries on), `updateRates` (scheduled), the invite callables (`createInvite`, `resetInvite`, `previewInvite`, `joinGroup`, also
   first-generation, as the same service account) and `deleteUserData`, a first-generation `auth.user().onDelete` trigger (the
   newer API has no Auth delete trigger) with retries on, running as the Firebase Admin SDK
   service account (the project has no default Compute Engine account), which wipes `users/{uid}` and its
@@ -411,15 +411,15 @@ stutters on a device even when the simulator looks smooth.
   The avatar, a glass search pill and a `+` for a new squabble are real **toolbar items**
   (search and `+` have no destination yet). Below them `TotalBalanceView`, the net of
   everything owed either way, labelled "Total · <code>": the stored balances
-  in the home currency, with other currencies listed under it (`HomeTotal`). Totals will be
-  **converted into one home currency**.
+  converted into the home currency at the ECB's latest rates (`HomeTotal`, `Feature/Rates`),
+  marked ≈ when anything was converted.
 - **Balance backdrop:** `BalanceMood` (`Feature/Home/Model`) turns the total into a signed
   intensity (−1…1) and a `BackdropPalette` for `SquabbleBackdrop` — hue says which way the
   money flows, saturation how much. Petrol at zero (deliberately not a Revolut-ish royal
   blue/indigo); pale green → brand green when owed, amber → red when owing. Log scale,
   full strength at ~€250, pale green fully in at ~€6 but amber already at ~€1 (the
   petrol–amber midpoint is a muddy khaki, so debts rush through it); amounts are judged in rough euro
-  terms via a small per-currency table, to be replaced by real rates when totals convert.
+  terms at the latest rates (a rough table stands in without them).
   The sheet's blurred background uses the same palette. `SquabbleBackdrop`'s drift is
   driven by a `TimelineView` clock, not a repeating animation, so an animated palette
   change can't cancel it. A bright fade always stands for a balance: a squabble's pages use
@@ -459,7 +459,7 @@ stutters on a device even when the simulator looks smooth.
 - **Home currency:** `PreferencesStore` (owned by `HomeView`, passed to the account sheet
   via the environment) listens to `private/preferences`. Unset means
   `Locale.current.currency` (the phone's Region, not its language), resolved at read time
-  so a move abroad updates the default. Nothing converts yet — it only relabels the total.
+  so a move abroad updates the default. Home's total converts into it.
   The picker lists `Locale.commonISOCurrencyCodes`, each with a round flag from
   `Assets.xcassets/Flags` (SVGs copied from MIT-licensed circle-flags; notice in
   `THIRD_PARTY_NOTICES.md`), named by lowercase region code. Only flags a currency maps to
@@ -497,7 +497,7 @@ stutters on a device even when the simulator looks smooth.
 - **Bills, in progress** (`Feature/Bills`, spec `docs/specs/bills.md`): added from the chat's
   composer in a sheet (`BillFormView`, split page pushed), shown in the timeline (`BillCard`,
   details sheet), same currency as the squabble only. `updateBalances` keeps
-  `groups/{id}.balances`; home totals them per currency (`HomeTotal`), nothing converts yet.
+  `groups/{id}.balances`; home converts them into one total (`HomeTotal`); bills in other currencies aren't built.
   Amount fields go through `AmountField`: a binding that rejects input leaves it on screen.
 - **Not started:** bills — capture, AI parsing, settlements,
   reminders.

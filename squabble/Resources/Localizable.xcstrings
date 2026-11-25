@@ -3043,6 +3043,17 @@
           }
         }
       }
+    },
+    "About %@" : {
+      "comment" : "Home: VoiceOver for the total balance when part of it was converted from another currency.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Körülbelül %@"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

@@ -47,4 +47,13 @@ struct BalanceMoodTests {
         let euros = BalanceMood(amount: 30, currencyCode: "EUR").intensity
         #expect(BalanceMood(amount: 30, currencyCode: "XYZ").intensity == euros)
     }
+
+    @Test func usesRealRatesWhenThereAreSome() {
+        let rates = ExchangeRates(date: "2026-11-25", unitsPerEuro: ["HUF": 200, "XYZ": 10])
+        let euros = BalanceMood(amount: 20, currencyCode: "EUR", rates: rates).intensity
+        #expect(BalanceMood(amount: 4_000, currencyCode: "HUF", rates: rates).intensity == euros)
+        #expect(BalanceMood(amount: 200, currencyCode: "XYZ", rates: rates).intensity == euros)
+        // No rate: still the rough table.
+        #expect(BalanceMood(amount: 500, currencyCode: "CZK", rates: rates).intensity == euros)
+    }
 }

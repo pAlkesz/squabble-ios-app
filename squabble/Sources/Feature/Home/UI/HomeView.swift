@@ -12,6 +12,7 @@ struct HomeView: View {
     @Environment(\.isMembershipWelcomeShowing) private var isWelcomeShowing
     @State private var preferences = PreferencesStore()
     @State private var groups = GroupsStore()
+    @State private var rates = RatesStore()
     @State private var path: [HomeRoute] = []
     @State private var isCreatingSquabble = false
     @State private var newSquabbleSource = NewSquabbleSource.homeToolbar
@@ -27,7 +28,8 @@ struct HomeView: View {
                 guard let uid = session.user?.id else { return }
                 async let preferences: Void = preferences.observe(uid: uid)
                 async let groups: Void = groups.observe(uid: uid)
-                _ = await (preferences, groups)
+                async let rates: Void = rates.observe()
+                _ = await (preferences, groups, rates)
             }
             .onChange(of: session.profile, initial: true) { _, profile in
                 groups.profile = profile
@@ -43,7 +45,12 @@ struct HomeView: View {
         NavigationStack(path: $path) {
             ScrollView {
                 VStack(spacing: 24) {
-                    TotalBalanceView(amount: balance, currencyCode: headlineCurrencyCode, others: total.others)
+                    TotalBalanceView(
+                        amount: balance,
+                        currencyCode: headlineCurrencyCode,
+                        isApproximate: isApproximate,
+                        others: total.others
+                    )
                         .frame(maxWidth: .infinity)
                     #if DEBUG
                         .onLongPressGesture {
@@ -112,6 +119,7 @@ struct HomeView: View {
         .tint(.white)
         .environment(preferences)
         .environment(groups)
+        .environment(rates)
         #if DEBUG
         .environment(debugBalances)
         #endif
@@ -269,10 +277,10 @@ struct HomeView: View {
     private var mood: BalanceMood {
         #if DEBUG
         if debugBalance != nil {
-            return BalanceMood(amount: balance, currencyCode: homeCurrencyCode)
+            return BalanceMood(amount: balance, currencyCode: homeCurrencyCode, rates: rates.rates)
         }
         #endif
-        return BalanceMood(balances: [total.headline] + total.others)
+        return BalanceMood(balances: [total.headline] + total.others, rates: rates.rates)
     }
 
     private var headlineCurrencyCode: String {
@@ -282,8 +290,20 @@ struct HomeView: View {
         return total.headline.currencyCode
     }
 
+    private var isApproximate: Bool {
+        #if DEBUG
+        if debugBalance != nil { return false }
+        #endif
+        return total.isApproximate
+    }
+
     private var total: HomeTotal {
-        HomeTotal(groups: groups.groups, uid: session.user?.id ?? "", homeCurrencyCode: homeCurrencyCode)
+        HomeTotal(
+            groups: groups.groups,
+            uid: session.user?.id ?? "",
+            homeCurrencyCode: homeCurrencyCode,
+            rates: rates.rates
+        )
     }
 
     private var balance: Decimal {

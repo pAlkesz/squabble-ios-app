@@ -416,7 +416,16 @@ describe("bills", () => {
   });
 });
 
+test("exchange rates are for reading, by members of the club", async () => {
+  await seed(environment, { "rates/latest": { base: "EUR" } });
+  await assertSucceeds(getDoc(doc(anna, "rates/latest")));
+  await assertFails(getDoc(doc(guest, "rates/latest")));
+  await assertFails(getDocs(collection(anna, "rates")));
+  await assertFails(setDoc(doc(anna, "rates/latest"), { base: "USD" }));
+  await assertFails(deleteDoc(doc(anna, "rates/latest")));
+});
+
 test("anything unlisted is closed", async () => {
-  await assertFails(getDoc(doc(anna, "rates/latest")));
+  await assertFails(getDoc(doc(anna, "rates/2026-11-25")));
   await assertFails(setDoc(doc(anna, "groups/g/settlements/s"), { amountMinor: 1 }));
 });

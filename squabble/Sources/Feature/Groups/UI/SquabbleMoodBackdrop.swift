@@ -8,6 +8,7 @@ struct SquabbleMoodBackdrop: View {
     var isDimmed = false
 
     @Environment(GroupsStore.self) private var groups
+    @Environment(RatesStore.self) private var rates
     @Environment(AuthSession.self) private var session
     #if DEBUG
     @Environment(DebugBalances.self) private var debugBalances: DebugBalances?
@@ -19,7 +20,11 @@ struct SquabbleMoodBackdrop: View {
     }
 
     private var mood: BalanceMood {
-        BalanceMood(amount: balance, currencyCode: groups.group(id: groupID)?.currencyCode ?? "EUR")
+        BalanceMood(
+            amount: balance,
+            currencyCode: groups.group(id: groupID)?.currencyCode ?? "EUR",
+            rates: rates.rates
+        )
     }
 
     private var balance: Decimal {

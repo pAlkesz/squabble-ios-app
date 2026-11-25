@@ -1,7 +1,7 @@
 # Home & balance
 
 **Status:** Partly built. The layout, balance mood, home currency and the Squabbles tile
-are done. Totals are per currency until exchange rates land.
+are done. Totals convert into the home currency.
 
 ## Summary
 
@@ -20,12 +20,15 @@ either direction. There's no tab bar; squabbles are pushed from home like conver
 
 - **Positive** means others owe the user; **negative** means the user owes others.
 - Shown in the **home currency**, labelled "Total · <code>".
-- **Built (Nov 2026):** the sum of the user's stored balances. Nothing converts yet, so the
-  headline adds up squabbles in the home currency, and other currencies are listed under it
-  (`HomeTotal`). If the only balance is in another currency, that's the headline instead of
-  a zero. Separately, the mood judges them all together in rough euro terms.
-- **Planned:** one converted total, using the ECB's latest daily rates (see
-  [Bills](bills.md#exchange-rates)).
+- **Built (Nov 2026):** the sum of the user's stored balances, with other currencies converted
+  at the ECB's latest daily rates (`HomeTotal`, `RatesStore`; see
+  [Bills](bills.md#exchange-rates)). Added up exactly and rounded once. Display only: what
+  people owe stays in each squabble's currency.
+- With anything converted it's marked **≈** (VoiceOver: "About"), as it moves with the rates.
+  With one currency it's exact.
+- A currency without a rate is listed under the total instead of guessed. Before any rates have
+  arrived that's all of them, except that a lone balance in another currency is the headline
+  rather than a zero.
 
 ## Balance mood
 
@@ -43,9 +46,9 @@ money flows; the saturation shows how much.
 - Pale green is fully in at about **€6** owed. Amber is fully in at about **€1** owing:
   the midpoint between petrol and amber is a muddy khaki, so debts pass through it
   quickly.
-- Amounts are judged in rough euro terms using a small per-currency table
-  (`BalanceMood.unitsPerEuro`, e.g. HUF 400, JPY 160). This is a colour heuristic, not an
-  exchange rate. Replace it with real rates once totals convert.
+- Amounts are judged in euros at the latest rates. A small rough table
+  (`BalanceMood.unitsPerEuro`, e.g. HUF 400) stands in until there are some, or for a currency
+  without one.
 - This is the one place `Double` is allowed near money: it only picks a colour and never
   changes an amount.
 
@@ -99,7 +102,7 @@ like Revolut's: `+` already covers the one main action.
 - **Flags:** a currency's country is the region its code starts with (HUF → HU,
   EUR → EU), or otherwise the only region that uses it. Currencies shared by several
   countries show a banknote instead. A test fails if a mapped flag asset is missing.
-- **Nothing is converted yet:** it decides which squabbles make up the headline total.
+- It's the currency home's total is converted into.
 
 ## Placeholders and built entry points
 

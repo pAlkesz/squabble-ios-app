@@ -23,6 +23,14 @@ nonisolated struct Money: Equatable, Hashable, Sendable {
         self.init(minorUnits: units, currencyCode: currencyCode)
     }
 
+    /// Rounded to the currency's precision, half away from zero; nil when it doesn't fit.
+    init?(rounding amount: Decimal, currencyCode: String) {
+        var exact = amount
+        var rounded = Decimal()
+        NSDecimalRound(&rounded, &exact, CurrencyPrecision.fractionDigits(for: currencyCode), .plain)
+        self.init(amount: rounded, currencyCode: currencyCode)
+    }
+
     var amount: Decimal {
         Decimal(minorUnits) / pow(10, CurrencyPrecision.fractionDigits(for: currencyCode))
     }

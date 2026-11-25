@@ -29,6 +29,10 @@ extension Container {
         self { FirestoreBillRepository() }.singleton
     }
 
+    var ratesRepository: Factory<RatesRepository> {
+        self { FirestoreRatesRepository() }.singleton
+    }
+
     var avatarStore: Factory<AvatarStore> {
         self { FirebaseAvatarStore() }.singleton
     }
