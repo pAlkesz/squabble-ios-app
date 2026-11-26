@@ -55,7 +55,8 @@ newest at the bottom. The composer sits at the bottom.
 - **Tap a message:** nothing.
 - **Reactions:** one emoji per person per entry; choosing your own again in the long-press
   menu removes it, once the menu has closed (so the copy still matches the message). A pill
-  coming or going pops in, and the rows around it make room smoothly. Message times are `.caption`, bills' too. Shown as one dark pill (`ReactionChip`, opaque so it reads over the
+  coming or going pops in, and the rows around it make room smoothly; the animation sits on
+  the scroll view, so the shift the bottom-pinned list makes above a growing row is animated too. Message times are `.caption`, bills' too. Shown as one dark pill (`ReactionChip`, opaque so it reads over the
   bubble) on the bubble's bottom-right corner whoever wrote it, as in Messenger: the three
   most common emoji, then the total when there's more than one, overlapping only the
   bubble's bottom padding, with the same faint ring whoever reacted. The room it needs is left

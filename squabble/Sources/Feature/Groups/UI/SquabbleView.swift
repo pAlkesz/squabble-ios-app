@@ -83,15 +83,16 @@ struct SquabbleView: View {
                             }
                         }
                     }
-                    // A pill coming or going changes a row's height: the rows around it make room
-                    // smoothly instead of jumping.
-                    .animation(.snappy, value: reactionCounts)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
                     .frame(maxWidth: 720)
                     .frame(maxWidth: .infinity)
                 }
                 .defaultScrollAnchor(.bottom)
+                // A pill coming or going changes a row's height, and the list, pinned to the
+                // bottom, moves what's above it. On the scroll view, not the rows, so that move is
+                // animated too instead of jumping.
+                .animation(.snappy, value: reactionCounts)
                 // An older page is added above, which would leave the list at the very top of it:
                 // stay on what was first. Loading waits for the scroll to settle, because its
                 // momentum would override this.
