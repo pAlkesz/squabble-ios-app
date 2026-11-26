@@ -80,6 +80,25 @@ the rules and this spec in the same commit.
 - The first "does this user have a profile?" check when nothing is cached
 - Account deletion
 
+## Failure states
+
+What happens when a load or a write fails (surveyed Nov 2026):
+
+- **Handled:** the profile listener (`ProfileSyncFailedSheet`: retry or sign out); the
+  chat ("Chat isn't loading"); one-off calls (invite preview and join, onboarding's save,
+  the handle check, photo upload) show their own inline error or alert.
+- **Fall back quietly, which is fine:** exchange rates (a rough table) and preferences (the
+  phone's region currency).
+
+**Planned, not built:**
+
+- **Squabbles listener:** a failure is only logged, so home's tile never appears and
+  nothing says why. Needs a failure state with retry, on home's tile and the list.
+- **Chat:** the failure text needs a retry button.
+- **Refused writes:** messages, bills and edits are written to the cache first; if the
+  server's rules refuse one later, it silently disappears and is only logged. Decide how
+  to tell the user (at least for bills).
+
 ## Money
 
 - Firestore has no decimal type. **Amounts are stored as integer minor units (`Int64`)

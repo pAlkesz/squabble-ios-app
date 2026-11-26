@@ -142,7 +142,9 @@ Laid out like Revolut's group pages (Nov 2026):
   "Settled up" in the neutral (petrol) one at exactly zero; nothing before the first bill. A
   non-zero balance also tints the row (an inset rounded card fading from the left in the
   mood's colour) — an experiment that replaced a ring around the picture. Home's tile uses the
-  same rows with a 48 pt picture.
+  same rows with a 48 pt picture. The list is only reachable with at least one squabble
+  (home hides "See all" and the chevron otherwise), so it has no empty state yet; it will
+  need one once leaving or deleting can empty it while it's open.
 - **Last activity** is written by whoever acts, in the same batch as the message or bill and
   the `updatedAt` bump, so it shows offline at once and costs no extra read. It stores what
   happened (kind, uid, message or bill id, text or title capped at 120 characters), never a
