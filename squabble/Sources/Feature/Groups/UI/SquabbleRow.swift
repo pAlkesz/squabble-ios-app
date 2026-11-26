@@ -1,8 +1,8 @@
 import SwiftUI
 
-/// A squabble in a list: its picture, its name, the latest thing that happened in it, when,
-/// and, on a third line, the user's balance there. A balance tints the row from the left in its mood's colour.
-/// No chevron, as in Revolut's lists.
+/// A squabble in a list, laid out like Revolut's: its picture, its name, the user's balance
+/// there, the latest thing that happened in it, and when. A balance tints the row from the
+/// left in its mood's colour. No chevron.
 struct SquabbleRow: View {
     let group: SquabbleGroup
     var pictureSize: CGFloat = 56
@@ -15,29 +15,31 @@ struct SquabbleRow: View {
     var body: some View {
         HStack(spacing: 14) {
             SquabbleImageView(group.image, size: pictureSize)
-            VStack(alignment: .leading, spacing: 2) {
-                // The date sits on the name's baseline, as in Revolut's lists.
-                HStack(alignment: .firstTextBaseline, spacing: 8) {
+            // The date sits on the name's baseline in a column of its own, so no line runs
+            // under it, as in Revolut's lists.
+            HStack(alignment: .firstTextBaseline, spacing: 12) {
+                VStack(alignment: .leading, spacing: 2) {
                     Text(verbatim: group.name)
                         .font(.body.weight(.semibold))
                         .lineLimit(1)
-                    Spacer(minLength: 0)
-                    // Not there yet while the creation is still a pending write.
-                    if let updatedAt = group.updatedAt {
-                        Text(verbatim: ActivityDate.text(for: updatedAt))
-                            .font(.footnote)
-                            .foregroundStyle(.white.opacity(secondaryOpacity))
-                    }
+                    // Above the message, which it would otherwise crowd out on one line.
+                    balanceLine
+                        .font(.subheadline)
+                        .monospacedDigit()
+                        .lineLimit(1)
+                    Text(verbatim: SquabbleRowSummary.text(for: group, me: session.user?.id))
+                        .font(.subheadline)
+                        .foregroundStyle(.white.opacity(secondaryOpacity))
+                        .lineLimit(1)
                 }
-                Text(verbatim: SquabbleRowSummary.text(for: group, me: session.user?.id))
-                    .font(.subheadline)
-                    .foregroundStyle(.white.opacity(secondaryOpacity))
-                    .lineLimit(1)
-                // Its own line, as in Revolut's lists, so a big amount never crowds out the message.
-                balanceLine
-                    .font(.subheadline)
-                    .monospacedDigit()
-                    .lineLimit(1)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                // Not there yet while the creation is still a pending write.
+                if let updatedAt = group.updatedAt {
+                    Text(verbatim: ActivityDate.text(for: updatedAt))
+                        .font(.footnote)
+                        .foregroundStyle(.white.opacity(secondaryOpacity))
+                        .fixedSize()
+                }
             }
         }
         .foregroundStyle(.white)
@@ -56,10 +58,8 @@ struct SquabbleRow: View {
                 .foregroundStyle(color)
             if balance.minorUnits < 0 {
                 Text("You owe \(amount)", comment: "The user's balance in a squabble: what they owe altogether.")
-                    .foregroundStyle(.white.opacity(secondaryOpacity))
             } else if balance.minorUnits > 0 {
                 Text("You're owed \(amount)", comment: "The user's balance in a squabble: what they're owed altogether.")
-                    .foregroundStyle(.white.opacity(secondaryOpacity))
             } else if group.isInvolved(uid) {
                 Text("Settled up", comment: "Squabble row: the user's balance in the squabble is exactly zero.")
                     .fontWeight(.semibold)

@@ -139,8 +139,10 @@ Laid out like Revolut's group pages (Nov 2026):
   Under the name (`SquabbleRowSummary`, Nov 2026): the latest thing that happened ("You: …",
   "Anna: …", "Anna added “Dinner”", edited, deleted, "deleted a message"); before anything has,
   "Invite people to the squabble" while the user is alone, else "No messages yet. Say hello!".
-  On a third line, as in Revolut's lists (Nov 2026; on the right of the message it crowded
-  long messages out), the user's balance as a sentence with the amount in its mood colour
+  Laid out as in Revolut's lists (Nov 2026): the name, then the balance in white, then the
+  message in the secondary colour; the date has a column of its own on the name's baseline, so
+  no line runs under it (an amount on the message's right crowded long messages out).
+  The balance is a sentence with the amount in its mood colour
   (`BalanceMood`): "You owe 30,00 €", "You're owed 355,00 €", or "Settled up" in the neutral
   (petrol) colour at exactly zero. "Settled up" only once the user paid or shares a bill that
   counts (`SquabbleGroup.isInvolved`, from `involvedIds`); before that, or with no bills, the

@@ -15,7 +15,7 @@ struct SquabbleListView: View {
             LazyVStack(spacing: 0) {
                 ForEach(groups.groups) { group in
                     NavigationLink(value: HomeRoute.squabble(id: group.id)) {
-                        SquabbleRow(group: group, secondaryOpacity: 0.9)
+                        SquabbleRow(group: group, secondaryOpacity: 0.8)
                     }
                     .buttonStyle(.plain)
                 }
