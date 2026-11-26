@@ -206,6 +206,42 @@ await message("chat", "t1", "dora", "Should we plan the trip?", ago(3 * day + 30
 await message("chat", "t2", "emma", "Yes!", ago(3 * day + 20));
 await message("chat", "t3", "dora", "So who's booking?", ago(3 * day));
 
+// A busy chat: runs from one person, replies, reactions, a bill in the middle, a deleted
+// message, across three days.
+await squabble("lake", {
+  name: "Lake house", currency: "EUR", artwork: "trio", background: "teal",
+  members: ["anna", "emma", "bela", "cili"], createdAt: ago(3 * day), updatedAt: ago(15),
+});
+const lake = [
+  ["l01", "anna", 2 * day + 120, "Lake house is booked! 🏡", { reactions: { emma: "❤️", bela: "😮" } }],
+  ["l02", "anna", 2 * day + 119, "Three nights, sleeps six, has a sauna"],
+  ["l03", "anna", 2 * day + 118, "And a canoe. Nobody is sinking the canoe this time."],
+  ["l04", "bela", 2 * day + 100, "That was one time"],
+  ["l05", "bela", 2 * day + 99, "And the canoe started it"],
+  ["l06", "cili", 2 * day + 60, "How much per person?"],
+  ["l07", "anna", 2 * day + 58, "€150 each, I'll put it in as a bill"],
+  ["l08", "emma", 2 * day + 40, "Paying you back the second payday hits", { replyTo: { id: "l07", authorId: "anna", preview: "€150 each, I'll put it in as a bill" } }],
+  ["l09", "bela", day + 300, "Who's bringing food?"],
+  ["l10", "cili", day + 298, "I'll do breakfasts"],
+  ["l11", "cili", day + 297, "Real breakfasts. Not Béla's \"coffee and a sigh\".", { reactions: { anna: "😂", emma: "😂", bela: "🙄" } }],
+  ["l12", "bela", day + 250, "Coffee and a sigh is a lifestyle"],
+  ["l13", "emma", day + 200, "I'm on snacks 🍿"],
+  ["l14", "emma", day + 199, "Large snacks"],
+  ["l15", "anna", day + 120, "Someone needs to drive Cili, her car is \"resting\""],
+  ["l16", "cili", day + 118, "It's not resting, it's sulking"],
+  ["l17", "bela", day + 117, "I'll drive", { replyTo: { id: "l15", authorId: "anna", preview: "Someone needs to drive Cili, her car is \"resting\"" } }],
+  ["l18", "anna", 300, "Packing list going up tonight"],
+  ["l19", "emma", 240, "Do we need towels?"],
+  ["l20", "anna", 238, "Yes. Bring your own, the house ones are crunchy"],
+  ["l21", "bela", 120, "Crunchy towels build character"],
+  ["l23", "cili", 58, "Ignore that, wrong chat 🙈"],
+  ["l24", "emma", 20, "Leaving at 9 on Friday?"],
+  ["l25", "anna", 15, "9 sharp. Sharp, Béla.", { reactions: { bela: "👍", emma: "😂", cili: "😂" } }],
+];
+for (const [id, author, minutesAgo, text, more] of lake) await message("lake", id, author, text, ago(minutesAgo), more);
+await db.doc("groups/lake/messages/l22").set({ authorId: "cili", kind: "text", createdAt: ago(60), deletedAt: ago(59), reactions: {} });
+await bill("lake", "house", "EUR", "Lake house, 3 nights", "anna", { anna: 15000, emma: 15000, bela: 15000, cili: 15000 }, ago(2 * day + 57));
+
 await squabble("edits", {
   name: "Second thoughts", currency: "EUR", artwork: "trio", background: "sunrise",
   members: ["emma", "cili"], createdAt: ago(15 * day), updatedAt: ago(5 * day),
@@ -239,4 +275,4 @@ for (const group of (await db.collection("groups").get()).docs) {
   if (latest) await group.ref.update({ lastActivity: latest.activity });
 }
 
-console.log(`Seeded ${Object.keys(people).length} people and 13 squabbles. Sign in as Emma to see them all.`);
+console.log(`Seeded ${Object.keys(people).length} people and 14 squabbles. Sign in as Emma to see them all.`);

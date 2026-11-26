@@ -50,6 +50,7 @@ Emma's squabbles, one per state a screen can be in:
 | Forint flat | HUF, no decimals |
 | The whole extended family reunion, 2026 | 20 people, long names and titles |
 | All talk | Messages, no bills |
+| Lake house | A busy chat: runs from one person, replies, reactions, a bill, a deleted message, over three days |
 | Ghosted dinner | A deleted member; Cili deep in debt |
 | Second thoughts | An edited bill, a deleted one, a deleted message |
 | Old festival | Archived with an open debt |

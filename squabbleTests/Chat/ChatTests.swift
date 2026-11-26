@@ -159,6 +159,21 @@ struct ChatStoreTests {
 
     private func ids(_ range: Range<Int>) -> [String] { range.map { "m\($0)" } }
 
+    @Test func anEmptyCacheIsNotTrustedWhenTheSquabbleHasActivity() async {
+        let empty = FeedPage<ChatMessage>(items: [], isFull: false, isFromCache: true)
+        let noBills = FeedPage<Bill>(items: [], isFull: false, isFromCache: true)
+        repository.latest = [empty]
+        bills.latest = [noBills]
+        let store = ChatStore(groupID: "g1")
+        await store.observe(expectsContent: true)
+        #expect(!store.hasLoaded)
+        await store.observe(expectsContent: false)
+        #expect(store.hasLoaded)
+        repository.latest = [page(0..<3)]
+        await store.observe(expectsContent: true)
+        #expect(store.hasLoaded)
+    }
+
     @Test func aRefusalBeforeTheSquabbleReachesTheServerIsNotAFailure() async {
         repository.latestError = ChatError.unavailable
         let store = ChatStore(groupID: "g1")

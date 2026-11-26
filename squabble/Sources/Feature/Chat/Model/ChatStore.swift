@@ -24,15 +24,36 @@ final class ChatStore {
         self.groupID = groupID
     }
 
-    var hasLoaded: Bool { messageFeed.hasLoaded && billFeed.hasLoaded }
+    /// The squabble says something has happened in it, so an empty answer from the cache alone
+    /// means the cache hasn't seen it yet, not that the chat is empty: showing the empty state
+    /// then would flash it before the messages arrive.
+    private var expectsContent = false
+    /// Offline the server never answers; after a moment, show what the cache has.
+    private var gaveUpWaiting = false
+
+    static let serverPatience: Duration = .seconds(2)
+
+    var hasLoaded: Bool {
+        guard messageFeed.hasLoaded, billFeed.hasLoaded else { return false }
+        let mayBeStale = expectsContent && entries.isEmpty && !isLive
+        return !mayBeStale || gaveUpWaiting || failed
+    }
     var isLive: Bool { messageFeed.isLive && billFeed.isLive }
     var canLoadOlder: Bool { messageFeed.canLoadOlder || billFeed.canLoadOlder }
     var messages: [ChatMessage] { messageFeed.items }
 
     /// For as long as `isAwaitingServer`, a refusal only means the squabble hasn't got there yet:
     /// call again once it has. Offline, what's written meanwhile shows from the cache.
-    func observe(isAwaitingServer: Bool = false) async {
+    func observe(isAwaitingServer: Bool = false, expectsContent: Bool = false) async {
         failed = false
+        self.expectsContent = expectsContent
+        gaveUpWaiting = false
+        let patience = expectsContent ? Task { [weak self] in
+            try? await Task.sleep(for: Self.serverPatience)
+            guard !Task.isCancelled else { return }
+            self?.gaveUpWaiting = true
+        } : nil
+        defer { patience?.cancel() }
         if isAwaitingServer {
             messageFeed.stopWaiting()
             billFeed.stopWaiting()

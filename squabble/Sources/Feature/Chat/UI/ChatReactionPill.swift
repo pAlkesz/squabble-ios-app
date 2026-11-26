@@ -59,6 +59,7 @@ extension View {
             if !message.reactions.isEmpty {
                 ChatReactionPill(message: message, onTap: onTap)
                     .offset(x: -10, y: ChatReactionPill.overhang)
+                    .transition(.scale(scale: 0.4).combined(with: .opacity))
             }
         }
         .padding(.bottom, reservesSpace ? ChatReactionPill.space(for: message) : 0)

@@ -45,7 +45,14 @@ struct SquabbleView: View {
         .foregroundStyle(.white)
         .navigationBarTitleDisplayMode(.inline)
         .background { SquabbleMoodBackdrop(groupID: groupID) }
-        .task(id: isAwaitingServer) { await chat.observe(isAwaitingServer: isAwaitingServer) }
+        .task(id: isAwaitingServer) {
+            await chat.observe(isAwaitingServer: isAwaitingServer, expectsContent: groups.group(id: groupID)?.lastActivity != nil)
+        }
+    }
+
+    /// Each message's number of reactions, for animating the room their pills take.
+    private var reactionCounts: [String: Int] {
+        Dictionary(chat.messages.map { ($0.id, $0.reactions.count) }, uniquingKeysWith: { first, _ in first })
     }
 
     private var isAwaitingServer: Bool {
@@ -76,6 +83,9 @@ struct SquabbleView: View {
                             }
                         }
                     }
+                    // A pill coming or going changes a row's height: the rows around it make room
+                    // smoothly instead of jumping.
+                    .animation(.snappy, value: reactionCounts)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
                     .frame(maxWidth: 720)
@@ -309,14 +319,17 @@ struct SquabbleView: View {
         let endsRun: Bool
     }
 
+    /// The original comes back first, under the menu's identical copy, and the menu goes a
+    /// moment later: done in one go, a frame could show neither and the bubble flashed.
     private func closeMenu(then next: @escaping () -> Void = {}) {
         var transaction = Transaction()
         transaction.disablesAnimations = true
-        withTransaction(transaction) {
-            menu = nil
-            liftedMessageID = nil
+        withTransaction(transaction) { liftedMessageID = nil }
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(50))
+            withTransaction(transaction) { menu = nil }
+            next()
         }
-        next()
     }
 
     @ViewBuilder
@@ -338,8 +351,11 @@ struct SquabbleView: View {
                 isMine: isMine,
                 myReaction: uid.flatMap { message.reactions[$0] },
                 onReact: { emoji in
-                    if let uid { chat.toggleReaction(emoji, on: message, by: uid) }
-                    closeMenu()
+                    // Once the menu is gone: the new pill makes the list move, and the copy
+                    // would no longer match the message underneath.
+                    closeMenu {
+                        if let uid { chat.toggleReaction(emoji, on: message, by: uid) }
+                    }
                 },
                 onReply: {
                     closeMenu {

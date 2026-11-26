@@ -37,7 +37,8 @@ newest at the bottom. The composer sits at the bottom.
   menu, which can't hold a large, separate emoji bar (Nov 2026). The page blurs; the message
   stays where it was (moved only as far as it takes to fit): the menu draws an exact copy of
   it, name, tail and reaction pill included, never faded or scaled, and the original is hidden
-  in the list meanwhile, so only one is ever visible (the blur covers the bar and the composer,
+  in the list meanwhile, so only one is ever visible; on closing the original comes back first, under
+  the copy, and the menu goes a moment later, so no frame shows neither (the blur covers the bar and the composer,
   so the original itself can't sit above it). When the menu needs room, the copy glides from
   the original to where it fits and back onto wherever the original is when it closes, a large reaction bar sits above it
   (❤️ 😂 😮 😢 🙄 👍, yours highlighted, and a **+** that opens `EmojiPickerSheet`: every
@@ -53,7 +54,8 @@ newest at the bottom. The composer sits at the bottom.
   history), **Edit** and **Delete** (any member, per [Bills](bills.md)).
 - **Tap a message:** nothing.
 - **Reactions:** one emoji per person per entry; choosing your own again in the long-press
-  menu removes it. Message times are `.caption`, bills' too. Shown as one dark pill (`ReactionChip`, opaque so it reads over the
+  menu removes it, once the menu has closed (so the copy still matches the message). A pill
+  coming or going pops in, and the rows around it make room smoothly. Message times are `.caption`, bills' too. Shown as one dark pill (`ReactionChip`, opaque so it reads over the
   bubble) on the bubble's bottom-right corner whoever wrote it, as in Messenger: the three
   most common emoji, then the total when there's more than one, overlapping only the
   bubble's bottom padding, with the same faint ring whoever reacted. The room it needs is left
@@ -113,6 +115,10 @@ groups/{gid}/messages/{messageId}
 - **A squabble just created** may not have reached the server when its page opens, so the rules
   refuse its chat and bills. Until it has (`SquabbleGroup.isAwaitingServer`), that isn't a
   failure: the page shows as empty, and starts listening again once it's there.
+- **An empty cache isn't an empty chat** (Nov 2026): when the squabble has a `lastActivity`
+  but the phone's cache answers with nothing (it hasn't seen those messages yet), the page
+  waits for the server rather than flash the "ready" state, for at most
+  `ChatStore.serverPatience` (2 s), after which it shows what the cache has (offline).
 - **A chat opens already at the bottom**, without scrolling there (Nov 2026): the list isn't
   mounted until both feeds have loaded, and catching up from the cache to the server jumps.
   Only new entries while live, or your own, scroll in.
