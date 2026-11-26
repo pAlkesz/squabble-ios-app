@@ -14,8 +14,9 @@ struct ChatMessageRow: View {
     /// The long-press menu is showing this message.
     let isLifted: Bool
     let myUID: String?
-    /// With the bubble's frame on screen, so the menu can open over it.
-    let onOpenMenu: (CGRect) -> Void
+    /// With the bubble's frame on screen, kept current, so the menu can open over it and
+    /// return to wherever it is when it closes.
+    let onOpenMenu: (FrameBox) -> Void
     let onShowReactions: () -> Void
     let onShowQuoted: (String) -> Void
 
@@ -36,7 +37,7 @@ struct ChatMessageRow: View {
             }
             bubble
                 // On the bubble's bottom-right corner whoever wrote it, as in Messenger.
-                .reactionPill(for: message, onTap: onShowReactions)
+                .reactionPill(for: message, reservesSpace: false, onTap: onShowReactions)
                 // The menu shows an exact copy in its place while it's open.
                 .opacity(isLifted ? 0 : 1)
             if !isMine {
@@ -44,6 +45,8 @@ struct ChatMessageRow: View {
             }
         }
         .padding(.top, startsRun ? 8 : 0)
+        // Below the row rather than the bubble, so the avatar stays level with the bubble.
+        .padding(.bottom, ChatReactionPill.space(for: message))
     }
 
     private var bubble: some View {
@@ -58,12 +61,12 @@ struct ChatMessageRow: View {
         .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: { bubbleFrame.rect = $0 }
         .onLongPressGesture(minimumDuration: 0.3) {
             guard !message.isDeleted else { return }
-            onOpenMenu(bubbleFrame.rect)
+            onOpenMenu(bubbleFrame)
         }
         .accessibilityElement(children: .combine)
         .accessibilityAction(named: Text("React or reply", comment: "Chat: VoiceOver action on a message that opens its menu of reactions and actions.")) {
             guard !message.isDeleted else { return }
-            onOpenMenu(bubbleFrame.rect)
+            onOpenMenu(bubbleFrame)
         }
     }
 

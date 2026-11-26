@@ -270,7 +270,7 @@ struct SquabbleView: View {
                 var transaction = Transaction()
                 transaction.disablesAnimations = true
                 withTransaction(transaction) {
-                    menu = MessageMenu(id: message.id, anchor: frame, showsName: showsName, endsRun: endsRun)
+                    menu = MessageMenu(id: message.id, frame: frame, showsName: showsName, endsRun: endsRun)
                 }
             },
             onShowReactions: { reactionsOf = OpenMessage(id: message.id) },
@@ -302,7 +302,8 @@ struct SquabbleView: View {
 
     private struct MessageMenu: Identifiable {
         let id: String
-        let anchor: CGRect
+        /// The message's bubble in the list, kept current while it's hidden behind the menu.
+        let frame: ChatMessageRow.FrameBox
         /// As the row shows it, so the menu's copy is the same bubble.
         let showsName: Bool
         let endsRun: Bool
@@ -332,7 +333,8 @@ struct SquabbleView: View {
                     isMine: isMine,
                     hasTail: open.endsRun
                 ),
-                anchor: open.anchor,
+                anchor: open.frame.rect,
+                currentAnchor: { open.frame.rect },
                 isMine: isMine,
                 myReaction: uid.flatMap { message.reactions[$0] },
                 onReact: { emoji in

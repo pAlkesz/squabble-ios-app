@@ -11,6 +11,8 @@ struct ChatMessageMenu: View {
     let bubble: ChatBubble
     /// The bubble's frame on screen when the menu opened.
     let anchor: CGRect
+    /// Where the original is now: the list can move underneath (the keyboard going away).
+    let currentAnchor: () -> CGRect
     let isMine: Bool
     let myReaction: String?
     /// Each runs once the menu has animated away.
@@ -22,6 +24,8 @@ struct ChatMessageMenu: View {
     let onShown: () -> Void
     let onClose: () -> Void
 
+    /// Re-read on closing, so the copy lands back on the original.
+    @State private var closingAnchor: CGRect?
     @State private var contentSize: CGSize = .zero
     @State private var barHeight: CGFloat = 0
     @State private var isShown = false
@@ -34,7 +38,7 @@ struct ChatMessageMenu: View {
     var body: some View {
         GeometryReader { proxy in
             let origin = proxy.frame(in: .global).origin
-            let frame = anchor.offsetBy(dx: -origin.x, dy: -origin.y)
+            let frame = (closingAnchor ?? anchor).offsetBy(dx: -origin.x, dy: -origin.y)
             ZStack(alignment: .topLeading) {
                 Rectangle()
                     .fill(.ultraThinMaterial)
@@ -62,20 +66,24 @@ struct ChatMessageMenu: View {
         }
     }
 
-    /// Animates the bar and actions back into the message, then hands over.
+    /// Animates the bar and actions back into the message, and the message back onto the
+    /// original, then hands over.
     private func close(then next: @escaping () -> Void) {
-        withAnimation(.easeIn(duration: 0.16)) {
+        closingAnchor = currentAnchor()
+        withAnimation(.easeIn(duration: 0.2)) {
             isShown = false
         } completion: {
             next()
         }
     }
 
-    /// Where the block's top-left goes: the bubble over where it was, the block kept inside the
-    /// screen.
+    /// Where the block's top-left goes. Shown, it's kept inside the screen; hidden (opening and
+    /// closing), the bubble sits exactly on the original, so it glides between the two rather
+    /// than jumping.
     private func position(for frame: CGRect, in size: CGSize) -> CGSize {
         let x = isMine ? frame.maxX - contentSize.width : frame.minX
         let y = frame.minY - barHeight - Self.spacing
+        guard isShown else { return CGSize(width: x, height: y) }
         let maxX = size.width - Self.margin - contentSize.width
         let maxY = size.height - Self.margin - contentSize.height
         return CGSize(

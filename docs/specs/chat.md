@@ -38,7 +38,8 @@ newest at the bottom. The composer sits at the bottom.
   stays where it was (moved only as far as it takes to fit): the menu draws an exact copy of
   it, name, tail and reaction pill included, never faded or scaled, and the original is hidden
   in the list meanwhile, so only one is ever visible (the blur covers the bar and the composer,
-  so the original itself can't sit above it), a large reaction bar sits above it
+  so the original itself can't sit above it). When the menu needs room, the copy glides from
+  the original to where it fits and back onto wherever the original is when it closes, a large reaction bar sits above it
   (❤️ 😂 😮 😢 🙄 👍, yours highlighted, and a **+** that opens `EmojiPickerSheet`: every
   emoji in Unicode's groups, no skin tones, searchable by English name, from the bundled
   `Emoji.json` generated from Unicode's emoji-test.txt; the emoji keyboard was tried first and
@@ -55,7 +56,8 @@ newest at the bottom. The composer sits at the bottom.
   menu removes it. Message times are `.caption`, bills' too. Shown as one dark pill (`ReactionChip`, opaque so it reads over the
   bubble) on the bubble's bottom-right corner whoever wrote it, as in Messenger: the three
   most common emoji, then the total when there's more than one, overlapping only the
-  bubble's bottom padding, with the same faint ring whoever reacted. Tapping the pill opens
+  bubble's bottom padding, with the same faint ring whoever reacted. The room it needs is left
+  below the row, so the author's avatar stays level with the bubble. Tapping the pill opens
   `ChatReactionsSheet`: who reacted with what, yours first, and tapping yours takes it back
   (Nov 2026).
 - **Replies** quote the original (author and up to 120 characters); tapping the quote

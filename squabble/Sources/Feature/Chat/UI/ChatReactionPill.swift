@@ -12,6 +12,11 @@ struct ChatReactionPill: View {
 
     private static let emojiCount = 3
 
+    /// Room to leave below a bubble for its pill.
+    static func space(for message: ChatMessage) -> CGFloat {
+        message.reactions.isEmpty ? 0 : overhang + 2
+    }
+
     var body: some View {
         let counts = message.reactionCounts
         let total = message.reactions.count
@@ -46,15 +51,16 @@ struct ChatReactionPill: View {
 }
 
 extension View {
-    /// Hangs the message's reaction pill off this bubble's bottom-right corner, and makes room
-    /// for it below.
-    func reactionPill(for message: ChatMessage, onTap: (() -> Void)? = nil) -> some View {
+    /// Hangs the message's reaction pill off this bubble's bottom-right corner. With
+    /// `reservesSpace`, it also makes room for it below; without, the caller does, so things
+    /// aligned to the bubble's bottom (the author's avatar) stay level with the bubble.
+    func reactionPill(for message: ChatMessage, reservesSpace: Bool = true, onTap: (() -> Void)? = nil) -> some View {
         overlay(alignment: .bottomTrailing) {
             if !message.reactions.isEmpty {
                 ChatReactionPill(message: message, onTap: onTap)
                     .offset(x: -10, y: ChatReactionPill.overhang)
             }
         }
-        .padding(.bottom, message.reactions.isEmpty ? 0 : ChatReactionPill.overhang + 2)
+        .padding(.bottom, reservesSpace ? ChatReactionPill.space(for: message) : 0)
     }
 }
