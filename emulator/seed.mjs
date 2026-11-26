@@ -221,4 +221,22 @@ await squabble("archived", {
 });
 await bill("archived", "camping", "EUR", "Camping", "bela", { bela: 2200, emma: 2200 }, ago(125 * day));
 
+// What the app writes with each message and bill: the newest one, for the squabble lists.
+for (const group of (await db.collection("groups").get()).docs) {
+  const events = [];
+  for (const m of (await group.ref.collection("messages").get()).docs) {
+    const data = m.data();
+    events.push({ at: data.createdAt.toMillis(), activity: data.deletedAt
+      ? { kind: "messageDeleted", by: data.authorId, id: m.id }
+      : { kind: "message", by: data.authorId, id: m.id, text: data.text.slice(0, 120) } });
+  }
+  for (const b of (await group.ref.collection("bills").get()).docs) {
+    const data = b.data();
+    const kind = data.deletedAt ? "billDeleted" : data.updatedAt.isEqual(data.createdAt) ? "billAdded" : "billEdited";
+    events.push({ at: data.updatedAt.toMillis(), activity: { kind, by: data.updatedBy, id: b.id, text: data.title } });
+  }
+  const latest = events.sort((a, b) => b.at - a.at)[0];
+  if (latest) await group.ref.update({ lastActivity: latest.activity });
+}
+
 console.log(`Seeded ${Object.keys(people).length} people and 13 squabbles. Sign in as Emma to see them all.`);

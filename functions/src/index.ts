@@ -64,7 +64,7 @@ export const updateRates = functions
  *
  * Covers (see docs/specs/data-and-sync.md): users/{uid} and its private documents, the
  * user's handles/{handle} lock, avatars/{uid}/ in Storage, their place in every group, and
- * their chat messages' texts and reactions.
+ * their chat messages' texts and reactions (and a group's copy of their latest message).
  * Anything new stored per user belongs here too.
  */
 export const deleteUserData = functions
@@ -121,6 +121,11 @@ async function leaveAsDeletedMember(group: FirebaseFirestore.DocumentReference, 
     };
     if (data.createdBy === uid) {
       update.createdBy = earliestJoined(remaining, data.members ?? {});
+    }
+    // The squabble lists quote the latest message; theirs is blanked like the rest.
+    const activity = data.lastActivity;
+    if (activity?.by === uid && activity.kind === "message") {
+      update.lastActivity = { kind: "messageDeleted", by: uid, id: activity.id };
     }
     transaction.update(group, update);
     return false;

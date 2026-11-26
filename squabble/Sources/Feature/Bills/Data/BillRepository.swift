@@ -8,5 +8,5 @@ nonisolated protocol BillRepository: Sendable {
     func bills(in groupID: String, before date: Date, limit: Int) async throws -> FeedPage<Bill>
     func add(_ bill: Bill, in groupID: String) throws
     func update(_ bill: Bill, in groupID: String) throws
-    func delete(_ billID: String, by uid: String, in groupID: String) throws
+    func delete(_ bill: Bill, by uid: String, in groupID: String) throws
 }

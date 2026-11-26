@@ -8,6 +8,7 @@ final class FakeChatRepository: ChatRepository, @unchecked Sendable {
     private(set) var sent: [ChatMessage] = []
     private(set) var reactions: [(emoji: String?, uid: String, messageID: String)] = []
     private(set) var deleted: [String] = []
+    private(set) var replacedActivities: [SquabbleActivity?] = []
     private var nextID = 0
 
     func latestMessages(in groupID: String, limit: Int) -> AsyncThrowingStream<FeedPage<ChatMessage>, Error> {
@@ -29,7 +30,10 @@ final class FakeChatRepository: ChatRepository, @unchecked Sendable {
         reactions.append((emoji, uid, messageID))
     }
 
-    func delete(_ messageID: String, in groupID: String) throws { deleted.append(messageID) }
+    func delete(_ messageID: String, in groupID: String, replacingActivity activity: SquabbleActivity?) throws {
+        deleted.append(messageID)
+        replacedActivities.append(activity)
+    }
     func report(_ message: ChatMessage, in groupID: String, by uid: String) throws {}
 
     func newMessageID(in groupID: String) -> String {

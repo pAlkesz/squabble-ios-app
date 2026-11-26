@@ -158,7 +158,9 @@ groups/{groupId}                 name, currency, createdBy, createdAt,
   members: { uid: { displayName, handle, avatar, payment?, ... } }
                                  ← members are always app users (no guests, Nov 2026);
                                    payment details are copied here so group-mates can
-                                   read them. balances + chapter: functions only (bills.md). Full plan: docs/specs/groups.md
+                                   read them. balances + chapter: functions only (bills.md).
+  lastActivity?                  ← latest message/bill for the lists, written with it.
+                                   Full plan: docs/specs/groups.md
 groups/{gid}/bills/{billId}      title, currency, totalMinor, paidBy, items (embedded),
                                  shares: { memberId: amountMinor }, date,
                                  frozen? (converted copy) + chapter? ← functions only
@@ -404,7 +406,7 @@ stutters on a device even when the simulator looks smooth.
   optional payment methods, saved in one transaction; `Feature/Profile` holds the
   models, Firestore/Storage adapters and shared views (`AvatarView`,
   `PaymentMethodEditor`). Account deletion: the app deletes the Auth user, a Cloud Function
-  wipes profile data and avatars.
+  wipes profile data and avatars (and blanks a group's quote of their latest message).
 - **Home, in progress:** `HomeView` follows a Revolut-style layout on `SquabbleBackdrop`,
   one `NavigationStack` and **no tab bar** (decided Oct 2026: squabbles are pushed from
   home like conversations; add a `TabView` only once there are 3+ peer destinations).

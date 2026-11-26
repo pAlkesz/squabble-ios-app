@@ -45,7 +45,7 @@ nonisolated final class FirestoreBillRepository: BillRepository {
         var data = bill.firestoreData
         data[Bill.Field.createdAt] = FieldValue.serverTimestamp()
         data[Bill.Field.updatedAt] = FieldValue.serverTimestamp()
-        try write(in: groupID, "Adding a bill failed") { batch, bills in
+        try write(in: groupID, activity: .bill(.billAdded, bill, by: bill.createdBy), "Adding a bill failed") { batch, bills in
             batch.setData(data, forDocument: bills.document(bill.id))
         }
     }
@@ -53,27 +53,35 @@ nonisolated final class FirestoreBillRepository: BillRepository {
     func update(_ bill: Bill, in groupID: String) throws {
         var data = bill.editableFirestoreData
         data[Bill.Field.updatedAt] = FieldValue.serverTimestamp()
-        try write(in: groupID, "Editing a bill failed") { batch, bills in
+        try write(in: groupID, activity: .bill(.billEdited, bill, by: bill.updatedBy), "Editing a bill failed") { batch, bills in
             batch.updateData(data, forDocument: bills.document(bill.id))
         }
     }
 
-    func delete(_ billID: String, by uid: String, in groupID: String) throws {
-        try write(in: groupID, "Deleting a bill failed") { batch, bills in
+    func delete(_ bill: Bill, by uid: String, in groupID: String) throws {
+        try write(in: groupID, activity: .bill(.billDeleted, bill, by: uid), "Deleting a bill failed") { batch, bills in
             batch.updateData([
                 Bill.Field.deletedAt: FieldValue.serverTimestamp(),
                 Bill.Field.updatedBy: uid,
                 Bill.Field.updatedAt: FieldValue.serverTimestamp(),
-            ], forDocument: bills.document(billID))
+            ], forDocument: bills.document(bill.id))
         }
     }
 
-    private func write(in groupID: String, _ context: String, _ change: (WriteBatch, CollectionReference) -> Void) throws {
+    private func write(
+        in groupID: String,
+        activity: SquabbleActivity,
+        _ context: String,
+        _ change: (WriteBatch, CollectionReference) -> Void
+    ) throws {
         guard let db else { throw GroupError.unavailable }
         let batch = db.batch()
         change(batch, bills(db, groupID))
         batch.updateData(
-            [SquabbleGroup.Field.updatedAt: FieldValue.serverTimestamp()],
+            [
+                SquabbleGroup.Field.updatedAt: FieldValue.serverTimestamp(),
+                SquabbleGroup.Field.lastActivity: activity.firestoreData,
+            ],
             forDocument: db.collection("groups").document(groupID)
         )
         batch.commit { error in

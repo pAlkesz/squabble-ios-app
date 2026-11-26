@@ -244,6 +244,19 @@ describe("squabbles: updating", () => {
     await assertFails(update(bela, { updatedAt: Timestamp.fromMillis(Date.now() + 1e9) }));
     await assertFails(update(bela, { updatedAt: serverTimestamp(), name: "New" }));
   });
+  test("last activity: your own, of a known kind", async () => {
+    const activity = (more = {}) => ({ kind: "message", by: "bela", id: "m", text: "Hi", ...more });
+    await assertSucceeds(update(bela, { updatedAt: serverTimestamp(), lastActivity: activity() }));
+    await assertSucceeds(update(bela, { lastActivity: { kind: "messageDeleted", by: "bela", id: "m" } }));
+    await assertSucceeds(update(bela, { lastActivity: { kind: "billDeleted", by: "bela", id: "b", text: "Dinner" } }));
+    await assertFails(update(bela, { lastActivity: activity({ by: "anna" }) }));
+    await assertFails(update(cili, { lastActivity: { ...activity(), by: "cili" } }));
+    await assertFails(update(bela, { lastActivity: activity({ kind: "payday" }) }));
+    await assertFails(update(bela, { lastActivity: activity({ text: "x".repeat(401) }) }));
+    await assertFails(update(bela, { lastActivity: activity({ link: "https://example.com" }) }));
+    await assertFails(update(bela, { lastActivity: { kind: "message", by: "bela" } }));
+    await assertFails(update(bela, { lastActivity: activity(), updatedAt: joinedAt }));
+  });
   test("nothing once archived", async () => {
     await assertFails(update(bela, { "members.bela.displayName": "Béla" }, "old"));
     await assertFails(update(bela, { updatedAt: serverTimestamp() }, "old"));
@@ -265,7 +278,7 @@ describe("chat", () => {
   test("sending as the app does, with the activity bump", () => {
     const batch = writeBatch(bela);
     batch.set(doc(bela, "groups/g/messages/new"), message("bela", { createdAt: serverTimestamp() }));
-    batch.update(doc(bela, "groups/g"), { updatedAt: serverTimestamp() });
+    batch.update(doc(bela, "groups/g"), { updatedAt: serverTimestamp(), lastActivity: { kind: "message", by: "bela", id: "new", text: "Hi" } });
     return assertSucceeds(batch.commit());
   });
   test("replying", () => assertSucceeds(post(bela, { replyTo: { id: "m", authorId: "anna", preview: "Hi" } })));
@@ -351,7 +364,7 @@ describe("bills", () => {
   test("adding as the app does, with the activity bump", () => {
     const batch = writeBatch(bela);
     batch.set(doc(bela, "groups/g/bills/new"), bill({ createdAt: serverTimestamp(), updatedAt: serverTimestamp() }));
-    batch.update(doc(bela, "groups/g"), { updatedAt: serverTimestamp() });
+    batch.update(doc(bela, "groups/g"), { updatedAt: serverTimestamp(), lastActivity: { kind: "billAdded", by: "bela", id: "new", text: "Dinner" } });
     return assertSucceeds(batch.commit());
   });
   test("split by exact amounts", () => assertSucceeds(create({ split: "exactly" })));

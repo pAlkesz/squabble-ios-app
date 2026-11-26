@@ -1,6 +1,39 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ added “%@”" : {
+      "comment" : "Squabble row: someone added a bill; their name, then the bill's title.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ hozzáadta ezt: „%2$@”"
+          }
+        }
+      }
+    },
+    "%@ deleted a message" : {
+      "comment" : "Squabble row: the latest message was deleted by its author.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ törölt egy üzenetet"
+          }
+        }
+      }
+    },
+    "%@ edited “%@”" : {
+      "comment" : "Squabble row: someone edited a bill.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ szerkesztette ezt: „%2$@”"
+          }
+        }
+      }
+    },
     "%@ link" : {
       "comment" : "Payment method editor sheet: title when adding a payment link, with the service's name.",
       "localizations" : {
@@ -23,43 +56,13 @@
         }
       }
     },
-    "%lld members · %@" : {
-      "comment" : "Squabble row: member count and the squabble's currency code.",
+    "%@: %@" : {
+      "comment" : "Squabble row: someone's latest message; their name, then the message.",
       "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld member · %@"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld members · %@"
-                }
-              }
-            }
-          }
-        },
         "hu" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld tag · %@"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld tag · %@"
-                }
-              }
-            }
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@: %2$@"
           }
         }
       }
@@ -71,6 +74,83 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$lld/%2$lld"
+          }
+        }
+      }
+    },
+    "Invite people to the squabble" : {
+      "comment" : "Squabble row: the user is still alone in the squabble.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hívj meg valakit veszekedni"
+          }
+        }
+      }
+    },
+    "No messages yet. Say hello!" : {
+      "comment" : "Squabble row: nothing has happened yet in a squabble with other people in it.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Még csend van. Köszönj be!"
+          }
+        }
+      }
+    },
+    "Settled up" : {
+      "comment" : "Squabble row: the user's balance in the squabble is exactly zero.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kvittek vagytok"
+          }
+        }
+      }
+    },
+    "You added “%@”" : {
+      "comment" : "Squabble row: the user added a bill; the bill's title follows.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hozzáadtad ezt: „%@”"
+          }
+        }
+      }
+    },
+    "You deleted a message" : {
+      "comment" : "Squabble row: the latest message was the user's, and they deleted it.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Töröltél egy üzenetet"
+          }
+        }
+      }
+    },
+    "You edited “%@”" : {
+      "comment" : "Squabble row: the user edited a bill.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szerkesztetted ezt: „%@”"
+          }
+        }
+      }
+    },
+    "You: %@" : {
+      "comment" : "Squabble row: the user's own latest message.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Te: %@"
           }
         }
       }

@@ -29,6 +29,8 @@ nonisolated struct SquabbleGroup: Identifiable, Equatable, Sendable {
     /// Minor units of `currencyCode` by uid, kept by the server; zeros are left out. Nil until
     /// the squabble's first bill.
     var balances: [String: Int64]?
+    /// Nil until the first message or bill, and for squabbles from before it was kept.
+    var lastActivity: SquabbleActivity?
     /// Only just created here: until the server has it, its chat and bills are refused.
     var isAwaitingServer = false
 

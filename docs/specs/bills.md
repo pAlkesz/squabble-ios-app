@@ -169,7 +169,8 @@ rates). Only Cloud Functions fetch them.
   A function triggered by bill and settlement writes recomputes them from scratch in a
   transaction, rather than adding changes up, so retries and out-of-order events are
   harmless. The app can't write `balances`; it
-  does bump the group's `updatedAt` in the same batch as any bill write, as messages do.
+  does bump the group's `updatedAt` in the same batch as any bill write, as messages do, and
+  sets its `lastActivity` (added, edited or deleted, with the title).
   Members at zero are left out, and there's no `balances` until the first bill.
 - The balances in a group add up to exactly zero.
 - Home reads `balances` from its existing group listener. A provisional balance that

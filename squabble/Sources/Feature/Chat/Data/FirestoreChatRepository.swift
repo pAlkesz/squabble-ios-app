@@ -50,7 +50,10 @@ nonisolated final class FirestoreChatRepository: ChatRepository {
         let batch = db.batch()
         batch.setData(data, forDocument: messages(db, groupID).document(message.id))
         batch.updateData(
-            [SquabbleGroup.Field.updatedAt: FieldValue.serverTimestamp()],
+            [
+                SquabbleGroup.Field.updatedAt: FieldValue.serverTimestamp(),
+                SquabbleGroup.Field.lastActivity: SquabbleActivity.message(message).firestoreData,
+            ],
             forDocument: db.collection("groups").document(groupID)
         )
         batch.commit { error in
@@ -66,12 +69,21 @@ nonisolated final class FirestoreChatRepository: ChatRepository {
         }
     }
 
-    func delete(_ messageID: String, in groupID: String) throws {
+    func delete(_ messageID: String, in groupID: String, replacingActivity activity: SquabbleActivity?) throws {
         guard let db else { throw ChatError.unavailable }
-        messages(db, groupID).document(messageID).updateData([
+        let batch = db.batch()
+        batch.updateData([
             ChatMessage.Field.text: FieldValue.delete(),
             ChatMessage.Field.deletedAt: FieldValue.serverTimestamp(),
-        ]) { error in
+        ], forDocument: messages(db, groupID).document(messageID))
+        // Without bumping `updatedAt`: deleting isn't news that should lift the squabble.
+        if let activity {
+            batch.updateData(
+                [SquabbleGroup.Field.lastActivity: activity.firestoreData],
+                forDocument: db.collection("groups").document(groupID)
+            )
+        }
+        batch.commit { error in
             if let error { AppLog.error(error, "Message delete failed") }
         }
     }

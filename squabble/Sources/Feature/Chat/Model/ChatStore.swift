@@ -82,7 +82,7 @@ final class ChatStore {
     }
 
     func delete(_ bill: Bill, by uid: String) {
-        perform { try billRepository.delete(bill.id, by: uid, in: groupID) }
+        perform { try billRepository.delete(bill, by: uid, in: groupID) }
     }
 
     func message(id: String) -> ChatMessage? {
@@ -107,8 +107,12 @@ final class ChatStore {
         perform { try repository.setReaction(next, by: uid, on: message.id, in: groupID) }
     }
 
-    func delete(_ message: ChatMessage) {
-        perform { try repository.delete(message.id, in: groupID) }
+    /// If the squabble's lists still quote the message, they stop: they say it was deleted.
+    func delete(_ message: ChatMessage, lastActivity: SquabbleActivity?) {
+        let replacement = lastActivity?.id == message.id
+            ? SquabbleActivity(kind: .messageDeleted, by: message.authorID, id: message.id)
+            : nil
+        perform { try repository.delete(message.id, in: groupID, replacingActivity: replacement) }
     }
 
     func report(_ message: ChatMessage, by uid: String) {

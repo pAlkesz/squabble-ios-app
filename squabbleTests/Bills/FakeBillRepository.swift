@@ -22,5 +22,5 @@ final class FakeBillRepository: BillRepository, @unchecked Sendable {
 
     func add(_ bill: Bill, in groupID: String) throws { added.append(bill) }
     func update(_ bill: Bill, in groupID: String) throws { updated.append(bill) }
-    func delete(_ billID: String, by uid: String, in groupID: String) throws { deleted.append(billID) }
+    func delete(_ bill: Bill, by uid: String, in groupID: String) throws { deleted.append(bill.id) }
 }

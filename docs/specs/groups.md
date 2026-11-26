@@ -67,6 +67,7 @@ groups/{groupId}
   archivedAt?                            ← set by the creator; read-only for everyone
   inviteCode                             ← current invite code; reset by the creator
   balances: { uid: amountMinor }         ← written only by functions (bills.md)
+  lastActivity?: { kind, by, id, text? } ← the latest message or bill, for the lists (below)
   chapter                                ← planned; written only by functions ("Currency")
   memberIds: [uid]                       ← current members; drives the rules + home query
   members: {
@@ -132,9 +133,24 @@ are added afterwards from the squabble.
 Laid out like Revolut's group pages (Nov 2026):
 
 - **List** (`SquabbleListView`, from home's tile title or "See all"): a `+` in the bar
-  that zooms the create sheet out of itself, and every squabble in one card, most recently active first. Each row has a 56 pt picture, the name, "N members
-  · CODE" and, on the right on the name's line, when it was last active (`ActivityDate`: the time today, the
+  that zooms the create sheet out of itself, and every squabble in one card, most recently active first. Each row has a 56 pt picture, the name and, on the right on the name's line, when it was last active (`ActivityDate`: the time today, the
   weekday within the last week, then the date, with the year only for earlier years).
+  Under the name (`SquabbleRowSummary`, Nov 2026): the latest thing that happened ("You: …",
+  "Anna: …", "Anna added “Dinner”", edited, deleted, "deleted a message"); before anything has,
+  "Invite people to the squabble" while the user is alone, else "No messages yet. Say hello!".
+  On the right of that line the user's balance in its mood colour (`BalanceMood`), or
+  "Settled up" in the neutral (petrol) one at exactly zero; nothing before the first bill. A
+  non-zero balance also tints the row (an inset rounded card fading from the left in the
+  mood's colour) — an experiment that replaced a ring around the picture. Home's tile uses the
+  same rows with a 48 pt picture.
+- **Last activity** is written by whoever acts, in the same batch as the message or bill and
+  the `updatedAt` bump, so it shows offline at once and costs no extra read. It stores what
+  happened (kind, uid, message or bill id, text or title capped at 120 characters), never a
+  sentence, so each reader sees it in their own language. Deleting the message it quotes
+  rewrites it to "deleted a message" without bumping `updatedAt`; account deletion does the
+  same for the user's. Reactions and joins don't count. Squabbles from before it existed
+  show the placeholder until their next message or bill. Rules: only `updatedAt` (to now)
+  and `lastActivity` (`by` = the caller, a known kind, these keys only, text ≤ 400).
 - **Squabble** (`SquabbleView`): the name in the bar with the user's standing under it, the
   picture on the right of the bar, and the chat with its composer below (see [Chat](chat.md)).
   Before any message, the middle says "Your squabble is ready", with the invite link under

@@ -16,6 +16,7 @@ nonisolated extension SquabbleGroup {
         static let members = "members"
         static let inviteCode = "inviteCode"
         static let balances = "balances"
+        static let lastActivity = "lastActivity"
     }
 
     init(id: String, firestoreData data: [String: Any]) throws(FirestoreMappingError) {
@@ -43,7 +44,8 @@ nonisolated extension SquabbleGroup {
             memberIds: memberIds,
             members: members,
             inviteCode: data[Field.inviteCode] as? String,
-            balances: data[Field.balances] as? [String: Int64]
+            balances: data[Field.balances] as? [String: Int64],
+            lastActivity: (data[Field.lastActivity] as? [String: Any]).flatMap(SquabbleActivity.init(firestoreData:))
         )
     }
 

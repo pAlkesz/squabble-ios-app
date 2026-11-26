@@ -160,12 +160,26 @@ service cloud.firestore {
           == resource.data.members[request.auth.uid].get('joinedAt', null)
         && isValidMemberEntry(request.resource.data.members[request.auth.uid], request.auth.uid);
 
-      // Sending a message marks the squabble as just active.
+      // What you just did in the squabble (a message, a bill) marks it as just active and,
+      // for the lists, says what it was. Deleting your message rewrites the latter only.
       allow update: if signedIn()
         && request.auth.uid in resource.data.memberIds
         && !('archivedAt' in resource.data)
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['updatedAt'])
-        && request.resource.data.updatedAt == request.time;
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['updatedAt', 'lastActivity'])
+        && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['updatedAt'])
+          || request.resource.data.updatedAt == request.time)
+        && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['lastActivity'])
+          || isValidActivity(request.resource.data.lastActivity));
+
+      function isValidActivity(activity) {
+        return activity is map
+          && activity.keys().hasAll(['kind', 'by', 'id'])
+          && activity.keys().hasOnly(['kind', 'by', 'id', 'text'])
+          && activity.kind in ['message', 'messageDeleted', 'billAdded', 'billEdited', 'billDeleted']
+          && activity.id is string
+          && activity.by == request.auth.uid
+          && (!('text' in activity) || (activity.text is string && activity.text.size() <= 400));
+      }
 
       // One get() of the group per request, shared by every message in a query.
       function group() {

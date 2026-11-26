@@ -118,6 +118,9 @@ struct SquabbleView: View {
                 }
             }
         }
+        // Tapping anywhere above the composer puts the keyboard away. Simultaneous, so bubbles
+        // and bill cards still get their own taps.
+        .simultaneousGesture(TapGesture().onEnded { isComposing = false })
         .navigationTitle(Text(verbatim: group.name))
         .toolbar { toolbar(group) }
         #if DEBUG
@@ -174,7 +177,7 @@ struct SquabbleView: View {
             presenting: deleting
         ) { message in
             Button(role: .destructive) {
-                chat.delete(message)
+                chat.delete(message, lastActivity: group.lastActivity)
             } label: {
                 Text("Delete for everyone", comment: "Chat: confirms deleting a message.")
             }
@@ -288,15 +291,20 @@ struct SquabbleView: View {
                 .multilineTextAlignment(.center)
                 .padding(32)
         } else {
-            ScrollView {
-                ready(group)
-                    .padding(16)
-                    .frame(maxWidth: 560)
-                    .frame(maxWidth: .infinity)
-                    .containerRelativeFrame(.vertical) { height, _ in height }
+            // Not a scroll view sized to the screen: that one snapped to the keyboard instead of
+            // riding up with it. Scrolls only when it can't fit, as with large text.
+            ViewThatFits(in: .vertical) {
+                readyCentred(group)
+                ScrollView { readyCentred(group) }
             }
-            .scrollBounceBehavior(.basedOnSize)
         }
+    }
+
+    private func readyCentred(_ group: SquabbleGroup) -> some View {
+        ready(group)
+            .padding(16)
+            .frame(maxWidth: 560)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     /// The symbols differ in width; a shared column lines the texts up.

@@ -12,7 +12,7 @@ nonisolated protocol ChatRepository: Sendable {
     /// Sets the user's reaction, or clears it with nil.
     func setReaction(_ emoji: String?, by uid: String, on messageID: String, in groupID: String) throws
     /// Author only: blanks the text and marks the message deleted.
-    func delete(_ messageID: String, in groupID: String) throws
+    func delete(_ messageID: String, in groupID: String, replacingActivity activity: SquabbleActivity?) throws
     func report(_ message: ChatMessage, in groupID: String, by uid: String) throws
     /// A fresh id, so a reply can point at a message before it's sent.
     func newMessageID(in groupID: String) -> String

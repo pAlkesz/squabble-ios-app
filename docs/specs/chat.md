@@ -96,15 +96,20 @@ groups/{gid}/messages/{messageId}
   mounted until both feeds have loaded, and catching up from the cache to the server jumps.
   Only new entries while live, or your own, scroll in.
 - **Sending bumps the squabble's `updatedAt`** in the same batch (Nov 2026), so "most
-  recently active" includes chat. It costs one write, and a group read per listening member,
+  recently active" includes chat, and sets its `lastActivity` for the squabble lists
+  ([groups.md](groups.md)). It costs one write, and a group read per listening member,
   per message.
+- **Tapping anywhere above the composer puts the keyboard away**, as does scrolling. The
+  empty "ready" state is a plain centred view (a scroll view only when it can't fit): one
+  sized to the screen snapped to the keyboard instead of riding up with it.
 - `reports/{id}`: `{ groupId, messageId, authorId, text, reportedBy, createdAt }`,
   create-only for members of that squabble; nobody reads it from the app.
 - **Rules:** members read; a member creates messages as themselves; only the author
   soft-deletes; any member edits only their own key in `reactions`; nothing while the
   squabble is archived.
 - **Account deletion:** `deleteUserData` blanks the user's message texts and drops their
-  reactions; the messages stay, shown from "Deleted member", so replies still make sense.
+  reactions; the messages stay, shown from "Deleted member", so replies still make sense. A
+  squabble whose `lastActivity` quotes their message says "deleted a message" instead.
 
 ## Moderation
 

@@ -111,6 +111,14 @@ struct ChatStoreTests {
         #expect(repository.reactions.map(\.emoji) == [nil, "😂"])
     }
 
+    @Test func deletingTheMessageTheListsQuoteMakesThemSayItWasDeleted() {
+        let store = ChatStore(groupID: "g1")
+        let message = ChatMessage(id: "m1", authorID: "pal", text: "Oops")
+        store.delete(message, lastActivity: .message(message))
+        store.delete(message, lastActivity: SquabbleActivity(kind: .message, by: "anna", id: "m2", text: "Later"))
+        #expect(repository.replacedActivities == [SquabbleActivity(kind: .messageDeleted, by: "pal", id: "m1"), nil])
+    }
+
     private func messages(_ range: Range<Int>, text: String = "x") -> [ChatMessage] {
         range.map {
             ChatMessage(id: "m\($0)", authorID: "pal", createdAt: Date(timeIntervalSince1970: Double($0)), text: text)
