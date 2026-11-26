@@ -22,9 +22,10 @@ struct ChatReplyHeader: View {
                 Text(verbatim: caption)
             } icon: {
                 Image(systemName: "arrowshape.turn.up.left.fill")
+                    .imageScale(.small)
             }
             .labelStyle(.titleAndIcon)
-            .font(.footnote)
+            .font(.caption)
             .foregroundStyle(.white.opacity(0.65))
             .lineLimit(1)
             .padding(.horizontal, 12)
