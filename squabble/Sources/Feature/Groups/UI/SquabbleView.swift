@@ -119,8 +119,9 @@ struct SquabbleView: View {
             }
         }
         // Tapping anywhere above the composer puts the keyboard away. Simultaneous, so bubbles
-        // and bill cards still get their own taps.
-        .simultaneousGesture(TapGesture().onEnded { isComposing = false })
+        // and bill cards still get their own taps. Deferred out of the tap's update: changed
+        // inside it, the layout snapped down instead of following the keyboard.
+        .simultaneousGesture(TapGesture().onEnded { Task { isComposing = false } })
         .navigationTitle(Text(verbatim: group.name))
         .toolbar { toolbar(group) }
         #if DEBUG

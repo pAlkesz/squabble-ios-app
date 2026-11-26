@@ -100,6 +100,8 @@ groups/{gid}/messages/{messageId}
   ([groups.md](groups.md)). It costs one write, and a group read per listening member,
   per message.
 - **Tapping anywhere above the composer puts the keyboard away**, as does scrolling. The
+  focus change is deferred out of the tap's own update; made inside it, the page snapped
+  down while the keyboard was still sliding away. The
   empty "ready" state is a plain centred view (a scroll view only when it can't fit): one
   sized to the screen snapped to the keyboard instead of riding up with it.
 - `reports/{id}`: `{ groupId, messageId, authorId, text, reportedBy, createdAt }`,
