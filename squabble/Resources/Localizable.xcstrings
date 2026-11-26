@@ -100,6 +100,17 @@
         }
       }
     },
+    "Reactions" : {
+      "comment" : "Chat: VoiceOver label for the pill of reactions under a message, and the title of the sheet listing them.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reakciók"
+          }
+        }
+      }
+    },
     "Settled up" : {
       "comment" : "Squabble row: the user's balance in the squabble is exactly zero.",
       "localizations" : {
@@ -107,6 +118,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kvittek vagytok"
+          }
+        }
+      }
+    },
+    "Tap to take it back" : {
+      "comment" : "Reactions sheet: under the user's own reaction, which a tap removes.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Koppints, ha mégis visszavonnád"
           }
         }
       }

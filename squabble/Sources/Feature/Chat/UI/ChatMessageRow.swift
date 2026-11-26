@@ -14,6 +14,7 @@ struct ChatMessageRow: View {
     let showsName: Bool
     let myUID: String?
     let onReact: (String) -> Void
+    let onShowReactions: () -> Void
     let onReply: () -> Void
     let onDelete: () -> Void
     let onReport: () -> Void
@@ -34,7 +35,7 @@ struct ChatMessageRow: View {
                 // On the bubble's bottom-right corner whoever wrote it, as in Messenger.
                 .overlay(alignment: .bottomTrailing) {
                     if !message.reactions.isEmpty {
-                        reactionChips
+                        reactionPill
                             .offset(x: -10, y: Self.reactionOverhang)
                     }
                 }
@@ -142,28 +143,38 @@ struct ChatMessageRow: View {
         .buttonStyle(.plain)
     }
 
-    private var reactionChips: some View {
-        HStack(spacing: 4) {
-            ForEach(message.reactionCounts, id: \.emoji) { reaction in
-                let isMineReaction = myUID.map { message.reactions[$0] == reaction.emoji } ?? false
-                Button {
-                    onReact(reaction.emoji)
-                } label: {
-                    Text(verbatim: reaction.count > 1 ? "\(reaction.emoji) \(reaction.count)" : reaction.emoji)
-                        .font(.footnote)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        // Opaque and dark, so it reads over the bubble it overlaps.
-                        .background(Color.reactionChip, in: .capsule)
-                        .overlay {
-                            Capsule().strokeBorder(.white.opacity(isMineReaction ? 0.6 : 0.12), lineWidth: 1)
-                        }
+    /// Every reaction in one pill, as in Messenger: the most common few, then how many in all.
+    /// Tapping it shows who reacted with what, where your own can be taken back.
+    private var reactionPill: some View {
+        let counts = message.reactionCounts
+        let total = message.reactions.count
+        let hasMine = myUID.map { message.reactions[$0] != nil } ?? false
+        return Button(action: onShowReactions) {
+            HStack(spacing: 2) {
+                ForEach(counts.prefix(Self.pillEmojiCount), id: \.emoji) { reaction in
+                    Text(verbatim: reaction.emoji)
                 }
-                .buttonStyle(.plain)
-                .accessibilityAddTraits(isMineReaction ? .isSelected : [])
+                if total > 1 {
+                    Text(total, format: .number)
+                        .foregroundStyle(.white.opacity(0.8))
+                        .padding(.leading, 2)
+                }
+            }
+            .font(.footnote)
+            .padding(.horizontal, 7)
+            .padding(.vertical, 4)
+            // Opaque and dark, so it reads over the bubble it overlaps.
+            .background(Color.reactionChip, in: .capsule)
+            .overlay {
+                Capsule().strokeBorder(.white.opacity(hasMine ? 0.6 : 0.12), lineWidth: 1)
             }
         }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text("Reactions", comment: "Chat: VoiceOver label for the pill of reactions under a message, and the title of the sheet listing them."))
+        .accessibilityValue(Text(verbatim: counts.map { "\($0.emoji) \($0.count)" }.joined(separator: ", ")))
     }
+
+    private static let pillEmojiCount = 3
 
     @ViewBuilder
     private var menu: some View {

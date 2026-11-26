@@ -18,6 +18,7 @@ struct SquabbleView: View {
     @State private var reporting: ChatMessage?
     @State private var billForm: BillDraft?
     @State private var openBill: OpenBill?
+    @State private var reactionsOf: OpenMessage?
     /// Opened once the details sheet is gone; two sheets can't swap in one go.
     @State private var billToEdit: BillDraft?
     @FocusState private var isComposing: Bool
@@ -171,6 +172,15 @@ struct SquabbleView: View {
                 .presentationBackground { ProfileBackdrop() }
             }
         }
+        .sheet(item: $reactionsOf) { open in
+            // By id, so a reaction coming or going shows while it's open.
+            if let message = chat.message(id: open.id) {
+                ChatReactionsSheet(message: message, group: group, myUID: session.user?.id) {
+                    guard let uid = session.user?.id, let emoji = message.reactions[uid] else { return }
+                    chat.toggleReaction(emoji, on: message, by: uid)
+                }
+            }
+        }
         .confirmationDialog(
             Text("Delete this message?", comment: "Chat: title of the delete confirmation."),
             isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }),
@@ -249,6 +259,7 @@ struct SquabbleView: View {
             onReact: { emoji in
                 if let uid { chat.toggleReaction(emoji, on: message, by: uid) }
             },
+            onShowReactions: { reactionsOf = OpenMessage(id: message.id) },
             onReply: {
                 replyingTo = message
                 isComposing = true
@@ -274,6 +285,10 @@ struct SquabbleView: View {
     }
 
     private struct OpenBill: Identifiable {
+        let id: String
+    }
+
+    private struct OpenMessage: Identifiable {
         let id: String
     }
 

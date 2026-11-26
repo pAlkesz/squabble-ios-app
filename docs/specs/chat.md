@@ -40,10 +40,13 @@ newest at the bottom. The composer sits at the bottom.
 - **Tap a bill or settlement:** a sheet with its details (items, who owes what, edits
   history), **Edit** and **Delete** (any member, per [Bills](bills.md)).
 - **Tap a message:** nothing.
-- **Reactions:** one emoji per person per entry; tapping your own again removes it.
-  Shown as small dark chips (`ReactionChip`, opaque so they read over the bubble) on the
-  bubble's bottom-right corner whoever wrote it, as in Messenger, overlapping only its
-  bottom padding; your own has a brighter ring (Nov 2026).
+- **Reactions:** one emoji per person per entry; choosing your own again in the long-press
+  menu removes it. Shown as one dark pill (`ReactionChip`, opaque so it reads over the
+  bubble) on the bubble's bottom-right corner whoever wrote it, as in Messenger: the three
+  most common emoji, then the total when there's more than one, overlapping only the
+  bubble's bottom padding; a brighter ring when one is yours. Tapping the pill opens
+  `ChatReactionsSheet`: who reacted with what, yours first, and tapping yours takes it back
+  (Nov 2026).
 - **Replies** quote the original (author and up to 120 characters); tapping the quote
   scrolls to it if it's loaded. A reply being written shows above the field with a ✕.
 
