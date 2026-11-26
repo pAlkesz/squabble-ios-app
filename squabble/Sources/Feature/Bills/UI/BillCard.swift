@@ -112,12 +112,12 @@ struct BillCard: View {
     private var time: some View {
         if bill.isPending {
             Image(systemName: "clock")
-                .font(.caption2)
+                .font(ChatBubble.timeFont)
                 .foregroundStyle(.white.opacity(0.6))
                 .accessibilityLabel(Text("Not sent yet", comment: "Chat: VoiceOver label for a message still waiting for a connection."))
         } else {
             Text(verbatim: (bill.createdAt ?? .now).formatted(date: .omitted, time: .shortened))
-                .font(.caption2)
+                .font(ChatBubble.timeFont)
                 .foregroundStyle(.white.opacity(0.6))
         }
     }

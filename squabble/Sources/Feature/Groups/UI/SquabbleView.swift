@@ -19,6 +19,7 @@ struct SquabbleView: View {
     @State private var billForm: BillDraft?
     @State private var openBill: OpenBill?
     @State private var reactionsOf: OpenMessage?
+    @State private var menu: MessageMenu?
     /// Opened once the details sheet is gone; two sheets can't swap in one go.
     @State private var billToEdit: BillDraft?
     @FocusState private var isComposing: Bool
@@ -172,6 +173,10 @@ struct SquabbleView: View {
                 .presentationBackground { ProfileBackdrop() }
             }
         }
+        .fullScreenCover(item: $menu) { open in
+            messageMenu(open, in: group)
+        }
+        .sensoryFeedback(.impact(weight: .medium), trigger: menu?.id) { _, new in new != nil }
         .sheet(item: $reactionsOf) { open in
             // By id, so a reaction coming or going shows while it's open.
             if let message = chat.message(id: open.id) {
@@ -256,16 +261,14 @@ struct SquabbleView: View {
             endsRun: endsRun,
             showsName: showsName,
             myUID: uid,
-            onReact: { emoji in
-                if let uid { chat.toggleReaction(emoji, on: message, by: uid) }
+            onOpenMenu: { frame in
+                isComposing = false
+                // Without the cover's slide: the menu fades in over the message itself.
+                var transaction = Transaction()
+                transaction.disablesAnimations = true
+                withTransaction(transaction) { menu = MessageMenu(id: message.id, anchor: frame) }
             },
             onShowReactions: { reactionsOf = OpenMessage(id: message.id) },
-            onReply: {
-                replyingTo = message
-                isComposing = true
-            },
-            onDelete: { deleting = message },
-            onReport: { reporting = message },
             onShowQuoted: { id in
                 guard chat.message(id: id) != nil else { return }
                 withAnimation(.snappy) { proxy.scrollTo(id, anchor: .center) }
@@ -290,6 +293,53 @@ struct SquabbleView: View {
 
     private struct OpenMessage: Identifiable {
         let id: String
+    }
+
+    private struct MessageMenu: Identifiable {
+        let id: String
+        let anchor: CGRect
+    }
+
+    private func closeMenu(then next: @escaping () -> Void = {}) {
+        var transaction = Transaction()
+        transaction.disablesAnimations = true
+        withTransaction(transaction) { menu = nil }
+        next()
+    }
+
+    @ViewBuilder
+    private func messageMenu(_ open: MessageMenu, in group: SquabbleGroup) -> some View {
+        let uid = session.user?.id
+        if let message = chat.message(id: open.id), !message.isDeleted {
+            let isMine = message.authorID == uid
+            ChatMessageMenu(
+                message: message,
+                bubble: ChatBubble(
+                    message: message,
+                    authorName: nil,
+                    replyAuthorName: message.replyTo.map { ChatMessageRow.name(of: group.members[$0.authorID]) },
+                    isMine: isMine,
+                    hasTail: true
+                ),
+                anchor: open.anchor,
+                isMine: isMine,
+                myReaction: uid.flatMap { message.reactions[$0] },
+                onReact: { emoji in
+                    if let uid { chat.toggleReaction(emoji, on: message, by: uid) }
+                    closeMenu()
+                },
+                onReply: {
+                    closeMenu {
+                        replyingTo = message
+                        isComposing = true
+                    }
+                },
+                onDelete: { closeMenu { deleting = message } },
+                onReport: { closeMenu { reporting = message } },
+                onClose: { closeMenu() }
+            )
+            .presentationBackground(.clear)
+        }
     }
 
     private struct ChatEnd: Equatable {

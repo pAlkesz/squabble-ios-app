@@ -33,18 +33,22 @@ newest at the bottom. The composer sits at the bottom.
 
 ## Interactions
 
-- **Long press on any entry:** a reaction row (❤️ 😂 😮 😢 🙄 👍, the system menu's
-  palette; a full emoji picker can come later) and actions: **Reply**, **Copy** (text
-  messages only), **Delete** (own messages, confirmed: "Message deleted" stays in place) or
-  **Report** (others' messages, confirmed).
+- **Long press on a message:** `ChatMessageMenu`, our own rather than the system context
+  menu, which can't hold a large, separate emoji bar (Nov 2026). The page blurs; the message
+  stays where it was (moved only as far as it takes to fit), a large reaction bar sits above it
+  (❤️ 😂 😮 😢 🙄 👍, yours highlighted, and a **+** that opens the system emoji keyboard
+  through `EmojiKeyboardField`, so any emoji works) and the actions below it: **Reply**,
+  **Copy**, **Delete** (own messages, confirmed: "Message deleted" stays in place) or
+  **Report** (others' messages, confirmed). Tapping outside closes it; VoiceOver reaches it
+  through a "React or reply" action. Bills have no long press yet.
 - **Tap a bill or settlement:** a sheet with its details (items, who owes what, edits
   history), **Edit** and **Delete** (any member, per [Bills](bills.md)).
 - **Tap a message:** nothing.
 - **Reactions:** one emoji per person per entry; choosing your own again in the long-press
-  menu removes it. Shown as one dark pill (`ReactionChip`, opaque so it reads over the
+  menu removes it. Message times are `.caption`, bills' too. Shown as one dark pill (`ReactionChip`, opaque so it reads over the
   bubble) on the bubble's bottom-right corner whoever wrote it, as in Messenger: the three
   most common emoji, then the total when there's more than one, overlapping only the
-  bubble's bottom padding; a brighter ring when one is yours. Tapping the pill opens
+  bubble's bottom padding, with the same faint ring whoever reacted. Tapping the pill opens
   `ChatReactionsSheet`: who reacted with what, yours first, and tapping yours takes it back
   (Nov 2026).
 - **Replies** quote the original (author and up to 120 characters); tapping the quote

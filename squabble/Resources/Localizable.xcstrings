@@ -78,6 +78,17 @@
         }
       }
     },
+    "Close" : {
+      "comment" : "Chat menu: VoiceOver label for the blurred background, which closes the menu.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bezárás"
+          }
+        }
+      }
+    },
     "Invite people to the squabble" : {
       "comment" : "Squabble row: the user is still alone in the squabble.",
       "localizations" : {
@@ -89,6 +100,17 @@
         }
       }
     },
+    "More emoji" : {
+      "comment" : "Chat menu: VoiceOver label for the + at the end of the reaction bar, which opens the emoji keyboard.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Még több emoji"
+          }
+        }
+      }
+    },
     "No messages yet. Say hello!" : {
       "comment" : "Squabble row: nothing has happened yet in a squabble with other people in it.",
       "localizations" : {
@@ -96,6 +118,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Még csend van. Köszönj be!"
+          }
+        }
+      }
+    },
+    "React or reply" : {
+      "comment" : "Chat: VoiceOver action on a message that opens its menu of reactions and actions.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reagálj vagy válaszolj"
           }
         }
       }

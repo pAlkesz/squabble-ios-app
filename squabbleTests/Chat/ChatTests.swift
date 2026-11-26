@@ -245,3 +245,17 @@ struct ChatStoreTests {
         #expect(store.canLoadOlder)
     }
 }
+
+@MainActor
+struct EmojiPickTests {
+    @Test func takesOneEmojiAndNothingElse() {
+        #expect(EmojiKeyboardField.emoji(in: "👀") == "👀")
+        #expect(EmojiKeyboardField.emoji(in: "👍🏽") == "👍🏽")
+        #expect(EmojiKeyboardField.emoji(in: "🇭🇺") == "🇭🇺")
+        #expect(EmojiKeyboardField.emoji(in: "❤️") == "❤️")
+        #expect(EmojiKeyboardField.emoji(in: "a") == nil)
+        #expect(EmojiKeyboardField.emoji(in: "3") == nil)
+        #expect(EmojiKeyboardField.emoji(in: "👀👀") == nil)
+        #expect(EmojiKeyboardField.emoji(in: "") == nil)
+    }
+}
