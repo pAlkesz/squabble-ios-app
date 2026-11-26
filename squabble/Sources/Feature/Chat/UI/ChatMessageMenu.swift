@@ -18,6 +18,8 @@ struct ChatMessageMenu: View {
     let onReply: () -> Void
     let onDelete: () -> Void
     let onReport: () -> Void
+    /// Once the copy is on screen, so the original can be hidden behind it.
+    let onShown: () -> Void
     let onClose: () -> Void
 
     @State private var contentSize: CGSize = .zero
@@ -55,6 +57,7 @@ struct ChatMessageMenu: View {
             }
         }
         .onAppear {
+            onShown()
             withAnimation(.spring(duration: 0.32, bounce: 0.22)) { isShown = true }
         }
     }
@@ -86,11 +89,14 @@ struct ChatMessageMenu: View {
             reactionBar
                 .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { barHeight = $0 }
                 .modifier(Emerge(isShown: isShown, anchor: isMine ? .bottomTrailing : .bottomLeading, reduceMotion: reduceMotion))
+            // The same bubble as in the list, never faded or scaled, so it reads as the message
+            // itself staying put while the page dims around it.
             bubble
                 .frame(width: bubbleWidth, alignment: isMine ? .trailing : .leading)
                 .frame(maxHeight: maxBubbleHeight, alignment: .top)
                 // A long message is cut off at the bottom; the tail still reaches past the side.
                 .mask { Rectangle().padding(.horizontal, -ChatBubbleShape.tailWidth) }
+                .reactionPill(for: message)
                 .allowsHitTesting(false)
             actions
                 .modifier(Emerge(isShown: isShown, anchor: isMine ? .topTrailing : .topLeading, reduceMotion: reduceMotion))
@@ -129,18 +135,17 @@ struct ChatMessageMenu: View {
         .glassEffect(.regular.interactive(), in: .capsule)
     }
 
+    /// Laid out like an iOS menu: the symbol first, then the title, and no dividers.
     private var actions: some View {
         VStack(spacing: 0) {
             action(Text("Reply", comment: "Chat: long-press action that replies to a message."), systemImage: "arrowshape.turn.up.left") {
                 close(then: onReply)
             }
-            Divider().overlay(.white.opacity(0.08))
             action(Text("Copy", comment: "Chat: long-press action that copies a message's text."), systemImage: "doc.on.doc") {
                 // SwiftUI has no pasteboard API of its own.
                 UIPasteboard.general.string = message.text
                 close(then: onClose)
             }
-            Divider().overlay(.white.opacity(0.08))
             if isMine {
                 action(Text("Delete", comment: "Chat: long-press action that deletes your own message."), systemImage: "trash", isDestructive: true) {
                     close(then: onDelete)
@@ -151,21 +156,23 @@ struct ChatMessageMenu: View {
                 }
             }
         }
-        .frame(width: 240)
+        .padding(.vertical, 8)
+        .frame(width: 250)
         .glassEffect(.regular, in: .rect(cornerRadius: SquabbleMetrics.cornerRadius))
     }
 
     private func action(_ title: Text, systemImage: String, isDestructive: Bool = false, perform: @escaping () -> Void) -> some View {
         Button(action: perform) {
-            HStack {
-                title
-                Spacer(minLength: 12)
+            HStack(spacing: 14) {
                 Image(systemName: systemImage)
+                    .frame(width: 24)
+                title
+                Spacer(minLength: 0)
             }
             .font(.body)
             .foregroundStyle(isDestructive ? Color.red : .white)
-            .padding(.horizontal, 18)
-            .padding(.vertical, 13)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 11)
             .contentShape(.rect)
         }
         .buttonStyle(.plain)

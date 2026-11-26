@@ -35,11 +35,14 @@ newest at the bottom. The composer sits at the bottom.
 
 - **Long press on a message:** `ChatMessageMenu`, our own rather than the system context
   menu, which can't hold a large, separate emoji bar (Nov 2026). The page blurs; the message
-  stays where it was (moved only as far as it takes to fit), a large reaction bar sits above it
+  stays where it was (moved only as far as it takes to fit): the menu draws an exact copy of
+  it, name, tail and reaction pill included, never faded or scaled, and the original is hidden
+  in the list meanwhile, so only one is ever visible (the blur covers the bar and the composer,
+  so the original itself can't sit above it), a large reaction bar sits above it
   (❤️ 😂 😮 😢 🙄 👍, yours highlighted, and a **+** that opens `EmojiPickerSheet`: every
   emoji in Unicode's groups, no skin tones, searchable by English name, from the bundled
   `Emoji.json` generated from Unicode's emoji-test.txt; the emoji keyboard was tried first and
-  dropped for a sheet) and the actions below it: **Reply**,
+  dropped for a sheet) and the actions below it, laid out like an iOS menu (symbol first, no dividers): **Reply**,
   **Copy**, **Delete** (own messages, confirmed: "Message deleted" stays in place) or
   **Report** (others' messages, confirmed). The bar and the actions are separate pieces of
   Liquid Glass, and grow out of the message's edge as they fade in, shrinking back into it

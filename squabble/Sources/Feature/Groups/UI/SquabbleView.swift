@@ -20,6 +20,8 @@ struct SquabbleView: View {
     @State private var openBill: OpenBill?
     @State private var reactionsOf: OpenMessage?
     @State private var menu: MessageMenu?
+    /// Hidden in the list while the menu shows its copy, so only one is ever visible.
+    @State private var liftedMessageID: String?
     /// Opened once the details sheet is gone; two sheets can't swap in one go.
     @State private var billToEdit: BillDraft?
     @FocusState private var isComposing: Bool
@@ -260,13 +262,16 @@ struct SquabbleView: View {
             startsRun: startsRun,
             endsRun: endsRun,
             showsName: showsName,
+            isLifted: liftedMessageID == message.id,
             myUID: uid,
             onOpenMenu: { frame in
                 isComposing = false
                 // Without the cover's slide: the menu fades in over the message itself.
                 var transaction = Transaction()
                 transaction.disablesAnimations = true
-                withTransaction(transaction) { menu = MessageMenu(id: message.id, anchor: frame) }
+                withTransaction(transaction) {
+                    menu = MessageMenu(id: message.id, anchor: frame, showsName: showsName, endsRun: endsRun)
+                }
             },
             onShowReactions: { reactionsOf = OpenMessage(id: message.id) },
             onShowQuoted: { id in
@@ -298,12 +303,18 @@ struct SquabbleView: View {
     private struct MessageMenu: Identifiable {
         let id: String
         let anchor: CGRect
+        /// As the row shows it, so the menu's copy is the same bubble.
+        let showsName: Bool
+        let endsRun: Bool
     }
 
     private func closeMenu(then next: @escaping () -> Void = {}) {
         var transaction = Transaction()
         transaction.disablesAnimations = true
-        withTransaction(transaction) { menu = nil }
+        withTransaction(transaction) {
+            menu = nil
+            liftedMessageID = nil
+        }
         next()
     }
 
@@ -316,10 +327,10 @@ struct SquabbleView: View {
                 message: message,
                 bubble: ChatBubble(
                     message: message,
-                    authorName: nil,
+                    authorName: !isMine && open.showsName ? ChatMessageRow.name(of: group.members[message.authorID]) : nil,
                     replyAuthorName: message.replyTo.map { ChatMessageRow.name(of: group.members[$0.authorID]) },
                     isMine: isMine,
-                    hasTail: true
+                    hasTail: open.endsRun
                 ),
                 anchor: open.anchor,
                 isMine: isMine,
@@ -336,6 +347,7 @@ struct SquabbleView: View {
                 },
                 onDelete: { closeMenu { deleting = message } },
                 onReport: { closeMenu { reporting = message } },
+                onShown: { liftedMessageID = message.id },
                 onClose: { closeMenu() }
             )
             .presentationBackground(.clear)
