@@ -36,10 +36,14 @@ newest at the bottom. The composer sits at the bottom.
 - **Long press on a message:** `ChatMessageMenu`, our own rather than the system context
   menu, which can't hold a large, separate emoji bar (Nov 2026). The page blurs; the message
   stays where it was (moved only as far as it takes to fit), a large reaction bar sits above it
-  (❤️ 😂 😮 😢 🙄 👍, yours highlighted, and a **+** that opens the system emoji keyboard
-  through `EmojiKeyboardField`, so any emoji works) and the actions below it: **Reply**,
+  (❤️ 😂 😮 😢 🙄 👍, yours highlighted, and a **+** that opens `EmojiPickerSheet`: every
+  emoji in Unicode's groups, no skin tones, searchable by English name, from the bundled
+  `Emoji.json` generated from Unicode's emoji-test.txt; the emoji keyboard was tried first and
+  dropped for a sheet) and the actions below it: **Reply**,
   **Copy**, **Delete** (own messages, confirmed: "Message deleted" stays in place) or
-  **Report** (others' messages, confirmed). Tapping outside closes it; VoiceOver reaches it
+  **Report** (others' messages, confirmed). The bar and the actions are separate pieces of
+  Liquid Glass, and grow out of the message's edge as they fade in, shrinking back into it
+  before whatever was chosen happens (Reduce Motion: fades only). Tapping outside closes it; VoiceOver reaches it
   through a "React or reply" action. Bills have no long press yet.
 - **Tap a bill or settlement:** a sheet with its details (items, who owes what, edits
   history), **Edit** and **Delete** (any member, per [Bills](bills.md)).

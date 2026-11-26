@@ -246,16 +246,28 @@ struct ChatStoreTests {
     }
 }
 
-@MainActor
-struct EmojiPickTests {
-    @Test func takesOneEmojiAndNothingElse() {
-        #expect(EmojiKeyboardField.emoji(in: "👀") == "👀")
-        #expect(EmojiKeyboardField.emoji(in: "👍🏽") == "👍🏽")
-        #expect(EmojiKeyboardField.emoji(in: "🇭🇺") == "🇭🇺")
-        #expect(EmojiKeyboardField.emoji(in: "❤️") == "❤️")
-        #expect(EmojiKeyboardField.emoji(in: "a") == nil)
-        #expect(EmojiKeyboardField.emoji(in: "3") == nil)
-        #expect(EmojiKeyboardField.emoji(in: "👀👀") == nil)
-        #expect(EmojiKeyboardField.emoji(in: "") == nil)
+struct EmojiCatalogTests {
+    @Test func shipsEveryGroupWithoutSkinTones() {
+        let catalog = EmojiCatalog.shared
+        #expect(catalog.groups.map(\.id).count == 9)
+        let all = catalog.groups.flatMap(\.emoji)
+        #expect(all.count > 1500)
+        #expect(all.contains { $0.character == "👍" })
+        #expect(!all.contains { $0.character == "👍🏽" })
+    }
+
+    @Test func searchesByEveryWordOfTheName() {
+        let catalog = EmojiCatalog(groups: [
+            .init(id: "Smileys & Emotion", emoji: [
+                .init(character: "😂", name: "face with tears of joy"),
+                .init(character: "😭", name: "loudly crying face"),
+            ]),
+            .init(id: "Animals & Nature", emoji: [.init(character: "🦆", name: "duck")]),
+        ])
+        #expect(catalog.matching("JOY face").flatMap(\.emoji).map(\.character) == ["😂"])
+        #expect(catalog.matching("face").map(\.id) == ["Smileys & Emotion"])
+        #expect(catalog.matching("🦆").flatMap(\.emoji).map(\.character) == ["🦆"])
+        #expect(catalog.matching("  ").count == 2)
+        #expect(catalog.matching("unicorn").isEmpty)
     }
 }

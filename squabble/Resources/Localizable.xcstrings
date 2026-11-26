@@ -78,6 +78,28 @@
         }
       }
     },
+    "Activities" : {
+      "comment" : "Emoji picker: group heading.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tevékenységek"
+          }
+        }
+      }
+    },
+    "Animals & nature" : {
+      "comment" : "Emoji picker: group heading.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Állatok és természet"
+          }
+        }
+      }
+    },
     "Close" : {
       "comment" : "Chat menu: VoiceOver label for the blurred background, which closes the menu.",
       "localizations" : {
@@ -85,6 +107,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bezárás"
+          }
+        }
+      }
+    },
+    "Flags" : {
+      "comment" : "Emoji picker: group heading.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zászlók"
+          }
+        }
+      }
+    },
+    "Food & drink" : {
+      "comment" : "Emoji picker: group heading.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Étel és ital"
           }
         }
       }
@@ -101,12 +145,23 @@
       }
     },
     "More emoji" : {
-      "comment" : "Chat menu: VoiceOver label for the + at the end of the reaction bar, which opens the emoji keyboard.",
+      "comment" : "Chat menu: VoiceOver label for the + at the end of the reaction bar, which opens every emoji.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Még több emoji"
+          }
+        }
+      }
+    },
+    "No emoji by that name. Try another word." : {
+      "comment" : "Emoji picker: shown when a search finds nothing.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nincs ilyen nevű emoji. Próbálj egy másik szót."
           }
         }
       }
@@ -118,6 +173,39 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Még csend van. Köszönj be!"
+          }
+        }
+      }
+    },
+    "Objects" : {
+      "comment" : "Emoji picker: group heading.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tárgyak"
+          }
+        }
+      }
+    },
+    "People & body" : {
+      "comment" : "Emoji picker: group heading.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Emberek és testrészek"
+          }
+        }
+      }
+    },
+    "Pick an emoji" : {
+      "comment" : "Emoji picker: title of the sheet that offers every emoji as a reaction.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Válassz egy emojit"
           }
         }
       }
@@ -144,6 +232,17 @@
         }
       }
     },
+    "Search emoji" : {
+      "comment" : "Emoji picker: placeholder of the search field.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Emoji keresése"
+          }
+        }
+      }
+    },
     "Settled up" : {
       "comment" : "Squabble row: the user's balance in the squabble is exactly zero.",
       "localizations" : {
@@ -155,6 +254,28 @@
         }
       }
     },
+    "Smileys & emotion" : {
+      "comment" : "Emoji picker: group heading.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Smiley-k és érzelmek"
+          }
+        }
+      }
+    },
+    "Symbols" : {
+      "comment" : "Emoji picker: group heading.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szimbólumok"
+          }
+        }
+      }
+    },
     "Tap to take it back" : {
       "comment" : "Reactions sheet: under the user's own reaction, which a tap removes.",
       "localizations" : {
@@ -162,6 +283,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Koppints, ha mégis visszavonnád"
+          }
+        }
+      }
+    },
+    "Travel & places" : {
+      "comment" : "Emoji picker: group heading.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utazás és helyek"
           }
         }
       }
