@@ -305,6 +305,7 @@ entry in any group where it differs (the rules allow a member to edit only their
   - `Squabble<Name>Top` / `Squabble<Name>Bottom` (in `SquabbleArt/`) — the two stops of each
     squabble picture gradient (`SquabbleBackground`: mint, sky, peach, lilac, sunrise,
     bubblegum, teal, dusk, sand, storm). Their own palette, not the avatar colours.
+  - `ReactionChip` `#26272B` — the dark pill behind a chat reaction, over the bubble's corner.
   - `ButtonDisabledFill` `#4D4C4F`, `ButtonDisabledLabel` `#000000` — the primary button's
     disabled capsule: an opaque grey with black text, sampled from Revolut's.
   - `OnboardingRed` `#E4502E`, `OnboardingAmber` `#F5BC2F` — the first two onboarding

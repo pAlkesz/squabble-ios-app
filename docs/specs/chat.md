@@ -17,8 +17,11 @@ newest at the bottom. The composer sits at the bottom.
   lines ("Anna joined", "Pál started the squabble"). Day separators ("Today", "Tue",
   "Sep 30") break it up.
 - **Own messages on the right**, others on the left with the author's avatar; consecutive
-  messages from one author group together, the avatar shown on the last one and the name
-  on the first.
+  entries from one author (messages and the bills they added, same day, at most 5 minutes
+  apart) group together into a run: the avatar and a curled tail (`ChatBubbleShape`, as in
+  Revolut's chat) on the last bubble only, the name on the first message, and again on a
+  message right after a bill, since the card doesn't say who added it. A deleted bill
+  breaks a run (Nov 2026).
 - **Bill entries** are cards (`BillCard`), on the right when the user added them: a pill with
   the user's side of it ("You owe Anna", "You're owed", "You're not in this one"), that amount
   large, "<payer> paid <total> · <title>", the avatars of everyone sharing it, and the time.
@@ -38,7 +41,9 @@ newest at the bottom. The composer sits at the bottom.
   history), **Edit** and **Delete** (any member, per [Bills](bills.md)).
 - **Tap a message:** nothing.
 - **Reactions:** one emoji per person per entry; tapping your own again removes it.
-  Shown as small chips under the entry, with counts.
+  Shown as small dark chips (`ReactionChip`, opaque so they read over the bubble) on the
+  bubble's bottom-right corner whoever wrote it, as in Messenger, overlapping only its
+  bottom padding; your own has a brighter ring (Nov 2026).
 - **Replies** quote the original (author and up to 120 characters); tapping the quote
   scrolls to it if it's loaded. A reply being written shows above the field with a ✕.
 

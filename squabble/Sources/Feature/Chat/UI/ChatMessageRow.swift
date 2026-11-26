@@ -11,6 +11,7 @@ struct ChatMessageRow: View {
     let isMine: Bool
     let startsRun: Bool
     let endsRun: Bool
+    let showsName: Bool
     let myUID: String?
     let onReact: (String) -> Void
     let onReply: () -> Void
@@ -26,27 +27,37 @@ struct ChatMessageRow: View {
                 Spacer(minLength: 56)
             } else if endsRun {
                 AvatarView(author?.avatar ?? .preset(.default(for: message.authorID)), size: Self.avatarSize)
-                    // Clear of the reaction chips, level with the bubble's bottom.
-                    .padding(.bottom, message.reactions.isEmpty ? 0 : 30)
             } else {
                 Color.clear.frame(width: Self.avatarSize, height: 1)
             }
-            VStack(alignment: isMine ? .trailing : .leading, spacing: 4) {
-                bubble
-                if !message.reactions.isEmpty {
-                    reactionChips
+            bubble
+                // On the bubble's bottom-right corner whoever wrote it, as in Messenger.
+                .overlay(alignment: .bottomTrailing) {
+                    if !message.reactions.isEmpty {
+                        reactionChips
+                            .offset(x: -10, y: Self.reactionOverhang)
+                    }
                 }
-            }
             if !isMine {
                 Spacer(minLength: 56)
             }
         }
         .padding(.top, startsRun ? 8 : 0)
+        // Room for the chips hanging below the bubble.
+        .padding(.bottom, message.reactions.isEmpty ? 0 : Self.reactionOverhang + 2)
+    }
+
+    /// How far the reaction chips are pushed below the bubble: they overlap only its bottom
+    /// padding, clear of the text and the time.
+    private static let reactionOverhang: CGFloat = 18
+
+    private var bubbleShape: ChatBubbleShape {
+        ChatBubbleShape(tail: endsRun ? (isMine ? .trailing : .leading) : .none)
     }
 
     private var bubble: some View {
         VStack(alignment: .leading, spacing: 4) {
-            if !isMine, startsRun {
+            if !isMine, showsName {
                 Text(verbatim: authorName)
                     .font(.footnote.weight(.semibold))
                     .foregroundStyle(.white.opacity(0.65))
@@ -60,9 +71,9 @@ struct ChatMessageRow: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 9)
-        .background(.white.opacity(isMine ? 0.2 : 0.1), in: .rect(cornerRadius: SquabbleMetrics.bubbleCornerRadius))
+        .background(.white.opacity(isMine ? 0.2 : 0.1), in: bubbleShape)
         .foregroundStyle(message.isDeleted ? .white.opacity(0.6) : .white)
-        .contentShape(.contextMenuPreview, .rect(cornerRadius: SquabbleMetrics.bubbleCornerRadius))
+        .contentShape(.contextMenuPreview, bubbleShape)
         .contextMenu { if !message.isDeleted { menu } }
         .accessibilityElement(children: .combine)
     }
@@ -142,9 +153,10 @@ struct ChatMessageRow: View {
                         .font(.footnote)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(.white.opacity(isMineReaction ? 0.28 : 0.12), in: .capsule)
+                        // Opaque and dark, so it reads over the bubble it overlaps.
+                        .background(Color.reactionChip, in: .capsule)
                         .overlay {
-                            if isMineReaction { Capsule().strokeBorder(.white.opacity(0.5), lineWidth: 1) }
+                            Capsule().strokeBorder(.white.opacity(isMineReaction ? 0.6 : 0.12), lineWidth: 1)
                         }
                 }
                 .buttonStyle(.plain)

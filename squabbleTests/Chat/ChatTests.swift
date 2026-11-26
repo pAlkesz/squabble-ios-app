@@ -65,11 +65,39 @@ struct ChatTimelineTests {
         let shape = rows.map { row -> String in
             switch row {
             case .day: "day"
-            case .bill(let bill): bill.id
-            case .message(let m, let starts, let ends): "\(m.id)\(starts ? "s" : "")\(ends ? "e" : "")"
+            case .bill(let bill, _, _): bill.id
+            case .message(let m, let starts, let ends, _): "\(m.id)\(starts ? "s" : "")\(ends ? "e" : "")"
             }
         }
         #expect(shape == ["day", "1s", "2e", "3se", "4se", "day", "5se"])
+    }
+
+    private func bill(_ id: String, by author: String, _ date: Date, deleted: Bool = false) -> Bill {
+        Bill(
+            id: id, title: id, date: CalendarDay(date), currencyCode: "EUR", totalMinor: 100, paidBy: author,
+            split: .equally, shares: [author: 100], createdBy: author, createdAt: date, updatedBy: author,
+            updatedAt: date, deletedAt: deleted ? date : nil
+        )
+    }
+
+    @Test func billsShareRunsWithMessagesAndDeletedOnesBreakThem() {
+        let rows = ChatTimeline.rows(for: [
+            .message(message("1", "anna", at(18, 19, 0))),
+            .bill(bill("b1", by: "anna", at(18, 19, 1))),
+            .message(message("2", "anna", at(18, 19, 2))),
+            .bill(bill("gone", by: "anna", at(18, 19, 3), deleted: true)),
+            .message(message("3", "anna", at(18, 19, 4))),
+        ], now: at(19, 12), calendar: calendar)
+
+        let shape = rows.compactMap { row -> String? in
+            switch row {
+            case .day: nil
+            case .bill(let bill, let starts, let ends): "\(bill.id)\(starts ? "s" : "")\(ends ? "e" : "")"
+            case .message(let m, let starts, let ends, let name): "\(m.id)\(starts ? "s" : "")\(ends ? "e" : "")\(name ? "n" : "")"
+            }
+        }
+        // After a bill the name shows again: the card doesn't say who added it.
+        #expect(shape == ["1sn", "b1", "2en", "gonese", "3sen"])
     }
 
     @Test func dayTitles() {

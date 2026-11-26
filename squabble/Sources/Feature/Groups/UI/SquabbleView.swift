@@ -60,11 +60,11 @@ struct SquabbleView: View {
                             switch row {
                             case .day(let day):
                                 ChatDayHeader(day: day)
-                            case .message(let message, let startsRun, let endsRun):
-                                messageRow(message, startsRun: startsRun, endsRun: endsRun, in: group, proxy: proxy)
+                            case .message(let message, let startsRun, let endsRun, let showsName):
+                                messageRow(message, startsRun: startsRun, endsRun: endsRun, showsName: showsName, in: group, proxy: proxy)
                                     .id(message.id)
-                            case .bill(let bill):
-                                BillCard(bill: bill, group: group, myUID: session.user?.id) {
+                            case .bill(let bill, let startsRun, let endsRun):
+                                BillCard(bill: bill, group: group, myUID: session.user?.id, startsRun: startsRun, endsRun: endsRun) {
                                     isComposing = false
                                     openBill = OpenBill(id: bill.id)
                                 }
@@ -228,7 +228,14 @@ struct SquabbleView: View {
         .sharedBackgroundVisibility(.hidden)
     }
 
-    private func messageRow(_ message: ChatMessage, startsRun: Bool, endsRun: Bool, in group: SquabbleGroup, proxy: ScrollViewProxy) -> some View {
+    private func messageRow(
+        _ message: ChatMessage,
+        startsRun: Bool,
+        endsRun: Bool,
+        showsName: Bool,
+        in group: SquabbleGroup,
+        proxy: ScrollViewProxy
+    ) -> some View {
         let uid = session.user?.id
         return ChatMessageRow(
             message: message,
@@ -237,6 +244,7 @@ struct SquabbleView: View {
             isMine: message.authorID == uid,
             startsRun: startsRun,
             endsRun: endsRun,
+            showsName: showsName,
             myUID: uid,
             onReact: { emoji in
                 if let uid { chat.toggleReaction(emoji, on: message, by: uid) }
