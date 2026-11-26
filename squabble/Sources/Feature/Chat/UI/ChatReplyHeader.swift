@@ -18,13 +18,13 @@ struct ChatReplyHeader: View {
 
     var body: some View {
         VStack(alignment: isMine ? .trailing : .leading, spacing: 4) {
-            Label {
-                Text(verbatim: caption)
-            } icon: {
+            // Not a Label: its gap between icon and title is wider than this small line wants.
+            HStack(spacing: 3) {
                 Image(systemName: "arrowshape.turn.up.left.fill")
                     .imageScale(.small)
+                    .accessibilityHidden(true)
+                Text(verbatim: caption)
             }
-            .labelStyle(.titleAndIcon)
             .font(.caption)
             .foregroundStyle(.white.opacity(0.65))
             .lineLimit(1)
