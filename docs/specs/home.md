@@ -59,7 +59,7 @@ A bright fade always stands for a balance; pages without one stay quiet (Nov 202
 | Page | Backdrop |
 | --- | --- |
 | Home | Bright band from the top: the total balance |
-| Squabbles list | Plum in slow waves (`QuietBackdrop`), a hue no mood uses; dark petrol looked too much like the other pages. Each row's picture has a ring in its squabble's mood, here and on home, unless it's settled |
+| Squabbles list | A plain slate blue fade (`QuietBackdrop`), a hue no mood uses, so the rows' mood tints stand out (Nov 2026). Plum, cocoa and aubergine waves fought the red and amber rows; petrol looked like the other pages and like "Settled up"; brand green weakened the owed rows; charcoal and graphite were too flat; navy was the runner-up. Rows with a balance are tinted in its mood, here and on home |
 | Squabble page | Wavy glow from the top-right corner (a clean diagonal felt too rigid), by the picture: the balance in that squabble |
 | Squabble info | The same glow, dimmed |
 | Account pages and sheets | Dark brand green (`ProfileBackdrop`) |
