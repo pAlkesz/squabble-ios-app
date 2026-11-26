@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// A squabble in a list: its picture, its name, the latest thing that happened in it, when,
-/// and the user's balance there. A balance tints the row from the left in its mood's colour.
+/// and, on a third line, the user's balance there. A balance tints the row from the left in its mood's colour.
 /// No chevron, as in Revolut's lists.
 struct SquabbleRow: View {
     let group: SquabbleGroup
@@ -29,18 +29,15 @@ struct SquabbleRow: View {
                             .foregroundStyle(.white.opacity(secondaryOpacity))
                     }
                 }
-                HStack(alignment: .firstTextBaseline, spacing: 8) {
-                    Text(verbatim: SquabbleRowSummary.text(for: group, me: session.user?.id))
-                        .foregroundStyle(.white.opacity(secondaryOpacity))
-                        .lineLimit(1)
-                    Spacer(minLength: 0)
-                    balanceText
-                        .fontWeight(.semibold)
-                        .monospacedDigit()
-                        .lineLimit(1)
-                        .layoutPriority(1)
-                }
-                .font(.subheadline)
+                Text(verbatim: SquabbleRowSummary.text(for: group, me: session.user?.id))
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(secondaryOpacity))
+                    .lineLimit(1)
+                // Its own line, as in Revolut's lists, so a big amount never crowds out the message.
+                balanceLine
+                    .font(.subheadline)
+                    .monospacedDigit()
+                    .lineLimit(1)
             }
         }
         .foregroundStyle(.white)
@@ -50,17 +47,23 @@ struct SquabbleRow: View {
         .contentShape(.rect)
     }
 
-    /// Nothing before the first bill: there's no balance to speak of yet.
+    /// Nothing until the user pays or shares a bill: zero before that isn't settling anything.
     @ViewBuilder
-    private var balanceText: some View {
-        if group.balances != nil, let balance {
-            if balance.minorUnits == 0 {
+    private var balanceLine: some View {
+        if let balance, let uid = session.user?.id, let color = mood?.palette.top {
+            let amount = Text(verbatim: Money(minorUnits: abs(balance.minorUnits), currencyCode: balance.currencyCode).formatted())
+                .fontWeight(.semibold)
+                .foregroundStyle(color)
+            if balance.minorUnits < 0 {
+                Text("You owe \(amount)", comment: "The user's balance in a squabble: what they owe altogether.")
+                    .foregroundStyle(.white.opacity(secondaryOpacity))
+            } else if balance.minorUnits > 0 {
+                Text("You're owed \(amount)", comment: "The user's balance in a squabble: what they're owed altogether.")
+                    .foregroundStyle(.white.opacity(secondaryOpacity))
+            } else if group.isInvolved(uid) {
                 Text("Settled up", comment: "Squabble row: the user's balance in the squabble is exactly zero.")
-                    .foregroundStyle(mood?.palette.top ?? .white)
-            } else {
-                Text(verbatim: balance.formattedWithSign())
-                    .foregroundStyle(mood?.palette.top ?? .white)
-                    .accessibilityLabel(Text(verbatim: BillText.standing(balance)))
+                    .fontWeight(.semibold)
+                    .foregroundStyle(color)
             }
         }
     }

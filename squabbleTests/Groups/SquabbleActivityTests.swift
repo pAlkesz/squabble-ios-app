@@ -43,3 +43,28 @@ struct SquabbleActivityTests {
         #expect(try SquabbleGroup(id: "g1", firestoreData: data).lastActivity?.text == "Hi")
     }
 }
+
+struct SquabbleInvolvementTests {
+    private func group(balances: [String: Int64]?, involved: Set<String>?) -> SquabbleGroup {
+        SquabbleGroup(
+            id: "g1", name: "Trip", currencyCode: "EUR", createdBy: "pal",
+            memberIds: ["pal", "anna"], members: [:], balances: balances, involvedIDs: involved
+        )
+    }
+
+    @Test func settledUpNeedsABillYouAreIn() {
+        #expect(!group(balances: nil, involved: nil).isInvolved("pal"))
+        #expect(group(balances: [:], involved: ["pal", "anna"]).isInvolved("pal"))
+        #expect(!group(balances: [:], involved: ["anna"]).isInvolved("pal"))
+        // Balances from before the server kept track: everyone counts.
+        #expect(group(balances: [:], involved: nil).isInvolved("pal"))
+    }
+
+    @Test func readsTheInvolvedList() throws {
+        let data: [String: Any] = [
+            "name": "Trip", "currency": "EUR", "createdBy": "pal", "memberIds": ["pal"],
+            "balances": [String: Int64](), "involvedIds": ["pal"],
+        ]
+        #expect(try SquabbleGroup(id: "g1", firestoreData: data).involvedIDs == ["pal"])
+    }
+}

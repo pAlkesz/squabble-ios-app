@@ -3,7 +3,7 @@ import { FieldPath, FieldValue, getFirestore, Timestamp } from "firebase-admin/f
 import { randomBytes } from "node:crypto";
 import { getStorage } from "firebase-admin/storage";
 import * as functions from "firebase-functions/v1";
-import { computeBalances, sameBalances } from "./balances";
+import { computeBalances, sameBalances, sameIDs } from "./balances";
 import { parseRates } from "./rates";
 
 initializeApp();
@@ -24,14 +24,14 @@ export const updateBalances = functions
       // The whole group is being deleted.
       if (!data) return;
       const bills = await transaction.get(group.collection("bills"));
-      const { balances, invalid } = computeBalances(
+      const { balances, invalid, involved } = computeBalances(
         bills.docs.map((bill) => ({ id: bill.id, data: bill.data() })),
         data.currency,
         new Set(Object.keys(data.members ?? {})),
       );
       if (invalid.length > 0) functions.logger.warn("Skipped invalid bills", { group: group.id, invalid });
-      if (data.balances && sameBalances(data.balances, balances)) return;
-      transaction.update(group, { balances });
+      if (data.balances && sameBalances(data.balances, balances) && sameIDs(data.involvedIds, involved)) return;
+      transaction.update(group, { balances, involvedIds: involved });
     });
   });
 

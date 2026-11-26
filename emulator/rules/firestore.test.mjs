@@ -233,7 +233,7 @@ describe("squabbles: updating", () => {
   }
   test("not letting yourself in", () => assertFails(update(cili, { memberIds: ["anna", "bela", "cili"] })));
   test("not adding people", () => assertFails(update(anna, { memberIds: ["anna", "bela", "cili"] })));
-  for (const fields of [{ createdBy: "bela" }, { inviteCode: "mine-mine" }, { balances: { bela: 1 } }, { chapter: 2 }, { currency: "USD" }, { name: "New" }]) {
+  for (const fields of [{ createdBy: "bela" }, { inviteCode: "mine-mine" }, { balances: { bela: 1 } }, { involvedIds: ["bela"] }, { chapter: 2 }, { currency: "USD" }, { name: "New" }]) {
     test(`not ${Object.keys(fields)[0]}`, () => assertFails(update(bela, fields)));
   }
   test("not deleting", () => assertFails(deleteDoc(doc(anna, "groups/g"))));

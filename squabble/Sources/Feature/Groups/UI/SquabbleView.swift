@@ -257,7 +257,11 @@ struct SquabbleView: View {
         guard group.balances != nil, let uid = session.user?.id else {
             return Text("No bills yet", comment: "Squabble page: subtitle under the name in the bar while there are no bills.")
         }
-        return Text(verbatim: BillText.standing(group.balance(of: uid)))
+        let balance = group.balance(of: uid)
+        guard balance.minorUnits != 0 || group.isInvolved(uid) else {
+            return Text("You're not in any bills", comment: "Squabble page: subtitle in the bar when there are bills but the user neither paid nor shares any.")
+        }
+        return Text(verbatim: BillText.standing(balance))
     }
 
     private struct OpenBill: Identifiable {

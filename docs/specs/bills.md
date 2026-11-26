@@ -76,6 +76,9 @@ rates/latest, rates/{yyyy-MM-dd}                          ← written only by fu
 - `date` is the day of the bill or payment, a calendar day defaulting to today and never
   in the future.
 - `frozen` and `chapter` are never written by the app; the rules refuse them.
+- With the balances, `updateBalances` stores **`involvedIds`**: everyone who paid or has a
+  share above zero in a bill that counts (not deleted, not skipped), sorted. A member at zero
+  in it is settled up; one who isn't has nothing to settle (Nov 2026).
 - Bills and settlements in an **archived** squabble are read-only (see
   [Groups](groups.md)).
 

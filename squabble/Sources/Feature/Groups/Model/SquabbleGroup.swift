@@ -29,6 +29,9 @@ nonisolated struct SquabbleGroup: Identifiable, Equatable, Sendable {
     /// Minor units of `currencyCode` by uid, kept by the server; zeros are left out. Nil until
     /// the squabble's first bill.
     var balances: [String: Int64]?
+    /// Who paid or shares a bill that counts, kept by the server with the balances. Nil for
+    /// squabbles whose balances predate it.
+    var involvedIDs: Set<String>?
     /// Nil until the first message or bill, and for squabbles from before it was kept.
     var lastActivity: SquabbleActivity?
     /// Only just created here: until the server has it, its chat and bills are refused.
@@ -36,6 +39,14 @@ nonisolated struct SquabbleGroup: Identifiable, Equatable, Sendable {
 
     func balance(of uid: String) -> Money {
         Money(minorUnits: balances?[uid] ?? 0, currencyCode: currencyCode)
+    }
+
+    /// Whether the user has a balance to speak of, so that zero means settled up rather than
+    /// not in any bill. Squabbles from before the server kept track count everyone once there
+    /// are bills.
+    func isInvolved(_ uid: String) -> Bool {
+        guard balances != nil else { return false }
+        return involvedIDs?.contains(uid) ?? true
     }
 
     var isArchived: Bool { archivedAt != nil }

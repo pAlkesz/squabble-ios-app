@@ -67,6 +67,7 @@ groups/{groupId}
   archivedAt?                            ← set by the creator; read-only for everyone
   inviteCode                             ← current invite code; reset by the creator
   balances: { uid: amountMinor }         ← written only by functions (bills.md)
+  involvedIds: [uid]                     ← with the balances: who paid or shares a bill that counts
   lastActivity?: { kind, by, id, text? } ← the latest message or bill, for the lists (below)
   chapter                                ← planned; written only by functions ("Currency")
   memberIds: [uid]                       ← current members; drives the rules + home query
@@ -138,8 +139,15 @@ Laid out like Revolut's group pages (Nov 2026):
   Under the name (`SquabbleRowSummary`, Nov 2026): the latest thing that happened ("You: …",
   "Anna: …", "Anna added “Dinner”", edited, deleted, "deleted a message"); before anything has,
   "Invite people to the squabble" while the user is alone, else "No messages yet. Say hello!".
-  On the right of that line the user's balance in its mood colour (`BalanceMood`), or
-  "Settled up" in the neutral (petrol) one at exactly zero; nothing before the first bill. A
+  On a third line, as in Revolut's lists (Nov 2026; on the right of the message it crowded
+  long messages out), the user's balance as a sentence with the amount in its mood colour
+  (`BalanceMood`): "You owe 30,00 €", "You're owed 355,00 €", or "Settled up" in the neutral
+  (petrol) colour at exactly zero. "Settled up" only once the user paid or shares a bill that
+  counts (`SquabbleGroup.isInvolved`, from `involvedIds`); before that, or with no bills, the
+  line isn't there, so zero never reads as settling something that never was. Squabbles
+  whose balances predate `involvedIds` count everyone once they have bills. When there are
+  bills but none involves the user, the bar on the squabble's page says "You're not in any
+  bills". A
   non-zero balance also tints the row (an inset rounded card fading from the left in the
   mood's colour) — an experiment that replaced a ring around the picture. Home's tile uses the
   same rows with a 48 pt picture. The list is only reachable with at least one squabble

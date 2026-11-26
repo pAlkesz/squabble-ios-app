@@ -21,7 +21,7 @@ test("bills cancel out, and zeros are left out", () => {
   assert.deepEqual(result.balances, {});
 });
 test("deleted bills count for nothing", () => {
-  assert.deepEqual(compute(bill("a", { deletedAt: {} })), { balances: {}, invalid: [] });
+  assert.deepEqual(compute(bill("a", { deletedAt: {} })), { balances: {}, invalid: [], involved: [] });
 });
 for (const [name, more] of Object.entries({
   "shares that don't add up": { shares: { bela: 999 } },
@@ -36,11 +36,20 @@ for (const [name, more] of Object.entries({
 })) {
   test(`skips a bill with ${name}, keeping the rest`, () => {
     const result = compute(bill("bad", more), bill("good", { shares: { bela: 1000 } }));
-    assert.deepEqual(result, { balances: { anna: 1000, bela: -1000 }, invalid: ["bad"] });
+    assert.deepEqual(result, { balances: { anna: 1000, bela: -1000 }, invalid: ["bad"], involved: ["anna", "bela"] });
   });
 }
 test("comparing", () => {
   assert.ok(sameBalances({ a: 1 }, { a: 1 }));
   assert.ok(!sameBalances({ a: 1 }, { a: 2 }));
   assert.ok(!sameBalances({ a: 1 }, {}));
+});
+
+test("who's involved: payers and anyone with a share, in bills that count", () => {
+  assert.deepEqual(compute(bill("a", { shares: { bela: 1000 } })).involved, ["anna", "bela"]);
+  // Cancelled out to zero, still involved: that's what settled up means.
+  const evened = compute(bill("a", { shares: { bela: 1000 } }), bill("b", { paidBy: "bela", shares: { anna: 1000 } }));
+  assert.deepEqual(evened.involved, ["anna", "bela"]);
+  assert.deepEqual(compute(bill("a", { deletedAt: 1 }), bill("b", { totalMinor: 5 })).involved, []);
+  assert.deepEqual(compute(bill("a", { shares: { anna: 1000, cili: 0 } })).involved, ["anna"]);
 });

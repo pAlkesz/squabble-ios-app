@@ -13,6 +13,11 @@ export interface BalancesResult {
   balances: Record<string, number>;
   /** Bills that can't be trusted, so count for nothing. */
   invalid: string[];
+  /**
+   * Who paid or has a share in a bill that counts, sorted. Someone at zero in here is settled
+   * up; someone at zero who isn't has nothing to settle.
+   */
+  involved: string[];
 }
 
 /**
@@ -26,6 +31,7 @@ export function computeBalances(
 ): BalancesResult {
   const totals = new Map<string, number>();
   const invalid: string[] = [];
+  const involved = new Set<string>();
   for (const { id, data } of bills) {
     if (data.deletedAt) continue;
     const effect = effectOf(data, currency, memberIds);
@@ -34,10 +40,14 @@ export function computeBalances(
       continue;
     }
     for (const [uid, amount] of effect) totals.set(uid, (totals.get(uid) ?? 0) + amount);
+    involved.add(data.paidBy as string);
+    for (const [uid, share] of Object.entries(data.shares as Record<string, number>)) {
+      if (share > 0) involved.add(uid);
+    }
   }
   const balances: Record<string, number> = {};
   for (const [uid, amount] of totals) if (amount !== 0) balances[uid] = amount;
-  return { balances, invalid };
+  return { balances, invalid, involved: [...involved].sort() };
 }
 
 function effectOf(bill: BillData, currency: string, memberIds: ReadonlySet<string>): Map<string, number> | null {
@@ -61,6 +71,10 @@ const maxAmount = 1_000_000_000_000;
 
 function isAmount(value: unknown): value is number {
   return Number.isSafeInteger(value) && (value as number) >= 0 && (value as number) <= maxAmount;
+}
+
+export function sameIDs(a: unknown, b: string[]): boolean {
+  return Array.isArray(a) && a.length === b.length && a.every((id, index) => id === b[index]);
 }
 
 export function sameBalances(a: Record<string, number>, b: Record<string, number>): boolean {
