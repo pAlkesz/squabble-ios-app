@@ -63,8 +63,12 @@ newest at the bottom. The composer sits at the bottom.
   below the row, so the author's avatar stays level with the bubble. Tapping the pill opens
   `ChatReactionsSheet`: who reacted with what, yours first, and tapping yours takes it back
   (Nov 2026).
-- **Replies** quote the original (author and up to 120 characters); tapping the quote
-  scrolls to it if it's loaded. A reply being written shows above the field with a ✕.
+- **Replies** quote the original (author and up to 120 characters), laid out like Messenger's
+  (Nov 2026, `ChatReplyHeader`): above the reply a "↩ Anna replied to Béla" line ("You
+  replied to …", "… replied to you", "… replied to themselves", "You replied to yourself"),
+  then the quote as a faded bubble the reply overlaps; the reply keeps its usual colour, cutting
+  the quote away beneath it, and doesn't repeat the author's name inside, as the line says it.
+  Tapping the quote scrolls to the original if it's loaded. A reply being written shows above the field with a ✕.
 
 ## Decisions
 

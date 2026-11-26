@@ -45,6 +45,39 @@
         }
       }
     },
+    "%@ replied to %@" : {
+      "comment" : "Chat: above someone's reply to a third person; who replied, then to whom.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ válaszolt neki: %2$@"
+          }
+        }
+      }
+    },
+    "%@ replied to themselves" : {
+      "comment" : "Chat: above someone's reply to their own message; their name.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ magának válaszolt"
+          }
+        }
+      }
+    },
+    "%@ replied to you" : {
+      "comment" : "Chat: above someone's reply to the user's message; their name.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ neked válaszolt"
+          }
+        }
+      }
+    },
     "%@ username or link" : {
       "comment" : "Payment method editor: link field header, with the service's name.",
       "localizations" : {
@@ -254,6 +287,17 @@
         }
       }
     },
+    "Shows the message it answers" : {
+      "comment" : "Chat: VoiceOver hint on the quoted message above a reply.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Megmutatja, mire válaszol"
+          }
+        }
+      }
+    },
     "Smileys & emotion" : {
       "comment" : "Emoji picker: group heading.",
       "localizations" : {
@@ -327,6 +371,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Szerkesztetted ezt: „%@”"
+          }
+        }
+      }
+    },
+    "You replied to %@" : {
+      "comment" : "Chat: above a reply the user wrote to someone; their name.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Válaszoltál neki: %@"
+          }
+        }
+      }
+    },
+    "You replied to yourself" : {
+      "comment" : "Chat: above a reply the user wrote to their own message.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magadnak válaszoltál"
           }
         }
       }

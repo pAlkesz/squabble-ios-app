@@ -35,11 +35,26 @@ struct ChatMessageRow: View {
             } else {
                 Color.clear.frame(width: Self.avatarSize, height: 1)
             }
-            bubble
-                // On the bubble's bottom-right corner whoever wrote it, as in Messenger.
-                .reactionPill(for: message, reservesSpace: false, onTap: onShowReactions)
-                // The menu shows an exact copy in its place while it's open.
-                .opacity(isLifted ? 0 : 1)
+            VStack(alignment: isMine ? .trailing : .leading, spacing: 0) {
+                if let reply = message.replyTo, !message.isDeleted {
+                    ChatReplyHeader(
+                        reply: reply,
+                        authorID: message.authorID,
+                        authorName: Self.name(of: author),
+                        quotedName: replyAuthorName ?? Self.name(of: nil),
+                        myUID: myUID,
+                        isMine: isMine,
+                        onShowQuoted: onShowQuoted
+                    )
+                }
+                bubble
+                    // On the bubble's bottom-right corner whoever wrote it, as in Messenger.
+                    .reactionPill(for: message, reservesSpace: false, onTap: onShowReactions)
+                    // The menu shows an exact copy in its place while it's open.
+                    .opacity(isLifted ? 0 : 1)
+            }
+            // The bubble cuts away the quote it overlaps, and nothing beyond this row.
+            .compositingGroup()
             if !isMine {
                 Spacer(minLength: 56)
             }
@@ -52,11 +67,10 @@ struct ChatMessageRow: View {
     private var bubble: some View {
         ChatBubble(
             message: message,
-            authorName: !isMine && showsName ? Self.name(of: author) : nil,
-            replyAuthorName: replyAuthorName,
+            authorName: Self.showsNameInBubble(message, isMine: isMine, showsName: showsName) ? Self.name(of: author) : nil,
             isMine: isMine,
             hasTail: endsRun,
-            onShowQuoted: onShowQuoted
+            erasesBehind: message.replyTo != nil
         )
         .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: { bubbleFrame.rect = $0 }
         .onLongPressGesture(minimumDuration: 0.3) {
@@ -68,6 +82,11 @@ struct ChatMessageRow: View {
             guard !message.isDeleted else { return }
             onOpenMenu(bubbleFrame)
         }
+    }
+
+    /// The name inside the bubble starts someone's run, but a reply's caption already says who.
+    static func showsNameInBubble(_ message: ChatMessage, isMine: Bool, showsName: Bool) -> Bool {
+        !isMine && showsName && (message.replyTo == nil || message.isDeleted)
     }
 
     static func name(of member: GroupMember?) -> String {

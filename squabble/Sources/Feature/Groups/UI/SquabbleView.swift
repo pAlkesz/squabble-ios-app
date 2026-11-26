@@ -342,8 +342,8 @@ struct SquabbleView: View {
                 message: message,
                 bubble: ChatBubble(
                     message: message,
-                    authorName: !isMine && open.showsName ? ChatMessageRow.name(of: group.members[message.authorID]) : nil,
-                    replyAuthorName: message.replyTo.map { ChatMessageRow.name(of: group.members[$0.authorID]) },
+                    authorName: ChatMessageRow.showsNameInBubble(message, isMine: isMine, showsName: open.showsName)
+                        ? ChatMessageRow.name(of: group.members[message.authorID]) : nil,
                     isMine: isMine,
                     hasTail: open.endsRun
                 ),
