@@ -319,8 +319,8 @@ struct SquabbleView: View {
         let endsRun: Bool
     }
 
-    /// The original comes back first, under the menu's identical copy, and the menu goes a
-    /// moment later: done in one go, a frame could show neither and the bubble flashed.
+    /// The original comes back as the copy goes, in one update, and the menu itself goes a
+    /// moment later: removing the menu in the same update could leave a frame with neither.
     private func closeMenu(then next: @escaping () -> Void = {}) {
         var transaction = Transaction()
         transaction.disablesAnimations = true
@@ -350,6 +350,7 @@ struct SquabbleView: View {
                 currentAnchor: { open.frame.rect },
                 isMine: isMine,
                 myReaction: uid.flatMap { message.reactions[$0] },
+                showsCopy: liftedMessageID == open.id,
                 onReact: { emoji in
                     // Once the menu is gone: the new pill makes the list move, and the copy
                     // would no longer match the message underneath.

@@ -15,6 +15,9 @@ struct ChatMessageMenu: View {
     let currentAnchor: () -> CGRect
     let isMine: Bool
     let myReaction: String?
+    /// The page shows either this copy or the original, switched in one update: the bubbles are
+    /// see-through, so both at once would brighten the message for a moment.
+    let showsCopy: Bool
     /// Each runs once the menu has animated away.
     let onReact: (String) -> Void
     let onReply: () -> Void
@@ -105,6 +108,7 @@ struct ChatMessageMenu: View {
                 // A long message is cut off at the bottom; the tail still reaches past the side.
                 .mask { Rectangle().padding(.horizontal, -ChatBubbleShape.tailWidth) }
                 .reactionPill(for: message)
+                .opacity(showsCopy ? 1 : 0)
                 .allowsHitTesting(false)
             actions
                 .modifier(Emerge(isShown: isShown, anchor: isMine ? .topTrailing : .topLeading, reduceMotion: reduceMotion))
