@@ -21,6 +21,7 @@ struct ChatMessageMenu: View {
     /// Each runs once the menu has animated away.
     let onReact: (String) -> Void
     let onReply: () -> Void
+    let onCopy: () -> Void
     let onDelete: () -> Void
     let onReport: () -> Void
     /// Once the copy is on screen, so the original can be hidden behind it.
@@ -156,7 +157,7 @@ struct ChatMessageMenu: View {
             action(Text("Copy", comment: "Chat: long-press action that copies a message's text."), systemImage: "doc.on.doc") {
                 // SwiftUI has no pasteboard API of its own.
                 UIPasteboard.general.string = message.text
-                close(then: onClose)
+                close(then: onCopy)
             }
             if isMine {
                 action(Text("Delete", comment: "Chat: long-press action that deletes your own message."), systemImage: "trash", isDestructive: true) {

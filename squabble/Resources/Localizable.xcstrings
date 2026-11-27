@@ -913,6 +913,17 @@
         }
       }
     },
+    "Copied to clipboard" : {
+      "comment" : "Toast shown after copying a message's text.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kimásolva. Használd bölcsen."
+          }
+        }
+      }
+    },
     "Copy" : {
       "comment" : "Chat: long-press action that copies a message's text.",
       "localizations" : {

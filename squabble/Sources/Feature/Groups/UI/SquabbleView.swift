@@ -24,6 +24,7 @@ struct SquabbleView: View {
     @State private var liftedMessageID: String?
     /// Opened once the details sheet is gone; two sheets can't swap in one go.
     @State private var billToEdit: BillDraft?
+    @State private var toast: SquabbleToast?
     @FocusState private var isComposing: Bool
     #if DEBUG
     @Environment(DebugBalances.self) private var debugBalances: DebugBalances?
@@ -121,14 +122,6 @@ struct SquabbleView: View {
                 .scrollDismissesKeyboard(.interactively)
                 // iOS 26's soft fade under the bar; iOS 27 no longer defaults to it.
                 .scrollEdgeEffectStyle(.soft, for: [.top, .bottom])
-                // Tapping anywhere above the composer puts the keyboard away. Simultaneous, so
-                // bubbles and bill cards still get their own taps. Deferred out of the tap's update:
-                // changed inside it, the layout snapped down instead of following the keyboard.
-                // Before the bar, so taps on the composer itself don't count.
-                .simultaneousGesture(TapGesture().onEnded { Task { isComposing = false } })
-                // On the scroll view itself: attached around the loading switch, the bar was
-                // there before the scroll view and never got its fade underneath.
-                .safeAreaBar(edge: .bottom) { composer(group) }
                 .overlay {
                     if chat.entries.isEmpty {
                         emptyState(group)
@@ -140,6 +133,16 @@ struct SquabbleView: View {
                     let isNews = old.isLive || chat.entries.last?.isPending == true
                     withAnimation(isNews ? .snappy : nil) { proxy.scrollTo(id, anchor: .bottom) }
                 }
+                .squabbleToast($toast)
+                // Tapping anywhere above the composer puts the keyboard away. Simultaneous, so
+                // bubbles and bill cards still get their own taps. Deferred out of the tap's update:
+                // changed inside it, the layout snapped down instead of following the keyboard.
+                // Before the bar, so taps on the composer itself don't count.
+                .simultaneousGesture(TapGesture().onEnded { Task { isComposing = false } })
+                // On the scroll view itself: attached around the loading switch, the bar was
+                // there before the scroll view and never got its fade underneath. Last, so the
+                // empty state and toasts above are laid out above the composer.
+                .safeAreaBar(edge: .bottom) { composer(group) }
             }
         }
         .navigationTitle(Text(verbatim: group.name))
@@ -372,6 +375,7 @@ struct SquabbleView: View {
                         isComposing = true
                     }
                 },
+                onCopy: { closeMenu { toast = .copied } },
                 onDelete: { closeMenu { deleting = message } },
                 onReport: { closeMenu { reporting = message } },
                 onShown: { liftedMessageID = message.id },

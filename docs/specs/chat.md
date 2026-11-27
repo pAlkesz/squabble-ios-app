@@ -45,7 +45,8 @@ newest at the bottom. The composer sits at the bottom.
   emoji in Unicode's groups, no skin tones, searchable by English name, from the bundled
   `Emoji.json` generated from Unicode's emoji-test.txt; the emoji keyboard was tried first and
   dropped for a sheet) and the actions below it, laid out like an iOS menu (symbol first, no dividers): **Reply**,
-  **Copy**, **Delete** (own messages, confirmed: "Message deleted" stays in place) or
+  **Copy** (once the menu has closed, a "Copied to clipboard" toast on glass floats up above
+  the composer for two seconds and is announced to VoiceOver; `SquabbleToast`), **Delete** (own messages, confirmed: "Message deleted" stays in place) or
   **Report** (others' messages, confirmed). The bar and the actions are separate pieces of
   Liquid Glass, and grow out of the message's edge as they fade in, shrinking back into it
   before whatever was chosen happens (Reduce Motion: fades only). Tapping outside closes it; VoiceOver reaches it
