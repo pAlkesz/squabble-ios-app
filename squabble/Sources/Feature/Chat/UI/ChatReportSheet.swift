@@ -16,6 +16,11 @@ struct ChatReportSheet: View {
                 Section {
                     ForEach(ChatReportReason.allCases) { reason in
                         row(reason)
+                            // The account screen's cards: the system's grey rows read as a
+                            // different surface on these backdrops.
+                            .listRowBackground(Color.white.opacity(0.08))
+                            .listRowSeparatorTint(.white.opacity(0.12))
+                            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
                     }
                 } header: {
                     Text("What's wrong with this message?", comment: "Report sheet: question above the list of reasons.")
@@ -51,13 +56,15 @@ struct ChatReportSheet: View {
         } label: {
             HStack(spacing: 14) {
                 Image(systemName: reason.systemImage)
-                    .frame(width: 28)
+                    .font(.body.weight(.medium))
+                    .frame(width: 22)
                 Text(reason.title)
                 Spacer(minLength: 8)
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                     .font(.title3)
                     .foregroundStyle(isSelected ? Color.white : .white.opacity(0.35))
             }
+            .frame(minHeight: 54)
             .contentShape(.rect)
         }
         .buttonStyle(.plain)
