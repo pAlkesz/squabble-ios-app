@@ -24,7 +24,13 @@ phone over Wi-Fi.
    emulator and enter that address (asked once; change it in the same menu when it moves). Allow
    Local Network, and allow Java and Node through the Mac's firewall if it asks. Anyone on that
    network can reach the fake data meanwhile, so use it on a trusted one and stop it after.
-4. Invite links work too: `xcrun simctl openurl <device> https://squabble-club.web.app/join/<code>`
+4. **Chats the phone hasn't cached:** `node emulator/fresh.mjs` (with the emulator running)
+   adds three new squabbles for Emma, with 8, 130 and 300 messages and the time in their names.
+   Nothing is wiped, and every run makes new ones, so their first open and older pages come from
+   the server, not the cache. With the phone's Network Link Conditioner (Settings → Developer)
+   on a slow profile, that's how a first load on a bad connection looks. Restarting the emulator
+   removes them.
+5. Invite links work too: `xcrun simctl openurl <device> https://squabble-club.web.app/join/<code>`
    (the app looks the code up in the emulator).
 
 | Person | In |
