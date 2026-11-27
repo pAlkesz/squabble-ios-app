@@ -10,29 +10,25 @@ struct ChatReportSheet: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("What's wrong with this message?", comment: "Report sheet: question above the list of reasons.")
-                        .font(.headline)
-                        .padding(.horizontal, 4)
-                    VStack(spacing: 0) {
-                        ForEach(ChatReportReason.allCases) { reason in
-                            row(reason)
-                        }
+            // A native section, so the question and the note sit where iOS puts a header and
+            // a footer, as in the app's other lists.
+            List {
+                Section {
+                    ForEach(ChatReportReason.allCases) { reason in
+                        row(reason)
                     }
-                    .padding(.vertical, 8)
-                    .background(.white.opacity(0.08), in: .rect(cornerRadius: SquabbleMetrics.cornerRadius))
+                } header: {
+                    Text("What's wrong with this message?", comment: "Report sheet: question above the list of reasons.")
+                } footer: {
                     Text("We'll take a look. The author won't know it was you.", comment: "Report sheet: note under the reasons.")
-                        .font(.footnote)
-                        .foregroundStyle(.white.opacity(0.6))
-                        .padding(.horizontal, 4)
+                        .foregroundStyle(.white.opacity(0.7))
                 }
-                .padding(16)
-                .frame(maxWidth: 560)
-                .frame(maxWidth: .infinity)
             }
+            .scrollContentBackground(.hidden)
             .scrollBounceBehavior(.basedOnSize)
             .scrollEdgeEffectStyle(.soft, for: [.top, .bottom])
+            .frame(maxWidth: 560)
+            .frame(maxWidth: .infinity)
             .navigationTitle(Text("Report message", comment: "Report sheet: title."))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -62,9 +58,6 @@ struct ChatReportSheet: View {
                     .font(.title3)
                     .foregroundStyle(isSelected ? Color.white : .white.opacity(0.35))
             }
-            .font(.body)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
             .contentShape(.rect)
         }
         .buttonStyle(.plain)
