@@ -117,18 +117,22 @@ groups/{gid}/messages/{messageId}
   Messages the live page moves past stay on screen. If it jumps ahead with a possible gap
   (a long time offline), the timeline starts over from it. Only the server can say where a
   chat begins, never the cache. A page loads once the scroll settles near the top, and the
-  list stays on the message it was on. While there may be older entries, the timeline's first
-  row is a spinner (44 pt, held so the list doesn't jump as it comes and goes), scrolling with
-  the messages. Not pull-to-refresh: that means "reload" and takes a deliberate pull, while
+  list stays on the message it was on: the scroll view keeps its offset from the top, so when
+  the first entry changes and the content grows, the page moves the offset down by as much
+  (Nov 2026; scrolling to the old first entry afterwards, and animating the reaction pills'
+  room on any change of the message set, both made the list swing). While there may be older
+  entries, the timeline's first row is a spinner (44 pt, held so the list doesn't jump as it
+  comes and goes), scrolling with the messages. Not pull-to-refresh: that means "reload" and takes a deliberate pull, while
   older pages should just arrive (as in Messenger).
 - **A squabble just created** may not have reached the server when its page opens, so the rules
   refuse its chat and bills. Until it has (`SquabbleGroup.isAwaitingServer`), that isn't a
   failure: the page shows as empty, and starts listening again once it's there.
 - **An empty cache isn't an empty chat** (Nov 2026): when the squabble has a `lastActivity`
   but the phone's cache answers with nothing (it hasn't seen those messages yet), the page
-  shows `ChatLoadingView` (`ChatStore.isWaitingForServer`) rather than the "ready" state,
+  shows `ChatLoadingView`, the logo bird hopping on the spot with the receipt swinging in its
+  beak (`HoppingBirdView`; Reduce Motion: a slow pulse), rather than the "ready" state,
   for as long as it takes, offline too, until the server answers or the user writes
-  something. The spinner fades in after 0.3 s, so a quick answer never flashes it; after
+  something. The bird fades in after 0.3 s, so a quick answer never flashes it; after
   `ChatStore.serverPatience` (2 s) a line under it owns up to the wait. The timeline then
   fades in (0.3 s) instead of popping up; a chat the cache answers at once just appears.
 - **A chat opens already at the bottom**, without scrolling there (Nov 2026): the list isn't

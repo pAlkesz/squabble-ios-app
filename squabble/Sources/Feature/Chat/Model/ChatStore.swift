@@ -13,8 +13,6 @@ final class ChatStore {
     private(set) var entries: [ChatEntry] = []
     private(set) var failed = false
     private(set) var isLoadingOlder = false
-    /// The entry the last older page was added above.
-    private(set) var olderPageAnchor: String?
 
     @ObservationIgnored @Injected(\.chatRepository) private var repository
     @ObservationIgnored @Injected(\.billRepository) private var billRepository
@@ -83,11 +81,7 @@ final class ChatStore {
         } catch {
             AppLog.error(error, "Loading older chat failed")
         }
-        let first = entries.first?.id
         merge()
-        if let first, entries.first?.id != first, entries.contains(where: { $0.id == first }) {
-            olderPageAnchor = first
-        }
     }
 
     func bill(id: String) -> Bill? {

@@ -27,6 +27,10 @@ struct SquabbleView: View {
     /// The loading view was on screen, so the timeline fades in instead of popping up.
     @State private var timelineFadesIn = false
     @State private var isTimelineShown = false
+    @State private var scrollPosition = ScrollPosition()
+    /// The first entry the last time the scroll view laid out: rows added above it are an
+    /// older page, and the view moves down by as much so what's on screen stays put.
+    @State private var laidOutFirstEntryID: String?
     @FocusState private var isComposing: Bool
     #if DEBUG
     @Environment(DebugBalances.self) private var debugBalances: DebugBalances?
@@ -54,8 +58,21 @@ struct SquabbleView: View {
     }
 
     /// Each message's number of reactions, for animating the room their pills take.
-    private var reactionCounts: [String: Int] {
-        Dictionary(chat.messages.map { ($0.id, $0.reactions.count) }, uniquingKeysWith: { first, _ in first })
+    private var reactionCounts: ReactionCounts {
+        ReactionCounts(Dictionary(chat.messages.map { ($0.id, $0.reactions.count) }, uniquingKeysWith: { first, _ in first }))
+    }
+
+    /// Equal unless a message on both sides has a different number of reactions: messages coming
+    /// or going (an older page, a new message) aren't a pill changing, so they aren't animated.
+    /// Animated, an older page swung the whole list down and back.
+    private struct ReactionCounts: Equatable {
+        let counts: [String: Int]
+
+        init(_ counts: [String: Int]) { self.counts = counts }
+
+        static func == (lhs: Self, rhs: Self) -> Bool {
+            lhs.counts.allSatisfy { id, count in rhs.counts[id].map { $0 == count } ?? true }
+        }
     }
 
     private var isAwaitingServer: Bool {
@@ -100,6 +117,7 @@ struct SquabbleView: View {
                     .frame(maxWidth: 720)
                     .frame(maxWidth: .infinity)
                 }
+                .scrollPosition($scrollPosition)
                 // On the scroll view: on its content, the change landed in one frame.
                 .opacity(timelineFadesIn && !isTimelineShown ? 0 : 1)
                 .onAppear {
@@ -113,13 +131,6 @@ struct SquabbleView: View {
                 // bottom, moves what's above it. On the scroll view, not the rows, so that move is
                 // animated too instead of jumping.
                 .animation(.snappy, value: reactionCounts)
-                // An older page is added above, which would leave the list at the very top of it:
-                // stay on what was first. Loading waits for the scroll to settle, because its
-                // momentum would override this.
-                .onChange(of: chat.olderPageAnchor) { _, anchor in
-                    guard let anchor else { return }
-                    proxy.scrollTo(anchor, anchor: .top)
-                }
                 .onScrollPhaseChange { _, phase in
                     isSettled = phase == .idle
                 }
@@ -127,6 +138,17 @@ struct SquabbleView: View {
                     geometry.contentOffset.y + geometry.contentInsets.top < Self.olderPageDistance
                 } action: { _, isNearTop in
                     self.isNearTop = isNearTop
+                }
+                // The scroll view keeps its offset from the top, so a page added above would push
+                // what's being read down by its height; scrolling then fixed it, visibly.
+                .onScrollGeometryChange(for: ScrollGeometry.self) { $0 } action: { old, new in
+                    let first = chat.entries.first?.id
+                    defer { laidOutFirstEntryID = first }
+                    guard first != laidOutFirstEntryID, laidOutFirstEntryID != nil else { return }
+                    let added = new.contentSize.height - old.contentSize.height
+                    guard added != 0 else { return }
+                    // Its y is measured from the content's top edge; the offset includes the bar's inset.
+                    scrollPosition.scrollTo(y: new.contentOffset.y + new.contentInsets.top + added)
                 }
                 // Also once the connection comes back.
                 .task(id: OlderPageTrigger(isAtTop: isNearTop && isSettled, isLive: chat.isLive)) {
