@@ -15,7 +15,6 @@ struct SquabbleView: View {
     @State private var draft = ""
     @State private var replyingTo: ChatMessage?
     @State private var deleting: ChatMessage?
-    @State private var reporting: ChatMessage?
     @State private var billForm: BillDraft?
     @State private var openBill: OpenBill?
     @State private var reactionsOf: OpenMessage?
@@ -25,7 +24,6 @@ struct SquabbleView: View {
     /// Opened once the details sheet is gone; two sheets can't swap in one go.
     @State private var billToEdit: BillDraft?
     @State private var toast: SquabbleToast?
-    @State private var toastAfterSheet: SquabbleToast?
     @FocusState private var isComposing: Bool
     #if DEBUG
     @Environment(DebugBalances.self) private var debugBalances: DebugBalances?
@@ -204,19 +202,6 @@ struct SquabbleView: View {
         } message: { _ in
             Text("Everyone will see that a message was deleted, just not what it said.", comment: "Chat: explanation in the delete confirmation.")
         }
-        .sheet(item: $reporting, onDismiss: {
-            // Once the sheet is gone, so the toast isn't hidden behind it.
-            if let afterSheet = toastAfterSheet {
-                toast = afterSheet
-                toastAfterSheet = nil
-            }
-        }) { message in
-            ChatReportSheet { reason in
-                guard let uid = session.user?.id else { return }
-                chat.report(message, reason: reason, by: uid)
-                toastAfterSheet = .reported
-            }
-        }
     }
 
     @ViewBuilder
@@ -377,7 +362,12 @@ struct SquabbleView: View {
                 },
                 onCopy: { closeMenu { toast = .copied } },
                 onDelete: { closeMenu { deleting = message } },
-                onReport: { closeMenu { reporting = message } },
+                onReport: { reason in
+                    closeMenu {
+                        if let uid { chat.report(message, reason: reason, by: uid) }
+                        toast = .reported
+                    }
+                },
                 onShown: { liftedMessageID = message.id },
                 onClose: { closeMenu() }
             )

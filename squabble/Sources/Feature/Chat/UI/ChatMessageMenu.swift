@@ -23,7 +23,7 @@ struct ChatMessageMenu: View {
     let onReply: () -> Void
     let onCopy: () -> Void
     let onDelete: () -> Void
-    let onReport: () -> Void
+    let onReport: (ChatReportReason) -> Void
     /// Once the copy is on screen, so the original can be hidden behind it.
     let onShown: () -> Void
     let onClose: () -> Void
@@ -34,6 +34,9 @@ struct ChatMessageMenu: View {
     @State private var barHeight: CGFloat = 0
     @State private var isShown = false
     @State private var isPickingEmoji = false
+    @State private var isReporting = false
+    /// Sent once the report sheet is gone, so the menu closes after it rather than under it.
+    @State private var reportReason: ChatReportReason?
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private static let spacing: CGFloat = 10
@@ -63,6 +66,15 @@ struct ChatMessageMenu: View {
                 isPickingEmoji = false
                 close { onReact(emoji) }
             }
+        }
+        // From the menu itself, like the emoji picker: a sheet can't open until the menu's
+        // full-screen cover is gone, which left a noticeable pause after tapping Report.
+        .sheet(isPresented: $isReporting, onDismiss: {
+            guard let reason = reportReason else { return }
+            reportReason = nil
+            close { onReport(reason) }
+        }) {
+            ChatReportSheet { reportReason = $0 }
         }
         .onAppear {
             onShown()
@@ -165,7 +177,7 @@ struct ChatMessageMenu: View {
                 }
             } else {
                 action(Text("Report", comment: "Chat: long-press action that reports someone else's message."), systemImage: "exclamationmark.bubble") {
-                    close(then: onReport)
+                    isReporting = true
                 }
             }
         }

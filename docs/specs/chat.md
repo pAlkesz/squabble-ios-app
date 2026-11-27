@@ -155,11 +155,12 @@ Chat is user-generated content, so App Review (guideline 1.2) wants a way to **r
 content and to keep away from abusive users.
 
 - **Report** (built Nov 2026): from the long-press menu on someone else's message,
-  `ChatReportSheet` asks what's wrong with it: Harassment or bullying, Hate speech, Scam or
+  `ChatReportSheet` (presented by the menu itself, like the emoji picker, so it opens at once
+  rather than after the menu's cover is gone) asks what's wrong with it: Harassment or bullying, Hate speech, Scam or
   fraud, Spam, Sexual content, Violence or threats, Something else. Send report stays
   disabled until one is picked; nothing is written before it. It writes one `reports`
-  document (offline too, synced later) and, once the sheet is gone, a "Reported" toast
-  shows. The author is never told, and nobody is notified: reports are read in the Firebase
+  document (offline too, synced later) and, once the sheet and then the menu are gone, a
+  "Reported" toast shows. Closing the sheet without sending leaves the menu up. The author is never told, and nobody is notified: reports are read in the Firebase
   console. Reporting the same message twice files two reports.
 - **Planned:** leaving the squabble (and blocking, if App Review asks for more).
 
