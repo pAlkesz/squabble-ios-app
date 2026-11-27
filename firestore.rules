@@ -274,7 +274,9 @@ service cloud.firestore {
 
     match /reports/{reportId} {
       allow create: if signedIn()
-        && request.resource.data.keys().hasOnly(['groupId', 'messageId', 'authorId', 'text', 'reportedBy', 'createdAt'])
+        && request.resource.data.keys().hasOnly(['groupId', 'messageId', 'authorId', 'text', 'reason', 'reportedBy', 'createdAt'])
+        // ChatReportReason's raw values.
+        && request.resource.data.reason in ['harassment', 'hate', 'scam', 'spam', 'sexual', 'violence', 'other']
         && request.resource.data.reportedBy == request.auth.uid
         && request.resource.data.createdAt == request.time
         && request.auth.uid in get(/databases/$(database)/documents/groups/$(request.resource.data.groupId)).data.memberIds;

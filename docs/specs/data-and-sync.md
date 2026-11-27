@@ -42,7 +42,7 @@ groups/{groupId}                 a squabble; current members can read it (see gr
 invites/{code}                   { groupId, createdAt }: only the invite functions touch it
 groups/{groupId}/messages/{id}   chat messages (see chat.md)
 groups/{groupId}/bills/{id}      bills (see bills.md)
-reports/{id}                     reported messages; create-only, read by the developer
+reports/{id}                     reported messages and why; create-only, read by the developer
 avatars/{uid}/{random}.jpg       Storage: square JPEG, < 1 MB
 groupImages/{uid}/{random}.jpg   Storage: squabble photos, filed by uploader, < 1 MB
 ```
@@ -117,6 +117,8 @@ on, Admin SDK so the rules don't apply) deletes:
   the profile, so a retry after the profile is gone still releases the handle.
 - `users/{uid}` and all its subcollections (recursive delete)
 - everything under `avatars/{uid}/` in Storage
+- every `reports/*` document the user filed (`reportedBy`); reports about their messages
+  (`authorId`) stay, with the copied `text` removed, as their messages are blanked
 
 Every step is safe to repeat. **Anything new stored per user must be added to this
 function.**

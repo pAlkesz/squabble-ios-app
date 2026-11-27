@@ -64,7 +64,8 @@ export const updateRates = functions
  *
  * Covers (see docs/specs/data-and-sync.md): users/{uid} and its private documents, the
  * user's handles/{handle} lock, avatars/{uid}/ in Storage, their place in every group, and
- * their chat messages' texts and reactions (and a group's copy of their latest message).
+ * their chat messages' texts and reactions (and a group's copy of their latest message), and
+ * reports: the ones they filed, and the text copied into reports about their messages.
  * Anything new stored per user belongs here too.
  */
 export const deleteUserData = functions
@@ -90,6 +91,8 @@ export const deleteUserData = functions
       await scrubMessages(group.ref, uid);
       await leaveAsDeletedMember(group.ref, uid);
     }
+
+    await scrubReports(uid);
 
     await getStorage().bucket().deleteFiles({ prefix: `avatars/${uid}/` });
 
@@ -160,6 +163,27 @@ async function scrubMessages(group: FirebaseFirestore.DocumentReference, uid: st
   }
   const writer = getFirestore().bulkWriter();
   for (const { ref, fields } of updates.values()) writer.update(ref, fields);
+  await writer.close();
+}
+
+/**
+ * Deletes the reports the user filed, and blanks the message text copied into reports about
+ * them, as their messages are blanked. Those reports stay, so a pattern is still visible.
+ */
+async function scrubReports(uid: string): Promise<void> {
+  const reports = getFirestore().collection("reports");
+  const [filed, about] = await Promise.all([
+    reports.where("reportedBy", "==", uid).get(),
+    reports.where("authorId", "==", uid).get(),
+  ]);
+  const writer = getFirestore().bulkWriter();
+  const deleted = new Set(filed.docs.map((report) => report.id));
+  for (const report of filed.docs) writer.delete(report.ref);
+  for (const report of about.docs) {
+    if (!deleted.has(report.id) && report.get("text") !== undefined) {
+      writer.update(report.ref, { text: FieldValue.delete() });
+    }
+  }
   await writer.close();
 }
 

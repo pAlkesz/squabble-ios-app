@@ -47,7 +47,7 @@ newest at the bottom. The composer sits at the bottom.
   dropped for a sheet) and the actions below it, laid out like an iOS menu (symbol first, no dividers): **Reply**,
   **Copy** (once the menu has closed, a "Copied to clipboard" toast on glass floats up above
   the composer for two seconds and is announced to VoiceOver; `SquabbleToast`), **Delete** (own messages, confirmed: "Message deleted" stays in place) or
-  **Report** (others' messages, confirmed). The bar and the actions are separate pieces of
+  **Report** (others' messages: opens `ChatReportSheet`, below). The bar and the actions are separate pieces of
   Liquid Glass, and grow out of the message's edge as they fade in, shrinking back into it
   before whatever was chosen happens (Reduce Motion: fades only). Tapping outside closes it; VoiceOver reaches it
   through a "React or reply" action. Bills have no long press yet.
@@ -137,20 +137,31 @@ groups/{gid}/messages/{messageId}
   down while the keyboard was still sliding away. The
   empty "ready" state is a plain centred view (a scroll view only when it can't fit): one
   sized to the screen snapped to the keyboard instead of riding up with it.
-- `reports/{id}`: `{ groupId, messageId, authorId, text, reportedBy, createdAt }`,
-  create-only for members of that squabble; nobody reads it from the app.
+- `reports/{id}`: `{ groupId, messageId, authorId, text, reason, reportedBy, createdAt }`,
+  create-only for members of that squabble; nobody reads it from the app. `reason` is a
+  `ChatReportReason` raw value (`harassment`, `hate`, `scam`, `spam`, `sexual`, `violence`,
+  `other`), required and checked by the rules; never rename one.
 - **Rules:** members read; a member creates messages as themselves; only the author
   soft-deletes; any member edits only their own key in `reactions`; nothing while the
   squabble is archived.
-- **Account deletion:** `deleteUserData` blanks the user's message texts and drops their
+- **Account deletion:** `deleteUserData` deletes the reports the user filed, and removes the
+  copied `text` from reports about their messages (those stay). It blanks the user's message texts and drops their
   reactions; the messages stay, shown from "Deleted member", so replies still make sense. A
   squabble whose `lastActivity` quotes their message says "deleted a message" instead.
 
 ## Moderation
 
 Chat is user-generated content, so App Review (guideline 1.2) wants a way to **report**
-content and to keep away from abusive users. Planned: "Report" in the long-press menu
-(writes to a `reports` collection only the developer reads), and leaving the squabble.
+content and to keep away from abusive users.
+
+- **Report** (built Nov 2026): from the long-press menu on someone else's message,
+  `ChatReportSheet` asks what's wrong with it: Harassment or bullying, Hate speech, Scam or
+  fraud, Spam, Sexual content, Violence or threats, Something else. Send report stays
+  disabled until one is picked; nothing is written before it. It writes one `reports`
+  document (offline too, synced later) and, once the sheet is gone, a "Reported" toast
+  shows. The author is never told, and nobody is notified: reports are read in the Firebase
+  console. Reporting the same message twice files two reports.
+- **Planned:** leaving the squabble (and blocking, if App Review asks for more).
 
 ## Open questions
 

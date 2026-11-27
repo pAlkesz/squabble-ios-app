@@ -78,7 +78,7 @@ ObjC-based SDK, NoSQL modeling, `Sendable` friction under Swift 6.
   first-generation, as the same service account) and `deleteUserData`, a first-generation `auth.user().onDelete` trigger (the
   newer API has no Auth delete trigger) with retries on, running as the Firebase Admin SDK
   service account (the project has no default Compute Engine account), which wipes `users/{uid}` and its
-  subcollections, the user's `handles/` lock and `avatars/{uid}/`. Admin SDK, so the
+  subcollections, the user's `handles/` lock, `avatars/{uid}/` and the reports they filed. Admin SDK, so the
   security rules don't apply to it.
 - **Security rules** live in the repo: `firestore.rules`, `storage.rules`, wired up by
   `firebase.json`. Deploy with `firebase deploy --only firestore:rules,storage`

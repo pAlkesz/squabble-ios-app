@@ -88,13 +88,14 @@ nonisolated final class FirestoreChatRepository: ChatRepository {
         }
     }
 
-    func report(_ message: ChatMessage, in groupID: String, by uid: String) throws {
+    func report(_ message: ChatMessage, reason: ChatReportReason, in groupID: String, by uid: String) throws {
         guard let db else { throw ChatError.unavailable }
         db.collection("reports").addDocument(data: [
             "groupId": groupID,
             "messageId": message.id,
             "authorId": message.authorID,
             "text": message.text,
+            "reason": reason.rawValue,
             "reportedBy": uid,
             "createdAt": FieldValue.serverTimestamp(),
         ]) { error in

@@ -166,6 +166,28 @@
         }
       }
     },
+    "Harassment or bullying" : {
+      "comment" : "Report sheet: reason for reporting a message.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaklatás vagy bántás"
+          }
+        }
+      }
+    },
+    "Hate speech" : {
+      "comment" : "Report sheet: reason for reporting a message.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gyűlöletbeszéd"
+          }
+        }
+      }
+    },
     "Invite people to the squabble" : {
       "comment" : "Squabble row: the user is still alone in the squabble.",
       "localizations" : {
@@ -265,6 +287,39 @@
         }
       }
     },
+    "Report message" : {
+      "comment" : "Report sheet: title.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Üzenet jelentése"
+          }
+        }
+      }
+    },
+    "Reported. We'll take it from here." : {
+      "comment" : "Toast shown after reporting a message.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jelentve. Innen átvesszük."
+          }
+        }
+      }
+    },
+    "Scam or fraud" : {
+      "comment" : "Report sheet: reason for reporting a message.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Átverés vagy csalás"
+          }
+        }
+      }
+    },
     "Search emoji" : {
       "comment" : "Emoji picker: placeholder of the search field.",
       "localizations" : {
@@ -276,6 +331,17 @@
         }
       }
     },
+    "Send report" : {
+      "comment" : "Report sheet: button that sends the report.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jelentés küldése"
+          }
+        }
+      }
+    },
     "Settled up" : {
       "comment" : "Squabble row: the user's balance in the squabble is exactly zero.",
       "localizations" : {
@@ -283,6 +349,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kvittek vagytok"
+          }
+        }
+      }
+    },
+    "Sexual content" : {
+      "comment" : "Report sheet: reason for reporting a message.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szexuális tartalom"
           }
         }
       }
@@ -305,6 +382,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Smiley-k és érzelmek"
+          }
+        }
+      }
+    },
+    "Something else" : {
+      "comment" : "Report sheet: reason for reporting a message that fits none of the others.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Valami más"
+          }
+        }
+      }
+    },
+    "Spam" : {
+      "comment" : "Report sheet: reason for reporting a message.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spam"
           }
         }
       }
@@ -338,6 +437,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Utazás és helyek"
+          }
+        }
+      }
+    },
+    "Violence or threats" : {
+      "comment" : "Report sheet: reason for reporting a message.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erőszak vagy fenyegetés"
+          }
+        }
+      }
+    },
+    "What's wrong with this message?" : {
+      "comment" : "Report sheet: question above the list of reasons.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mi a baj ezzel az üzenettel?"
           }
         }
       }
@@ -2035,17 +2156,6 @@
         }
       }
     },
-    "Report this message?" : {
-      "comment" : "Chat: title of the report confirmation.",
-      "localizations" : {
-        "hu" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jelented ezt az üzenetet?"
-          }
-        }
-      }
-    },
     "Sand" : {
       "comment" : "Squabble background name, read by VoiceOver.",
       "localizations" : {
@@ -2784,7 +2894,7 @@
       }
     },
     "We'll take a look. The author won't know it was you." : {
-      "comment" : "Chat: explanation in the report confirmation.",
+      "comment" : "Report sheet: note under the reasons.",
       "localizations" : {
         "hu" : {
           "stringUnit" : {

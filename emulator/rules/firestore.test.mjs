@@ -332,13 +332,17 @@ describe("chat", () => {
   });
 
   const report = (db, uid, more = {}) => addDoc(collection(db, "reports"), {
-    groupId: "g", messageId: "m", authorId: "anna", text: "Hi", reportedBy: uid, createdAt: serverTimestamp(), ...more,
+    groupId: "g", messageId: "m", authorId: "anna", text: "Hi", reason: "scam", reportedBy: uid, createdAt: serverTimestamp(), ...more,
   });
   test("reporting is for members, as themselves, and never read back", async () => {
     await assertSucceeds(report(bela, "bela"));
     await assertFails(report(bela, "anna"));
     await assertFails(report(cili, "cili"));
     await assertFails(report(bela, "bela", { extra: 1 }));
+    await assertFails(report(bela, "bela", { reason: "boring" }));
+    await assertFails(addDoc(collection(bela, "reports"), {
+      groupId: "g", messageId: "m", authorId: "anna", text: "Hi", reportedBy: "bela", createdAt: serverTimestamp(),
+    }));
     await assertFails(report(bela, "bela", { createdAt: joinedAt }));
     await assertFails(getDocs(collection(bela, "reports")));
   });

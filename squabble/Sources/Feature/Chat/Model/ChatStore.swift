@@ -136,8 +136,8 @@ final class ChatStore {
         perform { try repository.delete(message.id, in: groupID, replacingActivity: replacement) }
     }
 
-    func report(_ message: ChatMessage, by uid: String) {
-        perform { try repository.report(message, in: groupID, by: uid) }
+    func report(_ message: ChatMessage, reason: ChatReportReason, by uid: String) {
+        perform { try repository.report(message, reason: reason, in: groupID, by: uid) }
     }
 
     private func perform(_ write: () throws -> Void) {

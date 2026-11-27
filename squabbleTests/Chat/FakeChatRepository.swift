@@ -34,7 +34,7 @@ final class FakeChatRepository: ChatRepository, @unchecked Sendable {
         deleted.append(messageID)
         replacedActivities.append(activity)
     }
-    func report(_ message: ChatMessage, in groupID: String, by uid: String) throws {}
+    func report(_ message: ChatMessage, reason: ChatReportReason, in groupID: String, by uid: String) throws {}
 
     func newMessageID(in groupID: String) -> String {
         nextID += 1

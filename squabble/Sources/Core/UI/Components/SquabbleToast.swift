@@ -13,4 +13,11 @@ struct SquabbleToast: Identifiable, Equatable {
             systemImage: "doc.on.doc.fill"
         )
     }
+
+    static var reported: SquabbleToast {
+        SquabbleToast(
+            title: LocalizedStringResource("Reported. We'll take it from here.", comment: "Toast shown after reporting a message."),
+            systemImage: "flag.fill"
+        )
+    }
 }

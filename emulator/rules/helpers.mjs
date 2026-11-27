@@ -7,11 +7,18 @@ setLogLevel("silent");
 
 const rules = (name) => readFile(new URL(`../../${name}`, import.meta.url), "utf8");
 
+// `emulators:exec` says where it started them, so the tests can run on other ports while the
+// emulator the app uses is up (its data would be wiped otherwise).
+const address = (variable, port) => {
+  const [host, given] = (process.env[variable] ?? `127.0.0.1:${port}`).split(":");
+  return { host, port: Number(given) };
+};
+
 export async function startEnvironment() {
   return initializeTestEnvironment({
     projectId: "demo-squabble",
-    firestore: { host: "127.0.0.1", port: 8080, rules: await rules("firestore.rules") },
-    storage: { host: "127.0.0.1", port: 9199, rules: await rules("storage.rules") },
+    firestore: { ...address("FIRESTORE_EMULATOR_HOST", 8080), rules: await rules("firestore.rules") },
+    storage: { ...address("FIREBASE_STORAGE_EMULATOR_HOST", 9199), rules: await rules("storage.rules") },
   });
 }
 

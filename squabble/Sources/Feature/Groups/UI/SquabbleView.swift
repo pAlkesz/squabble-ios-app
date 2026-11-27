@@ -25,6 +25,7 @@ struct SquabbleView: View {
     /// Opened once the details sheet is gone; two sheets can't swap in one go.
     @State private var billToEdit: BillDraft?
     @State private var toast: SquabbleToast?
+    @State private var toastAfterSheet: SquabbleToast?
     @FocusState private var isComposing: Bool
     #if DEBUG
     @Environment(DebugBalances.self) private var debugBalances: DebugBalances?
@@ -203,19 +204,18 @@ struct SquabbleView: View {
         } message: { _ in
             Text("Everyone will see that a message was deleted, just not what it said.", comment: "Chat: explanation in the delete confirmation.")
         }
-        .confirmationDialog(
-            Text("Report this message?", comment: "Chat: title of the report confirmation."),
-            isPresented: Binding(get: { reporting != nil }, set: { if !$0 { reporting = nil } }),
-            titleVisibility: .visible,
-            presenting: reporting
-        ) { message in
-            Button(role: .destructive) {
-                if let uid = session.user?.id { chat.report(message, by: uid) }
-            } label: {
-                Text("Report", comment: "Chat: long-press action that reports someone else's message.")
+        .sheet(item: $reporting, onDismiss: {
+            // Once the sheet is gone, so the toast isn't hidden behind it.
+            if let afterSheet = toastAfterSheet {
+                toast = afterSheet
+                toastAfterSheet = nil
             }
-        } message: { _ in
-            Text("We'll take a look. The author won't know it was you.", comment: "Chat: explanation in the report confirmation.")
+        }) { message in
+            ChatReportSheet { reason in
+                guard let uid = session.user?.id else { return }
+                chat.report(message, reason: reason, by: uid)
+                toastAfterSheet = .reported
+            }
         }
     }
 
