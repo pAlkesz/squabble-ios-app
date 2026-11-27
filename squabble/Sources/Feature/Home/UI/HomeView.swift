@@ -201,9 +201,12 @@ struct HomeView: View {
                             SquabbleRow(group: group, pictureSize: 48)
                         }
                         .buttonStyle(.plain)
+                        .transition(SquabbleRow.arrival)
                     }
                 }
             }
+            // A squabble someone else starts, or one that just got busy, slides into place.
+            .animation(SquabbleRow.reorder, value: groups.groups.prefix(Self.tileSquabbleCount).map(\.id))
             .frame(maxWidth: 640)
             .transition(.opacity)
         }

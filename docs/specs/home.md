@@ -83,6 +83,9 @@ rows. Rows have a 48 pt picture, a title and a grey subtitle, and no chevron.
   squabble** button that zooms the create sheet out of itself (as `+` does).
 - The tile stays hidden until the first answer from Firestore, so a returning user never
   sees the empty state flash.
+- A squabble that turns up (someone adds you) or moves up (something happened in it) slides
+  into place: rows fade and grow in, the others make room (`SquabbleRow.arrival`/`reorder`),
+  here and in the full list.
 
 **Tile ideas, undecided** (Nov 2026), roughly by value, all waiting on bills: **You owe /
 Owed to you** (the people behind the total, with nudge and pay), **Expenses** (recent bills

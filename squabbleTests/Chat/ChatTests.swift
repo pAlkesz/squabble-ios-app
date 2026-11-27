@@ -166,12 +166,13 @@ struct ChatStoreTests {
         bills.latest = [noBills]
         let store = ChatStore(groupID: "g1")
         await store.observe(expectsContent: true)
-        #expect(!store.hasLoaded)
-        await store.observe(expectsContent: false)
         #expect(store.hasLoaded)
+        #expect(store.isWaitingForServer)
+        await store.observe(expectsContent: false)
+        #expect(!store.isWaitingForServer)
         repository.latest = [page(0..<3)]
         await store.observe(expectsContent: true)
-        #expect(store.hasLoaded)
+        #expect(!store.isWaitingForServer)
     }
 
     @Test func aRefusalBeforeTheSquabbleReachesTheServerIsNotAFailure() async {

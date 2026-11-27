@@ -18,8 +18,10 @@ struct SquabbleListView: View {
                         SquabbleRow(group: group, secondaryOpacity: 0.8)
                     }
                     .buttonStyle(.plain)
+                    .transition(SquabbleRow.arrival)
                 }
             }
+            .animation(SquabbleRow.reorder, value: groups.groups.map(\.id))
             .padding(.vertical, 8)
             .background(.white.opacity(0.08), in: .rect(cornerRadius: SquabbleMetrics.cornerRadius))
             .padding(16)

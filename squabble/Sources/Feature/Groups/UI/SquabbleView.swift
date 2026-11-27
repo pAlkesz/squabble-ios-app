@@ -24,6 +24,9 @@ struct SquabbleView: View {
     /// Opened once the details sheet is gone; two sheets can't swap in one go.
     @State private var billToEdit: BillDraft?
     @State private var toast: SquabbleToast?
+    /// The loading view was on screen, so the timeline fades in instead of popping up.
+    @State private var timelineFadesIn = false
+    @State private var isTimelineShown = false
     @FocusState private var isComposing: Bool
     #if DEBUG
     @Environment(DebugBalances.self) private var debugBalances: DebugBalances?
@@ -62,12 +65,20 @@ struct SquabbleView: View {
     private func content(_ group: SquabbleGroup) -> some View {
         ScrollViewReader { proxy in
             // Mounted with its content, so it opens at the bottom rather than scrolling there.
-            if !chat.hasLoaded {
-                Color.clear
+            if !chat.hasLoaded || chat.isWaitingForServer {
+                ChatLoadingView(isTakingLong: chat.isTakingLong) { timelineFadesIn = true }
                     .safeAreaBar(edge: .bottom) { composer(group) }
             } else {
                 ScrollView {
                     LazyVStack(spacing: 4) {
+                        // Older pages load on their own near the top; this says more are coming.
+                        // Held while there are any, so the list doesn't jump as it comes and goes.
+                        if chat.canLoadOlder {
+                            ProgressView()
+                                .tint(.white)
+                                .frame(maxWidth: .infinity, minHeight: Self.olderPageRowHeight)
+                                .accessibilityLabel(Text("Loading older messages", comment: "Chat: VoiceOver label of the spinner at the top of the chat while older messages load."))
+                        }
                         ForEach(ChatTimeline.rows(for: chat.entries)) { row in
                             switch row {
                             case .day(let day):
@@ -88,6 +99,14 @@ struct SquabbleView: View {
                     .padding(.vertical, 8)
                     .frame(maxWidth: 720)
                     .frame(maxWidth: .infinity)
+                }
+                // On the scroll view: on its content, the change landed in one frame.
+                .opacity(timelineFadesIn && !isTimelineShown ? 0 : 1)
+                .onAppear {
+                    guard timelineFadesIn else { return }
+                    // A turn later: animated in onAppear itself, it was already at full opacity
+                    // in the first frame drawn.
+                    Task { withAnimation(.easeOut(duration: 0.3)) { isTimelineShown = true } }
                 }
                 .defaultScrollAnchor(.bottom)
                 // A pill coming or going changes a row's height, and the list, pinned to the
@@ -112,11 +131,6 @@ struct SquabbleView: View {
                 // Also once the connection comes back.
                 .task(id: OlderPageTrigger(isAtTop: isNearTop && isSettled, isLive: chat.isLive)) {
                     if isNearTop, isSettled { await chat.loadOlder() }
-                }
-                .overlay(alignment: .top) {
-                    if chat.isLoadingOlder {
-                        ProgressView().tint(.white).padding(.top, 8)
-                    }
                 }
                 .scrollDismissesKeyboard(.interactively)
                 // iOS 26's soft fade under the bar; iOS 27 no longer defaults to it.
@@ -386,6 +400,7 @@ struct SquabbleView: View {
     }
 
     private static let olderPageDistance: CGFloat = 100
+    private static let olderPageRowHeight: CGFloat = 44
 
     private func send() {
         guard let uid = session.user?.id else { return }

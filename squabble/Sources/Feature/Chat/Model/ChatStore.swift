@@ -25,18 +25,20 @@ final class ChatStore {
     }
 
     /// The squabble says something has happened in it, so an empty answer from the cache alone
-    /// means the cache hasn't seen it yet, not that the chat is empty: showing the empty state
-    /// then would flash it before the messages arrive.
+    /// means the cache hasn't seen it yet, not that the chat is empty.
     private var expectsContent = false
-    /// Offline the server never answers; after a moment, show what the cache has.
-    private var gaveUpWaiting = false
+    /// The server is slow, or out of reach: worth saying so while the page waits.
+    private(set) var isTakingLong = false
 
     static let serverPatience: Duration = .seconds(2)
 
-    var hasLoaded: Bool {
-        guard messageFeed.hasLoaded, billFeed.hasLoaded else { return false }
-        let mayBeStale = expectsContent && entries.isEmpty && !isLive
-        return !mayBeStale || gaveUpWaiting || failed
+    /// Both feeds have answered, from the cache at least.
+    var hasLoaded: Bool { messageFeed.hasLoaded && billFeed.hasLoaded }
+
+    /// Nothing to show yet, though there is something: the empty state would be a lie. Lasts as
+    /// long as it takes, offline too, until the server answers or the user writes something.
+    var isWaitingForServer: Bool {
+        expectsContent && entries.isEmpty && !isLive && !failed
     }
     var isLive: Bool { messageFeed.isLive && billFeed.isLive }
     var canLoadOlder: Bool { messageFeed.canLoadOlder || billFeed.canLoadOlder }
@@ -47,11 +49,11 @@ final class ChatStore {
     func observe(isAwaitingServer: Bool = false, expectsContent: Bool = false) async {
         failed = false
         self.expectsContent = expectsContent
-        gaveUpWaiting = false
+        isTakingLong = false
         let patience = expectsContent ? Task { [weak self] in
             try? await Task.sleep(for: Self.serverPatience)
             guard !Task.isCancelled else { return }
-            self?.gaveUpWaiting = true
+            self?.isTakingLong = true
         } : nil
         defer { patience?.cancel() }
         if isAwaitingServer {

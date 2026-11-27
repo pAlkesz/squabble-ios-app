@@ -12,6 +12,11 @@ struct SquabbleRow: View {
     @Environment(RatesStore.self) private var rates
     @Environment(AuthSession.self) private var session
 
+    /// A row that wasn't there fades and grows in where it lands; the others make room.
+    static let arrival: AnyTransition = .opacity.combined(with: .scale(scale: 0.94, anchor: .top))
+    /// Lists key it on their ids, so it plays when the order or the set of squabbles changes.
+    static let reorder: Animation = .spring(duration: 0.45, bounce: 0.15)
+
     var body: some View {
         HStack(spacing: 14) {
             SquabbleImageView(group.image, size: pictureSize)

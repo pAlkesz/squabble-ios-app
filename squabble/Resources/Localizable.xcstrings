@@ -199,6 +199,28 @@
         }
       }
     },
+    "Loading messages" : {
+      "comment" : "Chat: VoiceOver label of the spinner shown while the messages load.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Üzenetek betöltése"
+          }
+        }
+      }
+    },
+    "Loading older messages" : {
+      "comment" : "Chat: VoiceOver label of the spinner at the top of the chat while older messages load.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Régebbi üzenetek betöltése"
+          }
+        }
+      }
+    },
     "More emoji" : {
       "comment" : "Chat menu: VoiceOver label for the + at the end of the reaction bar, which opens every emoji.",
       "localizations" : {
@@ -415,6 +437,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Szimbólumok"
+          }
+        }
+      }
+    },
+    "Taking its time. Bad signal, or the messages are just shy." : {
+      "comment" : "Chat: under the spinner when the messages take more than a couple of seconds to arrive.",
+      "localizations" : {
+        "hu" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ráér. Gyenge a térerő, vagy csak szégyenlősek az üzenetek."
           }
         }
       }
