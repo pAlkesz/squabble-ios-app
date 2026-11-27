@@ -64,6 +64,7 @@ struct SquabbleView: View {
             // Mounted with its content, so it opens at the bottom rather than scrolling there.
             if !chat.hasLoaded {
                 Color.clear
+                    .safeAreaBar(edge: .bottom) { composer(group) }
             } else {
                 ScrollView {
                     LazyVStack(spacing: 4) {
@@ -120,6 +121,14 @@ struct SquabbleView: View {
                 .scrollDismissesKeyboard(.interactively)
                 // iOS 26's soft fade under the bar; iOS 27 no longer defaults to it.
                 .scrollEdgeEffectStyle(.soft, for: [.top, .bottom])
+                // Tapping anywhere above the composer puts the keyboard away. Simultaneous, so
+                // bubbles and bill cards still get their own taps. Deferred out of the tap's update:
+                // changed inside it, the layout snapped down instead of following the keyboard.
+                // Before the bar, so taps on the composer itself don't count.
+                .simultaneousGesture(TapGesture().onEnded { Task { isComposing = false } })
+                // On the scroll view itself: attached around the loading switch, the bar was
+                // there before the scroll view and never got its fade underneath.
+                .safeAreaBar(edge: .bottom) { composer(group) }
                 .overlay {
                     if chat.entries.isEmpty {
                         emptyState(group)
@@ -133,10 +142,6 @@ struct SquabbleView: View {
                 }
             }
         }
-        // Tapping anywhere above the composer puts the keyboard away. Simultaneous, so bubbles
-        // and bill cards still get their own taps. Deferred out of the tap's update: changed
-        // inside it, the layout snapped down instead of following the keyboard.
-        .simultaneousGesture(TapGesture().onEnded { Task { isComposing = false } })
         .navigationTitle(Text(verbatim: group.name))
         .toolbar { toolbar(group) }
         #if DEBUG
@@ -144,24 +149,6 @@ struct SquabbleView: View {
             DebugBalanceSlider(groupID: group.id, currencyCode: group.currencyCode)
         }
         #endif
-        .safeAreaBar(edge: .bottom) {
-            if !group.isArchived {
-                ChatComposer(
-                    text: $draft,
-                    replyingTo: replyingTo,
-                    replyAuthorName: replyingTo.map { ChatMessageRow.name(of: group.members[$0.authorID]) },
-                    isFocused: $isComposing,
-                    onCancelReply: { replyingTo = nil },
-                    onSend: send,
-                    onAddBill: {
-                        guard let uid = session.user?.id else { return }
-                        isComposing = false
-                        billForm = BillDraft(newBillIn: group, by: uid)
-                    }
-                )
-                .frame(maxWidth: 720)
-            }
-        }
         .sheet(item: $billForm) { draft in
             if let uid = session.user?.id {
                 BillFormView(draft: draft, group: group, uid: uid) { bill, isNew in
@@ -226,6 +213,26 @@ struct SquabbleView: View {
             }
         } message: { _ in
             Text("We'll take a look. The author won't know it was you.", comment: "Chat: explanation in the report confirmation.")
+        }
+    }
+
+    @ViewBuilder
+    private func composer(_ group: SquabbleGroup) -> some View {
+        if !group.isArchived {
+            ChatComposer(
+                text: $draft,
+                replyingTo: replyingTo,
+                replyAuthorName: replyingTo.map { ChatMessageRow.name(of: group.members[$0.authorID]) },
+                isFocused: $isComposing,
+                onCancelReply: { replyingTo = nil },
+                onSend: send,
+                onAddBill: {
+                    guard let uid = session.user?.id else { return }
+                    isComposing = false
+                    billForm = BillDraft(newBillIn: group, by: uid)
+                }
+            )
+            .frame(maxWidth: 720)
         }
     }
 
